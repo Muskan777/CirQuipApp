@@ -36,6 +36,12 @@ const UserSchema = mongoose.Schema({
   token: {
     type: String,
   },
+  Post : [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+		  ref: "post",
+    }
+  ]
 });
 
 UserSchema.pre("save", async (next) => {
