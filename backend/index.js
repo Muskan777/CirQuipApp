@@ -16,6 +16,12 @@ app.get("/", (req, res) => {
   res.status(200).send("CirQuip API");
 });
 
+const routes = ["post"];
+
+routes.forEach((route) =>
+  app.use(`/api/${route}`, require(`./routes/${route}`))
+);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

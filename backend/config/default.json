@@ -1,5 +1,5 @@
 {
-    "mongoURI": "mongodb+srv://rootUser:sds2020root@sss-x10cv.mongodb.net/InductionPortal?retryWrites=true&w=majority",
+    "mongoURI": "mongodb+srv://rootUser:sds2020root@sss-x10cv.mongodb.net/CirQuip?retryWrites=true&w=majority",
     "localMongoURI": "mongodb://localhost:27017",
     "jwtSecretKey": "dsfkja;f"
 }
