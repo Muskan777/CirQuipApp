@@ -1,0 +1,73 @@
+const router = require("express").Router();
+let Comment = require("../models/Comments");
+let Post = require("../models/Post");
+
+// @route POST /api/comment/createComment
+// @desc Creates new comment
+
+router.route("/createComment").post(async (req, res) => {
+  let { postId, comment, likes } = req.body;
+  const createdAt = Date.now();
+  likes = parseInt(likes);
+
+  const newComment = new Comment({
+    postId,
+    comment,
+    likes,
+    createdAt,
+  });
+  try {
+    newComment
+      .save()
+      .then(async (newcomment) => {
+        await Post.findOneAndUpdate({_id: newcomment.postId},{$push: {comments: newcomment._id}}),
+        res.status(200).send({ msg: "New comment created", comment: newComment })
+      }  
+      )
+      .catch((err) => res.status(400).send("Error:" + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/comment/updateComment
+// @desc Updates existing comment
+
+router.route("/updateComment").patch(async (req, res) => {
+    let { comment, likes } = req.body;
+    likes = parseInt(likes);
+  
+  try {
+    let comments = await Comment.findById(req.body.id);
+    if(!comments) {
+      res.status(400).send("Comment with id not found")
+    }
+    Comment.findOneAndUpdate(
+      { _id: req.body.id },
+      { $set: { comment, likes } }
+    )
+      .then(() => res.status(200).send("Comment updated"))
+      .catch((err) => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route DELETE /api/comment/deleteComment
+// @desc Deletes existing comment
+
+router.route("/deleteComment").delete(async (req, res) => {
+  try {
+    let comments = await Comment.findById(req.body.id);
+    if(!comments) {
+      res.status(400).send("Comment with id not found")
+    }
+    Comment.findByIdAndDelete(req.body.id)
+      .then(() => res.status(200).send("Comment deleted"))
+      .catch((err) => res.status(400).send("Error:" + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+module.exports = router;

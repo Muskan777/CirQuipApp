@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
   res.status(200).send("CirQuip API");
 });
 
-const routes = ["post"];
+const routes = ["post","comment"];
 
 routes.forEach((route) =>
   app.use(`/api/${route}`, require(`./routes/${route}`))
