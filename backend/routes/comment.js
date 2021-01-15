@@ -63,7 +63,10 @@ router.route("/deleteComment").delete(async (req, res) => {
       res.status(400).send("Comment with id not found")
     }
     Comment.findByIdAndDelete(req.body.id)
-      .then(() => res.status(200).send("Comment deleted"))
+    .then(async () => {
+      await Post.findOneAndUpdate({_id: comments.postId},{$pull: {comments: req.body.id}}),
+      res.status(200).send("Comment deleted")
+    })  
       .catch((err) => res.status(400).send("Error:" + err));
   } catch (e) {
     console.log(e);
