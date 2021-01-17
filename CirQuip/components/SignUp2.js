@@ -4,6 +4,14 @@ import SignUp1 from './SignUp1'
 import {Formik} from 'formik';
 
 export default function SignUp2() {
+    const [name , setName] = useState('');
+    const [mobile , setMobile] = useState('');
+    const [email , setEmail] = useState('');
+
+    console.log(name);
+    console.log(mobile);
+    console.log(email);
+
     return (
         <SafeAreaView style={styles.begin}>
             <ScrollView>
@@ -14,7 +22,9 @@ export default function SignUp2() {
                 <Formik
                     initialValues={{name: '', mobile: '', email: ''}}
                     onSubmit={(values)=>{
-                        console.log(values);
+                        setName(values.name);
+                        setMobile(values.mobile);
+                        setEmail(values.email)
                     }}
                 >
                     {props => (
