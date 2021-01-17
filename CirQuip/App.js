@@ -2,7 +2,13 @@ import "react-native-gesture-handler";
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
+import {
+  DefaultTheme,
+  Provider as PaperProvider,
+  Button,
+  Text,
+  IconButton,
+} from "react-native-paper";
 import Home from "./screens/Home.jsx";
 import Shop from "./screens/Shop.jsx";
 const Stack = createStackNavigator();
@@ -25,25 +31,33 @@ export default function App() {
     headerStyle: {
       backgroundColor: "#e73050",
     },
+    headerRight: () => (
+      <IconButton
+        icon="account"
+        color="#000"
+        size={30}
+        onPress={() => alert("login")}
+      />
+    ),
   };
   return (
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              ...stackOptions,
-              title: "CirQuip",
-            }}
-          />
-          <Stack.Screen
             name="Shop"
             component={Shop}
             options={{
               ...stackOptions,
               title: "Shop",
+            }}
+          />
+          <Stack.Screen
+            name="Home"
+            component={Home}
+            options={{
+              ...stackOptions,
+              title: "CirQuip",
             }}
           />
         </Stack.Navigator>
