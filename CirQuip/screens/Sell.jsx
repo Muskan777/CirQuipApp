@@ -100,7 +100,8 @@ export default class Sell extends React.Component {
       .post(`${global.config.host}/shop/addProduct`, this.state)
       .then(res => {
         this.setState({ published: true });
-        Alert.alert("Success", "Your Product Is Live");
+        //Alert.alert("Success", "Your Product Is Live");
+        this.props.navigation.navigate("Published");
       })
       .catch(e => {
         Alert.alert("Error", "Something went wrong");

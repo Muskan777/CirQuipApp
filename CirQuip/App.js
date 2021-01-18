@@ -9,15 +9,16 @@ import {
   Button,
   Text,
   IconButton,
+  TextInput,
 } from "react-native-paper";
 import Home from "./screens/Home.jsx";
 import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
+import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clockRunning } from "react-native-reanimated";
 import CreatePost from "./screens/CreatePost";
 const Stack = createStackNavigator();
 const theme = {
@@ -96,6 +97,14 @@ export default function App() {
             options={{
               ...stackOptions,
               title: "CirQuip",
+            }}
+          />
+          <Stack.Screen
+            name="Published"
+            component={Published}
+            options={{
+              ...stackOptions,
+              title: "Product Published",
             }}
           />
           <Stack.Screen
