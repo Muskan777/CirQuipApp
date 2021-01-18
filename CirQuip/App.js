@@ -126,6 +126,7 @@ export default function App() {
             component={CreatePost}
             options={{
               ...stackOptions,
+              title: "Create Post",
             }}
           />
         </Stack.Navigator>

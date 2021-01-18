@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Image,
   TextInput,
   Alert,
+  Platform,
 } from "react-native";
 import {
   Appbar,
@@ -18,6 +20,7 @@ import {
   Paragraph,
 } from "react-native-paper";
 import StepIndicator from "expo-step-indicator";
+import * as ImagePicker from "expo-image-picker";
 
 const { width, height } = Dimensions.get("window");
 // #003f5c
@@ -25,7 +28,9 @@ export default class Sell extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentPosition: 1,
+      image: null,
+      pPrice: "400",
+      currentPosition: 0,
       pName: "Random Item",
       pDetails: "This product can freak you out, really !",
     };
@@ -42,7 +47,7 @@ export default class Sell extends React.Component {
     stepStrokeUnFinishedColor: "#aaaaaa",
     separatorFinishedColor: "#222",
     separatorUnFinishedColor: "#aaaaaa",
-    stepIndicatorFinishedColor: "#fb5b5a",
+    stepIndicatorFinishedColor: "#000",
     stepIndicatorUnFinishedColor: "#ffffff",
     stepIndicatorCurrentColor: "#ffffff",
     stepIndicatorLabelFontSize: 13,
@@ -57,6 +62,39 @@ export default class Sell extends React.Component {
   onPageChange(position) {
     this.setState({ currentPosition: position });
   }
+  componentDidMount() {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "CirQuip",
+            "We need camera/gallery paermission to upload photos"
+          );
+        }
+      }
+    })();
+  }
+  pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+      base64: true,
+    });
+
+    console.log(result.type);
+
+    if (!result.cancelled) {
+      this.setState({ image: result.base64 });
+    }
+  };
+
+  pushToSale = () => {
+    Alert.alert("Success", "Your Product Is Live");
+  };
   render() {
     return (
       <>
@@ -88,6 +126,17 @@ export default class Sell extends React.Component {
                   onChangeText={text => this.setState({ pName: text })}
                 />
               </View>
+              <Text style={styles.logo}>Product Name</Text>
+              <View style={styles.inputView}>
+                <TextInput
+                  value={this.state.pPrice}
+                  style={styles.inputText}
+                  keyboardType={"number-pad"}
+                  placeholder="Product Name..."
+                  placeholderTextColor="#003f5c"
+                  onChangeText={text => this.setState({ pPrice: text })}
+                />
+              </View>
               <Text style={styles.logo}>Product Details</Text>
               <View
                 style={{
@@ -100,7 +149,6 @@ export default class Sell extends React.Component {
               >
                 <TextInput
                   multiline
-                  textContentType={"addressCityAndState"}
                   value={this.state.pDetails}
                   style={{ ...styles.inputText, height: 100 }}
                   placeholder="Product Details..."
@@ -133,45 +181,143 @@ export default class Sell extends React.Component {
             </View>
           ) : this.state.currentPosition === 1 ? (
             <>
-              <View
-                style={{
-                  justifyContent: "space-between",
-                  width: width,
-                  display: "flex",
-                  flexDirection: "row",
-                  padding: 10,
-                }}
-              >
+              <View style={{ marginTop: 10 }}>
+                <Text style={styles.logo}>Upload Product Image</Text>
+                {this.state.image && (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignSelf: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `data:image/jpg;base64,${this.state.image}`,
+                      }}
+                      style={{ width: 200, height: 200 }}
+                    />
+                  </View>
+                )}
                 <Button
                   mode="contained"
-                  icon="cancel"
-                  style={{
-                    alignSelf: "flex-start",
-                    margin: 5,
-                    backgroundColor: "#e73050",
-                    width: 125,
-                  }}
-                  onPress={() => this.onPageChange(0)}
-                >
-                  Previous
-                </Button>
-                <Button
-                  mode="contained"
-                  icon="check"
+                  icon="folder"
                   style={{
                     margin: 5,
-                    backgroundColor: "#e73050",
-                    width: 100,
+                    backgroundColor: "#465881",
                   }}
-                  onPress={() => this.onPageChange(1)}
+                  onPress={() => this.pickImage()}
                 >
-                  Next
+                  Browse
                 </Button>
+                <View
+                  style={{
+                    justifyContent: "space-between",
+                    width: width,
+                    display: "flex",
+                    flexDirection: "row",
+                    padding: 10,
+                  }}
+                >
+                  <Button
+                    mode="contained"
+                    icon="cancel"
+                    style={{
+                      alignSelf: "flex-start",
+                      margin: 5,
+                      backgroundColor: "#e73050",
+                      width: 125,
+                    }}
+                    onPress={() => this.onPageChange(0)}
+                  >
+                    Previous
+                  </Button>
+                  <Button
+                    mode="contained"
+                    icon="check"
+                    style={{
+                      margin: 5,
+                      backgroundColor: "#e73050",
+                      width: 100,
+                    }}
+                    onPress={() => this.onPageChange(2)}
+                  >
+                    Next
+                  </Button>
+                </View>
               </View>
             </>
           ) : (
             <>
-              <Text>2</Text>
+              <View
+                style={{
+                  marginTop: 10,
+                  justifyContent: "center",
+                  alignContent: "center",
+                }}
+              >
+                <Text style={{ ...styles.logo, alignSelf: "center" }}>
+                  Preview Product
+                </Text>
+                {this.state.image && (
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignSelf: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Image
+                      source={{
+                        uri: `data:image/jpg;base64,${this.state.image}`,
+                        //uri: `${this.state.image}`,
+                      }}
+                      style={{ width: (3 * width) / 4, height: 300 }}
+                    />
+                  </View>
+                )}
+                <View style={{ alignItems: "center", padding: 10 }}>
+                  <Title style={{ color: "#fb5b5a" }}>{this.state.pName}</Title>
+                  <Text style={{ color: "#fff" }}>{this.state.pDetails}</Text>
+                  <Title style={{ color: "#fff", marginTop: 5 }}>
+                    PRICE : ₹{this.state.pPrice}
+                  </Title>
+                </View>
+                <View
+                  style={{
+                    justifyContent: "space-between",
+                    width: width,
+                    display: "flex",
+                    flexDirection: "row",
+                    padding: 10,
+                  }}
+                >
+                  <Button
+                    mode="contained"
+                    style={{
+                      alignSelf: "flex-start",
+                      margin: 5,
+                      backgroundColor: "#e73050",
+                      width: 125,
+                    }}
+                    onPress={() => this.onPageChange(1)}
+                  >
+                    Back
+                  </Button>
+                  <Button
+                    mode="contained"
+                    icon="check"
+                    style={{
+                      margin: 5,
+                      backgroundColor: "#e73050",
+                      width: 125,
+                    }}
+                    onPress={() => this.pushToSale()}
+                  >
+                    Sell
+                  </Button>
+                </View>
+              </View>
             </>
           )}
         </View>
