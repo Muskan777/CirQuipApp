@@ -44,12 +44,21 @@ export default class Product extends React.Component {
   render() {
     const LeftContent = props => <Avatar.Icon {...props} icon="account" />; //replace with user image later
     const RightContent = props => (
-      <Avatar.Icon
-        {...props}
-        icon="share"
-        style={{ marginRight: 5 }}
-        onPress={() => Alert.alert("Share", "Share this product")}
-      />
+      <TouchableOpacity
+        onPress={() =>
+          Alert.alert(
+            "Under Development",
+            "Have Mercy on Developers, there was a lot to develop"
+          )
+        }
+      >
+        <Avatar.Icon
+          {...props}
+          icon="share"
+          style={{ marginRight: 5 }}
+          onPress={() => Alert.alert("Share", "Share this product")}
+        />
+      </TouchableOpacity>
     ); //add share to it later
 
     return (
@@ -64,19 +73,19 @@ export default class Product extends React.Component {
         </Card>
         <Card>
           <Card.Cover
-            source={{ uri: this.state.image }}
+            source={{ uri: `data:image/jpg;base64,${this.state.image}` }}
             style={{ height: 450, padding: 5 }}
           />
           <Card.Content>
             <Title style={{ fontWeight: "bold" }}>{this.state.name}</Title>
-          </Card.Content>
-          <Card.Content>
             <Text style={{ fontSize: 18 }}>
               <Text style={{ fontWeight: "bold" }}>Details: </Text>
               {this.state.info}
             </Text>
             <View
               style={{
+                marginTop: 5,
+                marginBottom: 5,
                 height: 2,
                 backgroundColor: "rgba(0,0,0,0.5)",
               }}

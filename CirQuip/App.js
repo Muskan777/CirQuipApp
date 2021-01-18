@@ -91,19 +91,19 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name="Sell"
-            component={Sell}
-            options={{
-              ...stackOptions,
-              title: "Selling Arena",
-            }}
-          />
-          <Stack.Screen
             name="Home"
             component={Home}
             options={{
               ...stackOptions,
               title: "CirQuip",
+            }}
+          />
+          <Stack.Screen
+            name="Sell"
+            component={Sell}
+            options={{
+              ...stackOptions,
+              title: "Selling Arena",
             }}
           />
           <Stack.Screen

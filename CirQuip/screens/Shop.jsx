@@ -63,7 +63,9 @@ export default class App extends React.Component {
       >
         <Card>
           <Card.Cover
-            source={{ uri: data.image }}
+            source={{
+              uri: `data:image/jpg;base64,${data.image}`,
+            }}
             style={{
               minHeight: 250,
               width: width / 2 - 10,
