@@ -49,6 +49,20 @@ export default function Home({ navigation }) {
               Shop Products
             </Text>
           </Button>
+          <Button
+            onPress={() => {
+              navigation.navigate("CreatePost");
+            }}
+            mode="outlined"
+          >
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Create a Post
+            </Text>
+          </Button>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
