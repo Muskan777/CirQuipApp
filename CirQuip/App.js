@@ -13,14 +13,18 @@ import {
 import Home from "./screens/Home.jsx";
 import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
+import Login from "./screens/Login.jsx";
+import axios from "axios";
+import { AsyncStorage } from "react-native";
+import { clockRunning } from "react-native-reanimated";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
   dark: true,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#000",
-    accent: "#000",
+    primary: "#003f5c",
+    accent: "#fb5b5a",
     backdrop: "#000",
     text: "#000",
   },
@@ -33,33 +37,45 @@ export default function App() {
     headerStyle: {
       backgroundColor: "#e73050",
     },
-    headerRight: () => (
+    headerLeft: () => (
       <IconButton
-        icon="account"
+        icon="hamburger"
         color="#000"
         size={30}
         onPress={() => alert("login")}
       />
     ),
   };
-  return (
+  const [status, setStatus] = React.useState(false);
+  React.useEffect(() => {
+    let jwt = AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(`${global.config.host}/user/verifyJWT/${status}`)
+      .then(res => {
+        setStatus(true);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
+  return status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name="Shop"
-            component={Shop}
-            options={{
-              ...stackOptions,
-              title: "Shop",
-            }}
-          />
           <Stack.Screen
             name="Home"
             component={Home}
             options={{
               ...stackOptions,
               title: "CirQuip",
+            }}
+          />
+          <Stack.Screen
+            name="Shop"
+            component={Shop}
+            options={{
+              ...stackOptions,
+              title: "Shop",
             }}
           />
           <Stack.Screen
@@ -72,5 +88,7 @@ export default function App() {
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
+  ) : (
+    <Login />
   );
 }
