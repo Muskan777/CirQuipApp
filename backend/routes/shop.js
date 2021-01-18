@@ -11,7 +11,7 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 
 router.get("/products/:type", async (req, res) => {
   try {
-    const data = await Shop.find({});
+    //const data = await Shop.find({});
     log("products data", data);
     return res.status(200).json(data);
   } catch (err) {

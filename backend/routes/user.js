@@ -9,7 +9,7 @@ const keys = require("../config/default.json");
 
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
-  let { name, phone, college, email, password, password2 } = req.body;
+  let { name, phone, college, email, password } = req.body;
   phone = parseInt(phone);
   try {
     User.findOne({ email }).then(user => {
@@ -24,20 +24,16 @@ router.post("/register", (req, res) => {
           password,
           Post: [],
         });
-        if (newUser.password === password2) {
-          bcrypt.hash(newUser.password, 10, (err, hash) => {
-            if (err) throw err;
-            newUser.password = hash;
-            newUser
-              .save()
-              .then(() =>
-                res.status(200).send({ msg: "New user created", post: newUser })
-              )
-              .catch(err => res.status(400).send("Error:" + err));
-          });
-        } else {
-          return res.status(400).send("Passwords do not match");
-        }
+        bcrypt.hash(newUser.password, 10, (err, hash) => {
+          if (err) throw err;
+          newUser.password = hash;
+          newUser
+            .save()
+            .then(() =>
+              res.status(200).send({ msg: "New user created", post: newUser })
+            )
+            .catch(err => res.status(400).send("Error:" + err));
+        });
       }
     });
   } catch (e) {
