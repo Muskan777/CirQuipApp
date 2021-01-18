@@ -31,7 +31,7 @@ export default class Product extends React.Component {
   }
   componentDidMount() {
     axios
-      .get(`${global.config.host}/user/getUserWithEmail/${this.state.seller}`)
+      .get(`${global.config.host}/user/getUserWithId/${this.state.seller}`)
       .then(res => {
         this.setState({ user: { ...res.data } });
       })

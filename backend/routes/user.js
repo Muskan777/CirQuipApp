@@ -87,11 +87,11 @@ router.post("/login", (req, res) => {
 });
 
 // @route GET api/user/getUserWithEmail/{email}
-// @desc get all details of user when supplied with email of that user
+// @desc get all details of user when supplied with id of that user
 
-router.get("/getUserWithEmail/:email", async (req, res) => {
+router.get("/getUserWithId/:id", async (req, res) => {
   try {
-    const user = await User.find({ email: req.params.email });
+    const user = await User.find({ _id: req.params.id });
     log("user", user[0]);
     return res.status(200).json({ ...user[0]._doc, password: "" });
   } catch (err) {
