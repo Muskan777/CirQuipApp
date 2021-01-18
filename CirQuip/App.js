@@ -17,6 +17,7 @@ import Login from "./screens/Login.jsx";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clockRunning } from "react-native-reanimated";
+import CreatePost from "./screens/CreatePost";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
@@ -110,6 +111,13 @@ export default function App() {
               ...stackOptions,
             }}
           />
+          <Stack.Screen
+            name="CreatePost"
+            component={CreatePost}
+            options={{
+              ...stackOptions,
+            }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
@@ -117,4 +125,3 @@ export default function App() {
     <Login handleStatus={handleStatus} />
   );
 }
-
