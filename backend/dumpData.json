@@ -1,0 +1,46 @@
+{
+  "0": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://images-na.ssl-images-amazon.com/images/I/51rbTXrgsGL._SL1080_.jpg",
+    "name": "Drafter",
+    "info": "2 years old drafter, barely used, in good condition",
+    "price": 200
+  },
+
+  "1": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://upload.wikimedia.org/wikipedia/commons/c/cf/Casio_calculator_JS-20WK_in_201901_002.jpg",
+    "name": "Calculator",
+    "info": "Engineering Calulator in fairly good condition, still in working condition",
+    "price": 400
+  },
+  "2": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://www.offimart.com/5986-medium_default/artline-osum-mathematical-drawing-instruments-10202.jpg",
+    "name": "Drawing Instruments",
+    "info": "All drawing instruments required in engineering drawing in good form.",
+    "price": 500
+  },
+
+  "3": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://images-na.ssl-images-amazon.com/images/I/71sQ7O7omJL.jpg",
+    "name": "Engineering Mechanics",
+    "info": "Engineering Mechcanics 5th Edition by SK Gupta in very good condition.",
+    "price": 200
+  },
+  "4": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://images-na.ssl-images-amazon.com/images/I/51N4axRKrQL._SX343_BO1,204,203,200_.jpg",
+    "name": "Electrical Engineering",
+    "info": "Introduction to Electrical Engineering 7th Edition by RK Verma in very good condition.",
+    "price": 460
+  },
+  "5": {
+    "seller": "vasusharma2017@outlook.com",
+    "image": "https://images-na.ssl-images-amazon.com/images/I/51H52tr3KHL._SX346_BO1,204,203,200_.jpg",
+    "name": "Let Us C",
+    "info": "A sophisticated book for C programming in extremely good condition, barely touched",
+    "price": 550
+  }
+}
