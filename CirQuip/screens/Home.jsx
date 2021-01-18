@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Alert,
 } from "react-native";
 import { getStatusBarHeight } from "react-native-status-bar-height";
 import {
@@ -46,6 +47,21 @@ export default function Home({ navigation }) {
               }}
             >
               Shop Products
+            </Text>
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert("CirQuip", "Under Construction : Lazy Developers :)");
+          }}
+        >
+          <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Sell Products
             </Text>
           </Button>
         </TouchableOpacity>

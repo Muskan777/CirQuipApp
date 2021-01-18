@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -19,11 +19,26 @@ export default class Login extends React.Component {
       phone: "9906330301",
       college: "COEP",
       password2: "123",
-      toggleSignUp: true,
+      toggleSignUp: false,
     };
   }
   handleLogin() {
-    Alert.alert("Login", "Logged In");
+    axios
+      .post(`${global.config.host}/user/login`, this.state)
+      .then(async res => {
+        try {
+          await AsyncStorage.setItem("cirquip-auth-token", res.data.token);
+          //Alert.alert("CirQuip", res.data.token);
+          this.props.handleStatus(true);
+        } catch (err) {
+          console.log(err);
+          Alert.alert("Error", "Something went wrong");
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
+      });
   }
   toggleSignUp() {
     this.setState({ toggleSignUp: true });
@@ -39,8 +54,8 @@ export default class Login extends React.Component {
         Alert.alert("CirQuip", "Registeration Successful");
       })
       .catch(err => {
-        console.log(err);
-        Alert.alert("CirQuip", "Something went wrong in registeration");
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
       });
   }
   render() {
@@ -52,6 +67,7 @@ export default class Login extends React.Component {
             <>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.name}
                   style={styles.inputText}
                   placeholder="Name..."
                   placeholderTextColor="#003f5c"
@@ -60,6 +76,7 @@ export default class Login extends React.Component {
               </View>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.college}
                   style={styles.inputText}
                   placeholder="College..."
                   placeholderTextColor="#003f5c"
@@ -68,6 +85,7 @@ export default class Login extends React.Component {
               </View>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.email}
                   style={styles.inputText}
                   textContentType={"emailAddress"}
                   placeholder="Email..."
@@ -77,6 +95,8 @@ export default class Login extends React.Component {
               </View>
               <View style={styles.inputView}>
                 <TextInput
+                  maxLength={10}
+                  value={this.state.phone}
                   textContentType={"telephoneNumber"}
                   keyboardType={"phone-pad"}
                   style={styles.inputText}
@@ -87,6 +107,7 @@ export default class Login extends React.Component {
               </View>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.password}
                   secureTextEntry
                   style={styles.inputText}
                   placeholder="Password..."
@@ -96,6 +117,7 @@ export default class Login extends React.Component {
               </View>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.password2}
                   secureTextEntry
                   style={styles.inputText}
                   placeholder="Confirm Password..."
@@ -114,6 +136,7 @@ export default class Login extends React.Component {
             <>
               <View style={styles.inputView}>
                 <TextInput
+                  value={this.state.email}
                   style={styles.inputText}
                   placeholder="Email..."
                   placeholderTextColor="#003f5c"
@@ -123,6 +146,7 @@ export default class Login extends React.Component {
               <View style={styles.inputView}>
                 <TextInput
                   secureTextEntry
+                  value={this.state.password}
                   style={styles.inputText}
                   placeholder="Password..."
                   placeholderTextColor="#003f5c"

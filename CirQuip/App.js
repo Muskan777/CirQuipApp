@@ -15,7 +15,7 @@ import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
 import axios from "axios";
-import { AsyncStorage } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clockRunning } from "react-native-reanimated";
 const Stack = createStackNavigator();
 const theme = {
@@ -42,21 +42,46 @@ export default function App() {
         icon="hamburger"
         color="#000"
         size={30}
-        onPress={() => alert("login")}
+        onPress={() => alert("Open a damn menu here !")}
       />
     ),
   };
+  const handleStatus = param => setStatus(param);
+
   const [status, setStatus] = React.useState(false);
+  const checkJWT = async () => {
+    await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
+      console.log("jwt", jwt);
+      if (jwt) {
+        axios
+          .post(
+            `${global.config.host}/user/verifyJWT`,
+            {},
+            {
+              headers: {
+                "cirquip-auth-token": jwt,
+              },
+            }
+          )
+          .then(async res => {
+            //console.log("data", res.data);
+            try {
+              await AsyncStorage.setItem("user", res.data);
+            } catch {}
+            setStatus(true);
+          })
+          .catch(async err => {
+            try {
+              await AsyncStorage.removeItem("user");
+              await AsyncStorage.removeItem("cirquip-auth-token");
+            } catch {}
+            console.log(err);
+          });
+      }
+    });
+  };
   React.useEffect(() => {
-    let jwt = AsyncStorage.getItem("cirquip-auth-token");
-    axios
-      .post(`${global.config.host}/user/verifyJWT/${status}`)
-      .then(res => {
-        setStatus(true);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    checkJWT();
   });
   return status ? (
     <PaperProvider theme={theme}>
@@ -89,6 +114,6 @@ export default function App() {
       </NavigationContainer>
     </PaperProvider>
   ) : (
-    <Login />
+    <Login handleStatus={handleStatus} />
   );
 }

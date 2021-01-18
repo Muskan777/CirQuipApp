@@ -3,7 +3,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
-
+const auth = require("../middlewares/auth");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -14,7 +14,7 @@ router.post("/register", (req, res) => {
   try {
     User.findOne({ email }).then(user => {
       if (user) {
-        return res.status(400).send("Email already exists");
+        return res.status(400).json("Email already exists");
       } else {
         const newUser = new User({
           name,
@@ -63,16 +63,16 @@ router.post("/login", (req, res) => {
             payload,
             keys.jwtSecretKey,
             {
-              expiresIn: 3600,
+              expiresIn: "365d",
             },
             (err, token) => {
               if (token) {
-                res.status(200).send({
+                res.status(200).json({
                   token: token,
                   msg: "User successfully logged in",
                 });
               } else {
-                res.status(400).send("Err:" + err);
+                res.status(400).json(err);
               }
             }
           );
@@ -98,5 +98,11 @@ router.get("/getUserWithEmail/:email", async (req, res) => {
     log("user fetch", err);
     res.status(400).json(err);
   }
+});
+
+router.post("/verifyJWT", auth, (req, res) => {
+  req.payload
+    ? res.status(200).json(req.payload.id)
+    : res.status(400).json("Token Invalid");
 });
 module.exports = router;
