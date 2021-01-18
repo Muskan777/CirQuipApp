@@ -18,6 +18,7 @@ import Sell from "./screens/Sell.jsx";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clockRunning } from "react-native-reanimated";
+import CreatePost from "./screens/CreatePost";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
@@ -116,6 +117,13 @@ export default function App() {
           <Stack.Screen
             name="Product"
             component={Product}
+            options={{
+              ...stackOptions,
+            }}
+          />
+          <Stack.Screen
+            name="CreatePost"
+            component={CreatePost}
             options={{
               ...stackOptions,
             }}
