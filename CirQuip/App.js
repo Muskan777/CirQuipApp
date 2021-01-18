@@ -14,6 +14,7 @@ import Home from "./screens/Home.jsx";
 import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
+import Sell from "./screens/Sell.jsx";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clockRunning } from "react-native-reanimated";
@@ -36,6 +37,7 @@ export default function App() {
     },
     headerStyle: {
       backgroundColor: "#e73050",
+      //backgroundColor: "#fb5b5a",
     },
     headerLeft: () => (
       <IconButton
@@ -51,7 +53,7 @@ export default function App() {
   const [status, setStatus] = React.useState(false);
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
-      console.log("jwt", jwt);
+      if (global.config.debug) console.log("jwt", jwt);
       if (jwt) {
         axios
           .post(
@@ -75,7 +77,7 @@ export default function App() {
               await AsyncStorage.removeItem("user");
               await AsyncStorage.removeItem("cirquip-auth-token");
             } catch {}
-            console.log(err);
+            if (global.config.debug) console.log(err);
           });
       }
     });
@@ -87,6 +89,14 @@ export default function App() {
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen
+            name="Sell"
+            component={Sell}
+            options={{
+              ...stackOptions,
+              title: "Selling Arena",
+            }}
+          />
           <Stack.Screen
             name="Home"
             component={Home}
@@ -117,4 +127,3 @@ export default function App() {
     <Login handleStatus={handleStatus} />
   );
 }
-

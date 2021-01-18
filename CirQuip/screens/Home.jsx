@@ -52,7 +52,7 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
-            Alert.alert("CirQuip", "Under Construction : Lazy Developers :)");
+            navigation.navigate("Sell");
           }}
         >
           <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
