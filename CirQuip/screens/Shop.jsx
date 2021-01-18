@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Title, Searchbar, Card, Paragraph, Button } from "react-native-paper";
+import axios from "axios";
 const width = Dimensions.get("screen").width;
 
 export default class App extends React.Component {
@@ -28,10 +29,10 @@ export default class App extends React.Component {
 
   fetchData() {
     this.setState({ refreshing: true });
-    fetch("https://api.thecatapi.com/v1/images/search?limit=10&page=1")
-      .then(res => res.json())
-      .then(resJson => {
-        this.setState({ data: resJson });
+    axios
+      .get("https://api.thecatapi.com/v1/images/search?limit=10&page=1")
+      .then(res => {
+        this.setState({ data: res.data });
         this.setState({ refreshing: false });
       })
       .catch(e => console.log(e));
@@ -39,16 +40,23 @@ export default class App extends React.Component {
 
   onChangeSearch = query => this.setState({ searchQuery: query });
   renderItemComponent = data => (
-    <TouchableOpacity style={styles.container}>
-      <Card style={styles.image}>
-        <Card.Content>
-          <Title>Card title</Title>
-          <Paragraph>Card content</Paragraph>
-        </Card.Content>
+    <TouchableOpacity
+      style={{
+        ...styles.container,
+        //borderWidth: 1,
+        //borderColor: "black",
+        justifyContent: "flex-start",
+      }}
+    >
+      <Card>
         <Card.Cover
           source={{ uri: "https://picsum.photos/700" }}
-          style={{ height: 100 }}
+          style={{ minHeight: 250 }}
         />
+        <Card.Content style={{ height: 50 }}>
+          <Text style={{ fontWeight: "bold" }}>Card title</Text>
+          <Paragraph>Price</Paragraph>
+        </Card.Content>
       </Card>
     </TouchableOpacity>
   );
@@ -79,13 +87,13 @@ export default class App extends React.Component {
           onChangeText={this.onChangeSearch}
           value={this.state.searchQuery}
         />
-        <SafeAreaView style={{ padding: 10 }}>
+        <SafeAreaView>
           <FlatList
             numColumns={2}
             data={this.state.data}
             renderItem={item => this.renderItemComponent(item)}
             keyExtractor={item => item.id.toString()}
-            ItemSeparatorComponent={this.ItemSeparator}
+            //ItemSeparatorComponent={this.ItemSeparator}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
           />
@@ -103,14 +111,16 @@ const styles = StyleSheet.create({
     marginBottom: width / 30,
   },
   container: {
-    height: 200,
-    width: width / 2 - 10,
-    margin: 5,
+    height: 300,
+    width: width / 2 - 4,
+    margin: 2,
     backgroundColor: "#FFF",
     borderRadius: 6,
+    //borderColor: "black",
+    //borderWidth: 1,
   },
   image: {
-    height: "100%",
+    height: 250,
     borderRadius: 4,
   },
 });
