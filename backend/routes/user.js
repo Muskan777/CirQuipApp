@@ -7,6 +7,7 @@ const keys = require("../config/default.json");
 // @route POST api/user/register
 // @desc registration of new user
 
+const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
   let { name, phone, college, email, password, password2 } = req.body;
   phone = parseInt(phone);
@@ -89,4 +90,17 @@ router.post("/login", (req, res) => {
   }
 });
 
+// @route GET api/user/getUserWithEmail/{email}
+// @desc get all details of user when supplied with email of that user
+
+router.get("/getUserWithEmail/:email", async (req, res) => {
+  try {
+    const user = await User.find({ email: req.params.email });
+    log("user", user[0]);
+    return res.status(200).json({ ...user[0]._doc, password: "" });
+  } catch (err) {
+    log("user fetch", err);
+    res.status(400).json(err);
+  }
+});
 module.exports = router;

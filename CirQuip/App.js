@@ -1,5 +1,6 @@
 import "react-native-gesture-handler";
 import * as React from "react";
+import "./config";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -11,6 +12,7 @@ import {
 } from "react-native-paper";
 import Home from "./screens/Home.jsx";
 import Shop from "./screens/Shop.jsx";
+import Product from "./screens/Product.jsx";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
@@ -58,6 +60,13 @@ export default function App() {
             options={{
               ...stackOptions,
               title: "CirQuip",
+            }}
+          />
+          <Stack.Screen
+            name="Product"
+            component={Product}
+            options={{
+              ...stackOptions,
             }}
           />
         </Stack.Navigator>

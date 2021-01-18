@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Title, Searchbar, Card, Paragraph, Button } from "react-native-paper";
 import axios from "axios";
@@ -28,38 +29,56 @@ export default class App extends React.Component {
   }
 
   fetchData() {
+    console.log(`${global.config.host}/shop/products/all`);
     this.setState({ refreshing: true });
     axios
-      .get("https://api.thecatapi.com/v1/images/search?limit=10&page=1")
+      .get(`${global.config.host}/shop/products/all`)
       .then(res => {
         this.setState({ data: res.data });
         this.setState({ refreshing: false });
       })
-      .catch(e => console.log(e));
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
   }
 
   onChangeSearch = query => this.setState({ searchQuery: query });
-  renderItemComponent = data => (
-    <TouchableOpacity
-      style={{
-        ...styles.container,
-        //borderWidth: 1,
-        //borderColor: "black",
-        justifyContent: "flex-start",
-      }}
-    >
-      <Card>
-        <Card.Cover
-          source={{ uri: "https://picsum.photos/700" }}
-          style={{ minHeight: 250 }}
-        />
-        <Card.Content style={{ height: 50 }}>
-          <Text style={{ fontWeight: "bold" }}>Card title</Text>
-          <Paragraph>Price</Paragraph>
-        </Card.Content>
-      </Card>
-    </TouchableOpacity>
-  );
+  renderItemComponent = ({ item: data, index }) => {
+    return (
+      <TouchableOpacity
+        onPress={() =>
+          this.props.navigation.navigate({
+            name: "Product",
+            params: data,
+          })
+        }
+        style={{
+          ...styles.container,
+          //borderRightWidth: index % 2 ? 0 : 1,
+          //borderLeftWidth: index % 2 ? 1 : 0,
+          borderColor: "black",
+          justifyContent: "flex-start",
+        }}
+      >
+        <Card>
+          <Card.Cover
+            source={{ uri: data.image }}
+            style={{
+              minHeight: 250,
+              width: width / 2 - 10,
+              //borderWidth: 1,
+              //borderColor: "black",
+            }}
+          />
+          <Card.Content style={{ height: 50 }}>
+            <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
+            <Paragraph>₹ {data.price}</Paragraph>
+          </Card.Content>
+        </Card>
+      </TouchableOpacity>
+    );
+  };
 
   ItemSeparator = () => (
     <View
@@ -92,7 +111,7 @@ export default class App extends React.Component {
             numColumns={2}
             data={this.state.data}
             renderItem={item => this.renderItemComponent(item)}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={item => item._id}
             //ItemSeparatorComponent={this.ItemSeparator}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
@@ -116,8 +135,8 @@ const styles = StyleSheet.create({
     margin: 2,
     backgroundColor: "#FFF",
     borderRadius: 6,
-    //borderColor: "black",
-    //borderWidth: 1,
+    borderColor: "black",
+    borderWidth: 1,
   },
   image: {
     height: 250,
