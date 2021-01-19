@@ -32,10 +32,12 @@ const styles = StyleSheet.create({
         elevation: 4,
         flexDirection: 'row',
         alignItems: 'center',
-        paddingLeft: 20
+        paddingLeft: 20,
+        backgroundColor:'transparent'
     },
     searchContainer:{
         alignItems: 'center',
         height: 60,
+        backgroundColor:'transparent'
     }
 })
