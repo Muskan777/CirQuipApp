@@ -49,12 +49,13 @@ export default function Home({ navigation }) {
               Shop Products
             </Text>
           </Button>
-          <Button
-            onPress={() => {
-              navigation.navigate("CreatePost");
-            }}
-            mode="outlined"
-          >
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("CreatePost");
+          }}
+        >
+          <Button style={{ ...styles.shopButton }} mode="contained" icon="pen">
             <Text
               style={{
                 fontSize: 20,
