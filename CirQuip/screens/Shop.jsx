@@ -165,7 +165,11 @@ export default class Shop extends React.Component {
           onPress={() =>
             this.props.navigation.navigate({
               name: "Product",
-              params: { ...data, onGoBack: async () => await this.refresh() },
+              params: {
+                ...data,
+                onGoBack: async () => await this.refresh(),
+                type: this.props.route.params.type,
+              },
             })
           }
           style={{
@@ -192,7 +196,11 @@ export default class Shop extends React.Component {
                 this.state?.user?.likes.includes(data._id) ? "red" : "gray"
               }
               icon="heart"
-              style={styles.like}
+              style={{
+                ...styles.like,
+                display:
+                  this.props.route.params.type === "my" ? "none" : "flex",
+              }}
             />
           </TouchableOpacity>
           <Card>
@@ -247,6 +255,8 @@ export default class Shop extends React.Component {
           <Title style={{ textAlign: "center" }}>
             {this.props.route.params.type === "liked"
               ? "Your Wishlist"
+              : this.props.route.params.type === "my"
+              ? "My Listed Products"
               : "New Recommendations"}
           </Title>
           {this.state.data && this.state.data.length !== 0 ? (

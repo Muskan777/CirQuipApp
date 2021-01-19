@@ -207,7 +207,11 @@ export default class Product extends React.Component {
         <ScrollView>
           <Card style={{ elevation: 4 }}>
             <Card.Title
-              title={this.state.seller?.name}
+              title={
+                this.props.route.params.type === "my"
+                  ? "You"
+                  : this.state.seller?.name
+              }
               subtitle={this.state.seller?.email}
               left={LeftContent}
               right={RightContent}
@@ -218,29 +222,33 @@ export default class Product extends React.Component {
               source={{ uri: `data:image/jpg;base64,${this.state.image}` }}
               style={{ height: 450, padding: 5 }}
             />
-            <TouchableOpacity
-              style={{
-                position: "absolute",
-                zIndex: 1000,
-                elevation: 10,
-                alignSelf: "flex-end",
-              }}
-              onPress={() =>
-                this.state?.user?.likes.includes(this.state?._id)
-                  ? this.handleDislike(this.state?._id)
-                  : this.handleLike(this.state?._id)
-              }
-            >
-              <Avatar.Icon
-                color={
+            {this.props.route.params.type === "my" ? (
+              <></>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  position: "absolute",
+                  zIndex: 1000,
+                  elevation: 10,
+                  alignSelf: "flex-end",
+                }}
+                onPress={() =>
                   this.state?.user?.likes.includes(this.state?._id)
-                    ? "red"
-                    : "gray"
+                    ? this.handleDislike(this.state?._id)
+                    : this.handleLike(this.state?._id)
                 }
-                icon="heart"
-                style={styles.like}
-              />
-            </TouchableOpacity>
+              >
+                <Avatar.Icon
+                  color={
+                    this.state?.user?.likes.includes(this.state?._id)
+                      ? "red"
+                      : "gray"
+                  }
+                  icon="heart"
+                  style={styles.like}
+                />
+              </TouchableOpacity>
+            )}
             <Card.Content>
               <Title style={{ fontWeight: "bold" }}>{this.state.name}</Title>
               <Text style={{ fontSize: 18 }}>
@@ -266,44 +274,59 @@ export default class Product extends React.Component {
           </Card>
           <Card>
             <Card.Actions style={{ justifyContent: "space-around" }}>
-              <Button
-                mode="contained"
-                icon="cart"
-                style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-              >
-                <Text style={{ fontSize: 20 }}>Buy</Text>
-              </Button>
+              {this.props.route.params.type === "my" ? (
+                <Button
+                  mode="contained"
+                  icon="delete"
+                  style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                >
+                  <Text style={{ fontSize: 20 }}>Delete</Text>
+                </Button>
+              ) : (
+                <Button
+                  mode="contained"
+                  icon="cart"
+                  style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                >
+                  <Text style={{ fontSize: 20 }}>Buy</Text>
+                </Button>
+              )}
             </Card.Actions>
           </Card>
         </ScrollView>
-
-        <FAB
-          icon="phone"
-          onPress={() => this.callNumber(this.state.seller.phone)}
-          style={{
-            backgroundColor: "green",
-            position: "absolute",
-            margin: 16,
-            right: 0,
-            bottom: 0,
-            marginBottom: 80,
-          }}
-        />
-        <FAB
-          onPress={() =>
-            Linking.openURL(
-              `whatsapp://send?phone=${this.state.seller.phone}&text=${this.whatsappMsg}`
-            )
-          }
-          icon="whatsapp"
-          style={{
-            backgroundColor: "#4ec559",
-            position: "absolute",
-            margin: 16,
-            right: 0,
-            bottom: 0,
-          }}
-        />
+        {this.props.route.params.type === "my" ? (
+          <></>
+        ) : (
+          <>
+            <FAB
+              icon="phone"
+              onPress={() => this.callNumber(this.state.seller.phone)}
+              style={{
+                backgroundColor: "green",
+                position: "absolute",
+                margin: 16,
+                right: 0,
+                bottom: 0,
+                marginBottom: 80,
+              }}
+            />
+            <FAB
+              onPress={() =>
+                Linking.openURL(
+                  `whatsapp://send?phone=${this.state.seller.phone}&text=${this.whatsappMsg}`
+                )
+              }
+              icon="whatsapp"
+              style={{
+                backgroundColor: "#4ec559",
+                position: "absolute",
+                margin: 16,
+                right: 0,
+                bottom: 0,
+              }}
+            />
+          </>
+        )}
       </>
     );
   }
