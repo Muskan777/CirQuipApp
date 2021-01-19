@@ -33,7 +33,7 @@ export default class Shop extends React.Component {
       user: { likes: [] },
     };
   }
-  async componentDidMount() {
+  refresh = async () => {
     this.props.navigation.setOptions({
       headerLeft: () => (
         <IconButton
@@ -60,13 +60,16 @@ export default class Shop extends React.Component {
         }
       });
     })();
-    this.fetchData();
+  };
+  async componentDidMount() {
+    await this.refresh();
+    await this.fetchData();
   }
 
-  fetchData() {
+  async fetchData() {
     console.log(`${global.config.host}/shop/products/all`);
     this.setState({ refreshing: true });
-    axios
+    await axios
       .get(`${global.config.host}/shop/products/all`)
       .then(res => {
         this.setState({ data: res.data });
@@ -157,7 +160,7 @@ export default class Shop extends React.Component {
           onPress={() =>
             this.props.navigation.navigate({
               name: "Product",
-              params: data,
+              params: { ...data, onGoBack: async () => await this.refresh() },
             })
           }
           style={{

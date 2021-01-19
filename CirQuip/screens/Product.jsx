@@ -26,12 +26,14 @@ import {
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 const width = Dimensions.get("screen").width;
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default class Product extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       ...this.props.route.params,
+      user: { likes: [] },
     };
   }
   componentDidMount() {
@@ -41,21 +43,116 @@ export default class Product extends React.Component {
           icon="arrow-left"
           color="#000"
           size={30}
-          onPress={() => this.props.navigation.goBack()}
+          onPress={() => {
+            this.props.route.params.onGoBack();
+            this.props.navigation.goBack();
+          }}
         />
       ),
     });
     axios
       .get(`${global.config.host}/user/getUserWithId/${this.state.seller}`)
       .then(res => {
-        this.setState({ user: { ...res.data } });
+        this.setState({ seller: { ...res.data } });
       })
       .catch(err => {
         Alert.alert("Error", "Something Went Wrong In Fetching Seller");
         console.log(err);
       });
     this.props.navigation.setOptions({ title: this.state.name });
+
+    (async () => {
+      try {
+        let user = await AsyncStorage.getItem("user");
+        this.setState({ id: user });
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) {
+            info = JSON.parse(res);
+            if (info) {
+              this.setState({ user: info });
+            } else {
+              this.setState({ user: { likes: [] } });
+              await AsyncStorage.setItem("info", { likes: [] });
+            }
+          }
+        });
+      } catch (err) {
+        console.log(err);
+        Alert.alert("Cirquip", "Something went wrong");
+      }
+    })();
   }
+
+  handleLike = async id => {
+    console.log("inside like");
+    await axios
+      .put(`${global.config.host}/shop/like`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.push(id);
+            } else {
+              info["likes"] = [id];
+            }
+          } else {
+            info = { likes: [id] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+          this.setState({
+            user: {
+              likes: [...this.state.user.likes, id],
+            },
+          });
+        });
+      })
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
+  };
+
+  handleDislike = async id => {
+    console.log("inside dislike");
+    await axios
+      .put(`${global.config.host}/shop/dislike`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.splice(info.likes.indexOf(id), 1);
+            } else {
+              info["likes"] = [];
+            }
+          } else {
+            info = { likes: [] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+        });
+        let temp_likes = this.state.user.likes;
+        temp_likes.splice(temp_likes.indexOf(id), 1);
+        this.setState({
+          user: {
+            likes: temp_likes,
+          },
+        });
+      })
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
+  };
   callNumber = phone => {
     console.log("callNumber ----> ", phone);
     let phoneNumber = phone;
@@ -78,7 +175,7 @@ export default class Product extends React.Component {
   onShare = async () => {
     try {
       const result = await Share.share({
-        message: `Checkout ${this.state?.name} on CirQuip | Price: ${this.state?.price} | Posted By : ${this.state?.user.name} | Contact: ${this.state?.user.phone}`,
+        message: `Checkout ${this.state?.name} on CirQuip | Price: ${this.state?.price} | Posted By : ${this.state?.seller.name} | Contact: ${this.state?.seller.phone}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -110,8 +207,8 @@ export default class Product extends React.Component {
         <ScrollView>
           <Card style={{ elevation: 4 }}>
             <Card.Title
-              title={this.state.user?.name}
-              subtitle={this.state.user?.email}
+              title={this.state.seller?.name}
+              subtitle={this.state.seller?.email}
               left={LeftContent}
               right={RightContent}
             />
@@ -121,6 +218,29 @@ export default class Product extends React.Component {
               source={{ uri: `data:image/jpg;base64,${this.state.image}` }}
               style={{ height: 450, padding: 5 }}
             />
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                zIndex: 1000,
+                elevation: 10,
+                alignSelf: "flex-end",
+              }}
+              onPress={() =>
+                this.state?.user?.likes.includes(this.state?._id)
+                  ? this.handleDislike(this.state?._id)
+                  : this.handleLike(this.state?._id)
+              }
+            >
+              <Avatar.Icon
+                color={
+                  this.state?.user?.likes.includes(this.state?._id)
+                    ? "red"
+                    : "gray"
+                }
+                icon="heart"
+                style={styles.like}
+              />
+            </TouchableOpacity>
             <Card.Content>
               <Title style={{ fontWeight: "bold" }}>{this.state.name}</Title>
               <Text style={{ fontSize: 18 }}>
@@ -159,7 +279,7 @@ export default class Product extends React.Component {
 
         <FAB
           icon="phone"
-          onPress={() => this.callNumber(this.state.user.phone)}
+          onPress={() => this.callNumber(this.state.seller.phone)}
           style={{
             backgroundColor: "green",
             position: "absolute",
@@ -172,7 +292,7 @@ export default class Product extends React.Component {
         <FAB
           onPress={() =>
             Linking.openURL(
-              `whatsapp://send?phone=${this.state.user.phone}&text=${this.whatsappMsg}`
+              `whatsapp://send?phone=${this.state.seller.phone}&text=${this.whatsappMsg}`
             )
           }
           icon="whatsapp"
@@ -189,7 +309,13 @@ export default class Product extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  like: {
+    backgroundColor: "white",
+    transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
+    color: "red",
+  },
+});
 
 //<Button
 //mode="contained"
