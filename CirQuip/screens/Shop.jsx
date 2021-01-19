@@ -17,20 +17,23 @@ import {
   Card,
   Paragraph,
   Button,
+  FAB,
+  Avatar,
 } from "react-native-paper";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
-
-export default class App extends React.Component {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+export default class Shop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
       refreshing: true,
       searchQuery: "",
+      user: { likes: [] },
     };
   }
-  componentDidMount() {
+  async componentDidMount() {
     this.props.navigation.setOptions({
       headerLeft: () => (
         <IconButton
@@ -41,6 +44,22 @@ export default class App extends React.Component {
         />
       ),
     });
+    (async () => {
+      let user = await AsyncStorage.getItem("user");
+      this.setState({ id: user });
+      let info;
+      await AsyncStorage.getItem("info").then(async res => {
+        if (res) {
+          info = JSON.parse(res);
+          if (info) {
+            this.setState({ user: info });
+          } else {
+            this.setState({ user: { likes: [] } });
+            await AsyncStorage.setItem("info", { likes: [] });
+          }
+        }
+      });
+    })();
     this.fetchData();
   }
 
@@ -58,43 +77,132 @@ export default class App extends React.Component {
         console.log(e);
       });
   }
+  handleLike = async id => {
+    if (this.state?.user?.likes.includes(id)) return;
+    await axios
+      .put(`${global.config.host}/shop/like`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.push(id);
+            } else {
+              info["likes"] = [id];
+            }
+          } else {
+            info = { likes: [id] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+          this.setState({
+            user: {
+              ...this.state.user,
+              likes: this.state.user.likes
+                ? this.state.user.likes.push(id)
+                : [id],
+            },
+          });
+        });
+      })
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
+  };
 
+  handleDislike = async id => {
+    await axios
+      .put(`${global.config.host}/shop/dislike`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.splice(info.likes.indexOf(id), 1);
+            } else {
+              info["likes"] = [];
+            }
+          } else {
+            info = { likes: [] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+        });
+        this.setState({
+          user: {
+            ...this.state.user,
+            likes: this.state.users.likes.splice(
+              this.state.users.likes.indexOf(id),
+              1
+            ),
+          },
+        });
+      })
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
+  };
   onChangeSearch = query => this.setState({ searchQuery: query });
-  renderItemComponent = ({ item: data, index }) => {
+  renderItemComponent = obj => {
+    const { item: data, index } = obj;
     return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate({
-            name: "Product",
-            params: data,
-          })
-        }
-        style={{
-          ...styles.container,
-          //borderRightWidth: index % 2 ? 0 : 1,
-          //borderLeftWidth: index % 2 ? 1 : 0,
-          borderColor: "black",
-          justifyContent: "flex-start",
-        }}
-      >
-        <Card>
-          <Card.Cover
-            source={{
-              uri: `data:image/jpg;base64,${data.image}`,
-            }}
-            style={{
-              minHeight: 250,
-              width: width / 2 - 10,
-              //borderWidth: 1,
-              //borderColor: "black",
-            }}
-          />
-          <Card.Content style={{ height: 50 }}>
-            <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
-            <Paragraph>₹ {data.price}</Paragraph>
-          </Card.Content>
-        </Card>
-      </TouchableOpacity>
+      <>
+        <TouchableOpacity
+          onPress={() =>
+            this.props.navigation.navigate({
+              name: "Product",
+              params: data,
+            })
+          }
+          style={{
+            ...styles.container,
+            borderColor: "black",
+            justifyContent: "flex-start",
+          }}
+        >
+          <Card>
+            <TouchableOpacity
+              onPress={() =>
+                this.state?.user?.likes.includes(data._id)
+                  ? this.handleDislike(data._id)
+                  : this.handleLike(data._id)
+              }
+              style={{ zIndex: 1000 }}
+            >
+              <Avatar.Icon
+                color={
+                  this.state?.user?.likes.includes(data._id) ? "red" : "gray"
+                }
+                icon="heart"
+                style={styles.like}
+              />
+            </TouchableOpacity>
+            <Card.Cover
+              source={{
+                uri: `data:image/jpg;base64,${data.image}`,
+              }}
+              style={{
+                minHeight: 250,
+                width: width / 2 - 10,
+                //borderWidth: 1,
+                //borderColor: "black",
+              }}
+            />
+            <Card.Content style={{ height: 50 }}>
+              <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
+              <Paragraph>₹ {data.price}</Paragraph>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      </>
     );
   };
 
@@ -119,6 +227,12 @@ export default class App extends React.Component {
     return (
       <>
         <SafeAreaView>
+          <Searchbar
+            style={{ margin: 5 }}
+            placeholder="Search"
+            onChangeText={this.onChangeSearch}
+            value={this.state.searchQuery}
+          />
           <Title style={{ textAlign: "center" }}>New Recommendations</Title>
           <FlatList
             numColumns={2}
@@ -128,6 +242,7 @@ export default class App extends React.Component {
             //ItemSeparatorComponent={this.ItemSeparator}
             refreshing={this.state.refreshing}
             onRefresh={this.handleRefresh}
+            style={{ marginBottom: 5 }}
           />
         </SafeAreaView>
       </>
@@ -155,11 +270,14 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 4,
   },
+  like: {
+    //borderColor: "black",
+    //borderWidth: 2,
+    elevation: 10,
+    zIndex: 1000,
+    backgroundColor: "white",
+    alignSelf: "flex-end",
+    transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
+    color: "red",
+  },
 });
-
-//<Searchbar
-//style={{ margin: 5 }}
-//placeholder="Search"
-//onChangeText={this.onChangeSearch}
-//value={this.state.searchQuery}
-///>

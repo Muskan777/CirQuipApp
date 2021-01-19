@@ -3,7 +3,7 @@ const Shop = require("../models/shop.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
-
+const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 
 // @route GET api/shop/products/type
@@ -35,6 +35,33 @@ router.post("/addProduct", async (req, resp) => {
   });
   try {
     await prodcut.save();
+    return resp.status(200).json("Success");
+  } catch (err) {
+    console.log(err);
+    return resp.status(400).json("Error Saving data");
+  }
+});
+
+// @route PUT api/shop/like
+// @desc like a product
+
+router.put("/like", async (req, resp) => {
+  const { user, productId } = req.body;
+  console.log(user, productId);
+  try {
+    await User.findOneAndUpdate({ _id: user }, { $push: { likes: productId } });
+    return resp.status(200).json("Success");
+  } catch (err) {
+    console.log(err);
+    return resp.status(400).json("Error Saving data");
+  }
+});
+
+router.put("/dislike", async (req, resp) => {
+  const { user, productId } = req.body;
+  console.log(user, productId);
+  try {
+    await User.findOneAndUpdate({ _id: user }, { $pull: { likes: productId } });
     return resp.status(200).json("Success");
   } catch (err) {
     console.log(err);
