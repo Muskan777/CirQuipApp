@@ -33,6 +33,12 @@ const theme = {
   },
 };
 export default function App() {
+  const handleLogout = async () => {
+    await AsyncStorage.removeItem("user");
+    await AsyncStorage.removeItem("cirquip-auth-token");
+    setStatus(false);
+  };
+
   const stackOptions = {
     headerTitleStyle: {
       fontSize: 20,
@@ -48,6 +54,9 @@ export default function App() {
         size={30}
         onPress={() => alert("Open a damn menu here !")}
       />
+    ),
+    headerRight: () => (
+      <IconButton icon="logout" color="#000" size={30} onPress={handleLogout} />
     ),
   };
   const handleStatus = param => setStatus(param);
