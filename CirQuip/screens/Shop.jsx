@@ -62,23 +62,28 @@ export default class Shop extends React.Component {
     })();
   };
   async componentDidMount() {
-    await this.refresh();
-    await this.fetchData();
+    await this.refresh().then(async () => {
+      await this.fetchData();
+    });
   }
 
   async fetchData() {
-    console.log(`${global.config.host}/shop/products/all`);
     this.setState({ refreshing: true });
-    await axios
-      .get(`${global.config.host}/shop/products/all`)
-      .then(res => {
-        this.setState({ data: res.data });
-        this.setState({ refreshing: false });
-      })
-      .catch(e => {
-        Alert.alert("Error", "Something went wrong");
-        console.log(e);
-      });
+    await AsyncStorage.getItem("user").then(async id => {
+      await axios
+        .post(
+          `${global.config.host}/shop/products/${this.props.route.params.type}`,
+          { id: id }
+        )
+        .then(res => {
+          this.setState({ data: res.data });
+          this.setState({ refreshing: false });
+        })
+        .catch(e => {
+          Alert.alert("Error", "Something went wrong");
+          console.log(e);
+        });
+    });
   }
   handleLike = async id => {
     console.log("inside like");
@@ -239,17 +244,25 @@ export default class Shop extends React.Component {
             onChangeText={this.onChangeSearch}
             value={this.state.searchQuery}
           />
-          <Title style={{ textAlign: "center" }}>New Recommendations</Title>
-          <FlatList
-            numColumns={2}
-            data={this.state.data}
-            renderItem={item => this.renderItemComponent(item)}
-            keyExtractor={item => item._id}
-            //ItemSeparatorComponent={this.ItemSeparator}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}
-            style={{ marginBottom: 5 }}
-          />
+          <Title style={{ textAlign: "center" }}>
+            {this.props.route.params.type === "liked"
+              ? "Your Wishlist"
+              : "New Recommendations"}
+          </Title>
+          {this.state.data && this.state.data.length !== 0 ? (
+            <FlatList
+              numColumns={2}
+              data={this.state.data}
+              renderItem={item => this.renderItemComponent(item)}
+              keyExtractor={item => item._id}
+              //ItemSeparatorComponent={this.ItemSeparator}
+              refreshing={this.state.refreshing}
+              onRefresh={this.handleRefresh}
+              style={{ marginBottom: 5 }}
+            />
+          ) : (
+            <></>
+          )}
         </SafeAreaView>
       </>
     );
