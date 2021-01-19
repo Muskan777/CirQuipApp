@@ -85,13 +85,36 @@ export default function Home({ navigation }) {
             navigation.navigate({ name: "Shop", params: { type: "liked" } });
           }}
         >
-          <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
+          <Button
+            style={{ ...styles.shopButton }}
+            icon="heart"
+            mode="contained"
+          >
             <Text
               style={{
                 fontSize: 20,
               }}
             >
               Liked Products
+            </Text>
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate({ name: "Shop", params: { type: "my" } });
+          }}
+        >
+          <Button
+            style={{ ...styles.shopButton }}
+            icon="account"
+            mode="contained"
+          >
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              My Products
             </Text>
           </Button>
         </TouchableOpacity>

@@ -5,16 +5,32 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
+//const ObjectId = require("mongodb").ObjectID;
 
-// @route POST api/shop/products/type
-// @desc get the products available for sale depending on type {type = all for all products}
+/*
+ * @route POST api/shop/products/type
+ * @desc get the products available for sale depending on type
+ * {type = all {default} | liked | my}
+ */
 
 router.post("/products/:type", async (req, resp) => {
   const type = req.params.type;
+  const { id } = req.body;
   console.log(type);
   switch (type) {
+    case "my": {
+      try {
+        const products = await Shop.find({
+          seller: id,
+        });
+        //log("products", products);
+        return resp.status(200).json(products);
+      } catch (err) {
+        console.log(err);
+        return resp.status(400).json("Error Retreieving data");
+      }
+    }
     case "liked": {
-      const { id } = req.body;
       try {
         const user = await User.findOne({ _id: id });
         if (!user._doc.likes || user._doc.likes.length === 0)
@@ -26,7 +42,7 @@ router.post("/products/:type", async (req, resp) => {
         return resp.status(200).json(products);
       } catch (err) {
         console.log(err);
-        return resp.status(400).json("Error Saving data");
+        return resp.status(400).json("Error retreiving data at the moment");
       }
     }
 
