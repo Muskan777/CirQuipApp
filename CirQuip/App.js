@@ -49,7 +49,7 @@ export default function App() {
     },
     headerLeft: () => (
       <IconButton
-        icon="hamburger"
+        icon="arrow-left"
         color="#000"
         size={30}
         onPress={() => alert("Open a damn menu here !")}
