@@ -78,7 +78,7 @@ export default class Shop extends React.Component {
       });
   }
   handleLike = async id => {
-    if (this.state?.user?.likes.includes(id)) return;
+    console.log("inside like");
     await axios
       .put(`${global.config.host}/shop/like`, {
         user: this.state.id,
@@ -100,10 +100,7 @@ export default class Shop extends React.Component {
           await AsyncStorage.setItem("info", JSON.stringify(info));
           this.setState({
             user: {
-              ...this.state.user,
-              likes: this.state.user.likes
-                ? this.state.user.likes.push(id)
-                : [id],
+              likes: [...this.state.user.likes, id],
             },
           });
         });
@@ -115,6 +112,7 @@ export default class Shop extends React.Component {
   };
 
   handleDislike = async id => {
+    console.log("inside dislike");
     await axios
       .put(`${global.config.host}/shop/dislike`, {
         user: this.state.id,
@@ -135,13 +133,11 @@ export default class Shop extends React.Component {
           }
           await AsyncStorage.setItem("info", JSON.stringify(info));
         });
+        let temp_likes = this.state.user.likes;
+        temp_likes.splice(temp_likes.indexOf(id), 1);
         this.setState({
           user: {
-            ...this.state.user,
-            likes: this.state.users.likes.splice(
-              this.state.users.likes.indexOf(id),
-              1
-            ),
+            likes: temp_likes,
           },
         });
       })
@@ -153,9 +149,11 @@ export default class Shop extends React.Component {
   onChangeSearch = query => this.setState({ searchQuery: query });
   renderItemComponent = obj => {
     const { item: data, index } = obj;
+    console.log(this.state.user);
     return (
       <>
         <TouchableOpacity
+          key={this.state.user.likes}
           onPress={() =>
             this.props.navigation.navigate({
               name: "Product",
@@ -168,23 +166,28 @@ export default class Shop extends React.Component {
             justifyContent: "flex-start",
           }}
         >
-          <Card>
-            <TouchableOpacity
-              onPress={() =>
-                this.state?.user?.likes.includes(data._id)
-                  ? this.handleDislike(data._id)
-                  : this.handleLike(data._id)
+          <TouchableOpacity
+            style={{
+              position: "absolute",
+              zIndex: 1000,
+              elevation: 10,
+              alignSelf: "flex-end",
+            }}
+            onPress={() =>
+              this.state?.user?.likes.includes(data._id)
+                ? this.handleDislike(data._id)
+                : this.handleLike(data._id)
+            }
+          >
+            <Avatar.Icon
+              color={
+                this.state?.user?.likes.includes(data._id) ? "red" : "gray"
               }
-              style={{ zIndex: 1000 }}
-            >
-              <Avatar.Icon
-                color={
-                  this.state?.user?.likes.includes(data._id) ? "red" : "gray"
-                }
-                icon="heart"
-                style={styles.like}
-              />
-            </TouchableOpacity>
+              icon="heart"
+              style={styles.like}
+            />
+          </TouchableOpacity>
+          <Card>
             <Card.Cover
               source={{
                 uri: `data:image/jpg;base64,${data.image}`,
@@ -273,10 +276,7 @@ const styles = StyleSheet.create({
   like: {
     //borderColor: "black",
     //borderWidth: 2,
-    elevation: 10,
-    zIndex: 1000,
     backgroundColor: "white",
-    alignSelf: "flex-end",
     transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
     color: "red",
   },
