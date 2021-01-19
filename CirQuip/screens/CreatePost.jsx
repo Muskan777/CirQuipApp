@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -15,10 +15,22 @@ import {
   FontAwesome,
   AntDesign,
 } from "@expo/vector-icons";
-
-export default function CreatePost() {
+import { IconButton } from "react-native-paper";
+export default function CreatePost({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
+  useEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="arrow-left"
+          color="#000"
+          size={30}
+          onPress={() => navigation.goBack()}
+        />
+      ),
+    });
+  });
   return (
     <View style={styles.container}>
       <Button

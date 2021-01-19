@@ -14,7 +14,7 @@ import {
 import {
   Appbar,
   Title,
-  Surface,
+  IconButton,
   Button,
   Card,
   Paragraph,
@@ -64,6 +64,16 @@ export default class Sell extends React.Component {
     this.setState({ currentPosition: position });
   }
   componentDidMount() {
+    this.props.navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="arrow-left"
+          color="#000"
+          size={30}
+          onPress={() => this.props.navigation.goBack()}
+        />
+      ),
+    });
     (async () => {
       let user = await AsyncStorage.getItem("user");
       this.setState({ id: user });
@@ -90,7 +100,7 @@ export default class Sell extends React.Component {
 
     console.log(result.type);
 
-    if (!result.cancelled) {
+    if (!result.arrow - leftled) {
       this.setState({ image: result.base64 });
     }
   };
@@ -179,7 +189,7 @@ export default class Sell extends React.Component {
               >
                 <Button
                   mode="contained"
-                  icon="check"
+                  icon="arrow-right"
                   style={{
                     margin: 5,
                     backgroundColor: "#e73050",
@@ -234,7 +244,7 @@ export default class Sell extends React.Component {
                 >
                   <Button
                     mode="contained"
-                    icon="cancel"
+                    icon="arrow-left"
                     style={{
                       alignSelf: "flex-start",
                       margin: 5,
@@ -247,7 +257,7 @@ export default class Sell extends React.Component {
                   </Button>
                   <Button
                     mode="contained"
-                    icon="check"
+                    icon="arrow-right"
                     style={{
                       margin: 5,
                       backgroundColor: "#e73050",
@@ -307,6 +317,7 @@ export default class Sell extends React.Component {
                 >
                   <Button
                     mode="contained"
+                    icon="arrow-left"
                     style={{
                       alignSelf: "flex-start",
                       margin: 5,

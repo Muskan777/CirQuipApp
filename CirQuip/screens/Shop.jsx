@@ -10,7 +10,14 @@ import {
   TouchableOpacity,
   Alert,
 } from "react-native";
-import { Title, Searchbar, Card, Paragraph, Button } from "react-native-paper";
+import {
+  IconButton,
+  Title,
+  Searchbar,
+  Card,
+  Paragraph,
+  Button,
+} from "react-native-paper";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 
@@ -23,8 +30,17 @@ export default class App extends React.Component {
       searchQuery: "",
     };
   }
-
   componentDidMount() {
+    this.props.navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="arrow-left"
+          color="#000"
+          size={30}
+          onPress={() => this.props.navigation.goBack()}
+        />
+      ),
+    });
     this.fetchData();
   }
 
@@ -102,13 +118,8 @@ export default class App extends React.Component {
   render() {
     return (
       <>
-        <Searchbar
-          style={{ margin: 5 }}
-          placeholder="Search"
-          onChangeText={this.onChangeSearch}
-          value={this.state.searchQuery}
-        />
         <SafeAreaView>
+          <Title style={{ textAlign: "center" }}>New Recommendations</Title>
           <FlatList
             numColumns={2}
             data={this.state.data}
@@ -145,3 +156,10 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
 });
+
+//<Searchbar
+//style={{ margin: 5 }}
+//placeholder="Search"
+//onChangeText={this.onChangeSearch}
+//value={this.state.searchQuery}
+///>

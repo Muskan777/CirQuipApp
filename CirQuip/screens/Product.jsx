@@ -17,7 +17,7 @@ import {
   Title,
   Searchbar,
   Card,
-  Paragraph,
+  IconButton,
   Button,
   Surface,
   Avatar,
@@ -35,6 +35,16 @@ export default class Product extends React.Component {
     };
   }
   componentDidMount() {
+    this.props.navigation.setOptions({
+      headerLeft: () => (
+        <IconButton
+          icon="arrow-left"
+          color="#000"
+          size={30}
+          onPress={() => this.props.navigation.goBack()}
+        />
+      ),
+    });
     axios
       .get(`${global.config.host}/user/getUserWithId/${this.state.seller}`)
       .then(res => {

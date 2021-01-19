@@ -47,14 +47,6 @@ export default function App() {
       backgroundColor: "#e73050",
       //backgroundColor: "#fb5b5a",
     },
-    headerLeft: () => (
-      <IconButton
-        icon="arrow-left"
-        color="#000"
-        size={30}
-        onPress={() => alert("Open a damn menu here !")}
-      />
-    ),
     headerRight: () => (
       <IconButton icon="logout" color="#000" size={30} onPress={handleLogout} />
     ),
