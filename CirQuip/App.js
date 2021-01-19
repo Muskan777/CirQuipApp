@@ -34,8 +34,9 @@ const theme = {
 };
 export default function App() {
   const handleLogout = async () => {
-    await AsyncStorage.removeItem("user");
-    await AsyncStorage.removeItem("cirquip-auth-token");
+    await AsyncStorage.clear();
+    //await AsyncStorage.removeItem("user");
+    //await AsyncStorage.removeItem("cirquip-auth-token");
     setStatus(false);
   };
 
