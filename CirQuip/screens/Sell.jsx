@@ -191,7 +191,7 @@ export default class Sell extends React.Component {
                   justifyContent: "center",
                   alignItems: "center",
                   width: '100%',
-                  height: 200,
+                  height: 100,
                   padding: 10,
                 }}
               >
@@ -324,12 +324,15 @@ export default class Sell extends React.Component {
                   </View>
                 )}
                 <View style={{ alignItems: "center", padding: 10 }}>
-                  <Title style={{ color: "#fb5b5a" }}>{this.state.pName}</Title>
-                  <Text style={{ color: "#fff" }}>{this.state.pDetails}</Text>
-                  <Title style={{ color: "#fff", marginTop: 5 }}>
-                    PRICE : ₹{this.state.pPrice}
+                  <Title style={{ color: "#000", fontSize: 20, fontWeight: "700", fontFamily: "Segoe UI" }}>{this.state.pName}</Title>
+                  <Text style={{color: "#000", fontSize: 12, fontWeight: "400", fontFamily: "SF Pro Display"}}>Details</Text>
+                  <Text style={{ color: "#000", fontSize: 14, lineHeight: 32, fontFamily: "SF Pro Display" }}>{this.state.pDetails}</Text>
+                  <Title style={{ color: "rgba(146, 146, 146, 1)", fontSize: 14, fontFamily: "SF Pro Display" }}>
+                    PRICE
                   </Title>
+                  <Text style={{fontSize: 21, fontWeight: "700", fontFamily: "SF Pro Display", color: "#000"}}>₹{this.state.pPrice}</Text>
                 </View>
+
                 <View
                   style={{
                     justifyContent: "space-between",
@@ -337,7 +340,7 @@ export default class Sell extends React.Component {
                     display: "flex",
                     flexDirection: "row",
                     padding: 10,
-                    height: 300,
+                    height: 150,
                     alignItems: "flex-end"
                   }}
                 >
