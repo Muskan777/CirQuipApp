@@ -331,6 +331,12 @@ export default class Sell extends React.Component {
                     PRICE
                   </Title>
                   <Text style={{fontSize: 21, fontWeight: "700", fontFamily: "SF Pro Display", color: "#000"}}>₹{this.state.pPrice}</Text>
+                  <Text style={{fontSize: 14, marginTop: 75, fontFamily: "Segoe UI", color: "#000", fontWeight: "400"}}>
+                    CirQuip will help you find best buyer in minimum
+                  </Text>
+                  <Text style={{fontSize: 14, fontFamily: "Segoe UI", color: "#000", fontWeight: "400"}}>
+                    time within your college.
+                  </Text>
                 </View>
 
                 <View
@@ -339,8 +345,8 @@ export default class Sell extends React.Component {
                     width: width,
                     display: "flex",
                     flexDirection: "row",
-                    padding: 10,
-                    height: 150,
+                    height: 120,
+                    padding: 20,
                     alignItems: "flex-end"
                   }}
                 >
