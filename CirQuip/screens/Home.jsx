@@ -30,111 +30,129 @@ export default function Home({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.container}>
-      <Title style={styles.title}>
-        One Stop Solution for all college needs
-      </Title>
-      <View style={{ display: "flex", flexDirection: "column" }}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate({ name: "Shop", params: { type: "all" } });
-          }}
-        >
-          <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Shop Products
-            </Text>
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("CreatePost");
-          }}
-        >
-          <Button style={{ ...styles.shopButton }} mode="contained" icon="pen">
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Create a Post
-            </Text>
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("ChatWithAdmin");
-          }}
-        >
-          <Button style={{ ...styles.shopButton }} mode="contained" icon="pen">
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Chat With Admin
-            </Text>
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("Sell");
-          }}
-        >
-          <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
-            <Text
-              style={{
-                fontSize: 20,
-              }}
-            >
-              Sell Products
-            </Text>
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate({ name: "Shop", params: { type: "liked" } });
-          }}
-        >
-          <Button
-            style={{ ...styles.shopButton }}
-            icon="heart"
-            mode="contained"
+    <ScrollView>
+      <View style={styles.container}>
+        <Title style={styles.title}>
+          One Stop Solution for all college needs
+        </Title>
+        <View style={{ display: "flex", flexDirection: "column" }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate({ name: "Shop", params: { type: "all" } });
+            }}
           >
-            <Text
-              style={{
-                fontSize: 20,
-              }}
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="cart"
+              mode="contained"
             >
-              Liked Products
-            </Text>
-          </Button>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate({ name: "Shop", params: { type: "my" } });
-          }}
-        >
-          <Button
-            style={{ ...styles.shopButton }}
-            icon="account"
-            mode="contained"
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Shop Products
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("CreatePost");
+            }}
           >
-            <Text
-              style={{
-                fontSize: 20,
-              }}
+            <Button
+              style={{ ...styles.shopButton }}
+              mode="contained"
+              icon="pen"
             >
-              My Products
-            </Text>
-          </Button>
-        </TouchableOpacity>
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Create a Post
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("ChatWithAdmin");
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              mode="contained"
+              icon="pen"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Chat With Admin
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate("Sell");
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="cart"
+              mode="contained"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Sell Products
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate({ name: "Shop", params: { type: "liked" } });
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="heart"
+              mode="contained"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Liked Products
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate({ name: "Shop", params: { type: "my" } });
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="account"
+              mode="contained"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                My Products
+              </Text>
+            </Button>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

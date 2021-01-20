@@ -20,7 +20,7 @@ import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
-import ChatWithAdmin from "./screens/ChatWithAdmin";
+import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
