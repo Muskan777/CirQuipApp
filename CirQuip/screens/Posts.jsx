@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView } from "react-native";
+import { ScrollView, FlatList } from "react-native";
 import {
   SafeAreaView,
   Image,
@@ -11,20 +11,42 @@ import {
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
+import Post from '../components/Post'
 
 export default function Posts() {
   const [data, setData] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
   useEffect(() => {
+    fetchData();
+  }, []);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    fetchData();
+    setIsRefreshing(false);
+  }
+
+  const fetchData = () => {
     axios
       .get(`${global.config.host}/post/getPosts`)
       .then(res => {
         setData(res.data.post);
+        console.log(data)
       })
       .catch(e => console.log(e));
-  }, []);
+  }
+
   return (
     <SafeAreaView style={styles.post}>
-      <ScrollView>
+      <FlatList
+        data={data}
+        renderItem={({item}) => <Post createdAt={item.createdAt} caption={item.caption} comments={item.comments} likes={item.likes} content={item.content} />}
+        keyExtractor={item => item._id}
+        onRefresh={() => onRefresh()}
+        refreshing={isRefreshing}
+      />
+      {/* <ScrollView>
         {data.map((data, key) => {
           var date =
             data.createdAt.substr(8, 2) +
@@ -108,7 +130,7 @@ export default function Posts() {
             </Card>
           );
         })}
-      </ScrollView>
+      </ScrollView> */}
     </SafeAreaView>
   );
 }
