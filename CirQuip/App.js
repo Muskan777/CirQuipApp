@@ -20,6 +20,7 @@ import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
+import ChatWithAdmin from "./screens/ChatWithAdmin";
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
@@ -137,6 +138,14 @@ export default function App() {
             options={{
               ...stackOptions,
               title: "Create Post",
+            }}
+          />
+          <Stack.Screen
+            name="ChatWithAdmin"
+            component={ChatWithAdmin}
+            options={{
+              ...stackOptions,
+              title: "Chat With Admin",
             }}
           />
         </Stack.Navigator>

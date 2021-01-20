@@ -67,6 +67,21 @@ export default function Home({ navigation }) {
         </TouchableOpacity>
         <TouchableOpacity
           onPress={() => {
+            navigation.navigate("ChatWithAdmin");
+          }}
+        >
+          <Button style={{ ...styles.shopButton }} mode="contained" icon="pen">
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Chat With Admin
+            </Text>
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
             navigation.navigate("Sell");
           }}
         >
