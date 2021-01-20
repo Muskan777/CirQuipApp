@@ -1,9 +1,13 @@
 import React from 'react';
 import { ScrollView } from 'react-native';
-import {SafeAreaView, Image, StyleSheet, View, Text,StatusBar , TouchableHighlight} from 'react-native';
+import {SafeAreaView, Image, StyleSheet, View, Text,StatusBar, Dimensions , TouchableHighlight} from 'react-native';
+import { Button } from 'react-native-paper';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-material-cards';
-import Icon from 'react-native-vector-icons/AntDesign';
+// import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import Search from '../Search';
+import { Left } from 'native-base';
+const { width, height } = Dimensions.get("window");
 
 
 
@@ -65,14 +69,33 @@ const info =[
 
 
 
-export default function Post1() {
-
+export default class Post1 extends React.Component {
+    constructor(props) {
+        super(props);
     
+        this.state = {
+          liked: false,
+          bookmark:false
+        }
+    
+    }
+    moveToAdd() {
+        this.state.liked == false ? this.setState({name:'heart', liked:true}) : this.setState({name:'heart-o', liked:false})
+
+      }
+      moveToAddbookmark() {
+        this.state.bookmark == false ? this.setState({name:'bookmark', bookmark:true}) : this.setState({name:'bookmark-o', bookmark:false})
+
+      }
+    render() {
+        const { liked, bookmark } = this.state
 
     return (
         <SafeAreaView style={styles.post}>
         <Search />
-            <ScrollView>
+            <ScrollView 
+            style={{backgroundColor: 'transparent'}}
+            >
             {info.map((info, key) => {
 
             return (
@@ -103,56 +126,92 @@ export default function Post1() {
                     </View>
                     <View style={styles.response}>
                         <View style={styles.like}>
-                        <TouchableHighlight onPress={() => this.moveToAdd()}>
-                            <Image style={styles.likeimg} source={require("../../assets/path243.png")}></Image>
-                            </TouchableHighlight>
+                    
+                            <Icon
+                            name="heart-o"
+                            color="rgba(54, 181, 165, 1)"
+                            size={30}
+                            liked="false"
+                            onPress={() => this.moveToAdd()}
+                            ></Icon>
+                           
                             <Text>{info.like}</Text>
                         </View>
                         <View style={styles.like}>
-                        <TouchableHighlight onPress={() => this.moveToAdd()}>
-                            <Image source={require("../../assets/path227dcc55359.png")}></Image>
-                            </TouchableHighlight>
+                       
+                            <Icon
+                            name="commenting-o"
+                            color="rgba(54, 181, 165, 1)"
+                            size={30}
+                            
+                            // onPress={() => this.moveToAdd()}
+                            ></Icon>
+                    
                             <Text>{info.comment}</Text>
                         </View>
                         <View style={styles.like}>
-                        <TouchableHighlight onPress={() => this.moveToAdd()}>
-                            <Image source={require("../../assets/path216f57cb052.png")}></Image>
-                            </TouchableHighlight>
+                        
+                            <Icon
+                            name="bookmark-o"
+                            color="rgba(54, 181, 165, 1)"
+                            size={30}
+                            bookmark='false'
+                            onPress={() =>this.moveToAddbookmark()}
+                            ></Icon>
+                    
                             <Text>{info.bookmark}</Text>
                         </View>
                         <View style={styles.like}>
-                        <TouchableHighlight onPress={() => this.moveToAdd()}>
-                            <Image source={require("../../assets/path2385c2774f6.png")}></Image>
-                            </TouchableHighlight>
+                      
+                            <Icon
+                            name="share-square-o"
+                            color="rgba(54, 181, 165, 1)"
+                            size={30}
+                         
+                            // onPress={() => this.moveToAdd()}
+                            ></Icon>
+                         
                             <Text>{info.share}</Text>
                         </View>
                     </View>
                 </Card>
 )
             })}
+            <View>
+                <Icon
+                 name="bookmark"
+                ></Icon>
+            </View>
             </ScrollView>
             <View style={styles.bottom}>
             <View style={styles.bottomimages}>
-            <TouchableHighlight onPress={() => this.moveToAdd1()}>
+                <View style={styles.container1}>
+                <TouchableHighlight onPress={() => this.moveToAdd1()}>
                 <Image style={styles.msg} source={require("../../assets/path262.png")}></Image>
                 </TouchableHighlight>
+                </View>
+                <View style={styles.container2}>
                 <TouchableHighlight onPress={() => this.moveToAdd2()}>
                 <Image style={styles.plus} source={require("../../assets/plus.png")}></Image>
                 </TouchableHighlight>
+                </View>
+                <View style={styles.container3}>
                 <TouchableHighlight onPress={() => this.moveToAdd3()}>
                 <Image style={styles.message}source={require("../../assets/path262.png")}></Image>
                 </TouchableHighlight>
+                </View>
             </View>
         </View>
+            
         </SafeAreaView>
         
     )
-}
+}}
 
 
 const styles = StyleSheet.create({
     box:{
-        width:'98%',
+        width:width,
         alignContent:'center',
         // height:700,
         shadowColor: '#000',
@@ -168,10 +227,11 @@ const styles = StyleSheet.create({
 
     container : {
         height: 90,
-        width: '100%',
+        width:width,
+        padding:5,
         alignSelf: 'center',
         flexDirection: 'row',
-        marginTop: 5,
+        margin: 5,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.8,
@@ -246,35 +306,57 @@ const styles = StyleSheet.create({
     },
 
     bottom:{
-        backgroundColor:'transparent',
+        // backgroundColor:'blue',
+        position:'relative',
+        // paddingBottom:30,
     },
     bottomimages:{
-        flexDirection:'row',
-        justifyContent:'space-around',
-        // opacity:1,
-        // backgroundColor:'black',
-        
-        
-
+       
     },
     plus:{
-        height:70,
-        width:70,
-        borderRadius: 70/2,
-        backgroundColor:'transparent',
-       
-        // marginBottom:50,
+        height:90,
+        width:90,
+      
     },
     msg:{
-        // height:70,
-        // width:70,
-    
-        borderRadius: 5,
-        backgroundColor:'transparent'
+      
     },
 
     message:{
-        backgroundColor:'transparent'
-    }
+    },
+    container1:{
+        width: 70,
+        height:70,
+        padding:10,
+        margin:10,
+        // borderRadius:40,
+        position:'absolute',
+        left:10,
+        bottom:5,
+        borderRadius: 35,
+        backgroundColor:'white'
+    },
+    container2:{
+        height:90,
+        width:90,
+        borderRadius: 45,
+        backgroundColor:'white',
+        position:'absolute',
+        right:width/2-45,
+        bottom:55,
+        paddingBottom:40,
+    },
+    container3:{
+        width: 70,
+        height:70,
+        padding:10,
+        margin:10,
+        // borderRadius:40,
+        position:'absolute',
+        right:10,
+        bottom:5,
+        borderRadius: 35,
+        backgroundColor:'white'
+    },
 
 })

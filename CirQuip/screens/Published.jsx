@@ -45,11 +45,11 @@ export default class Published extends React.Component {
               uri:
                 "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/BlueFlat_tick_icon.svg/512px-BlueFlat_tick_icon.svg.png",
             }}
-            style={{ height: 300, width: 300, marginBottom: 10 }}
+            style={{ height: 220, width: 220, marginBottom: 28 }}
           />
           <Text style={styles.logo}>
             Congratulations{" "}
-            {JSON.stringify(this.state.user && this.state.user.name)}
+            {JSON.stringify(this.state.user && this.state.user.name)}!
           </Text>
           <View style={{ alignSelf: "center", padding: 10 }}>
             <Text style={styles.desc}>• Your product is live now !</Text>
@@ -64,27 +64,6 @@ export default class Published extends React.Component {
               on CirQuip and help your Community.
             </Text>
           </View>
-          <View
-            style={{
-              justifyContent: "flex-start",
-              width: width,
-              padding: 10,
-            }}
-          >
-            <Button
-              mode="contained"
-              icon="check"
-              style={{
-                margin: 5,
-                backgroundColor: "#e73050",
-                width: 100,
-                alignSelf: "flex-end",
-              }}
-              onPress={() => this.props.navigation.navigate("Home")}
-            >
-              Close
-            </Button>
-          </View>
         </View>
       </>
     );
@@ -94,15 +73,18 @@ export default class Published extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
   logo: {
     fontWeight: "bold",
     fontSize: 24,
-    color: "#e73050",
+    color: "rgba(54, 181, 165, 1)",
     marginBottom: 40,
+    fontWeight: "700",
+    fontStyle: "normal",
+    fontFamily: "Segoe UI"
   },
   inputView: {
     width: "80%",
@@ -137,6 +119,10 @@ const styles = StyleSheet.create({
   desc: {
     fontSize: 15,
     marginBottom: 5,
-    color: "white",
+    marginHorizontal: 40,
+    color: "rgba(112, 112, 112, 1)",
+    fontWeight: "400",
+    fontStyle: "normal",
+    fontFamily: "Segoe UI",
   },
 });

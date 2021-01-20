@@ -10,9 +10,11 @@ import {
   ScrollView,
   StatusBar,
   Platform,
+  Alert,
 } from "react-native";
 import SignUp1 from "./SignUp1";
 import { Formik } from "formik";
+import axios from "axios";
 
 export default function SignUp2() {
   const [name, setName] = useState("");
@@ -36,6 +38,23 @@ export default function SignUp2() {
               setName(values.name);
               setMobile(values.mobile);
               setEmail(values.email);
+              const newUser = {
+                name,
+                phone: mobile,
+                email,
+                college: "COEP", //college dropdown appears after registration
+                password: "dummy", //no password field in frontend
+                password2: "dummy",
+              };
+              axios
+                .post(`${global.config.host}/user/register`, newUser)
+                .then(() => {
+                  Alert.alert("CirQuip", "Registeration Successful");
+                })
+                .catch(err => {
+                  console.log(err.response.data);
+                  Alert.alert("Error", err.response.data);
+                });
             }}
           >
             {props => (
@@ -159,4 +178,3 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
 });
-
