@@ -57,6 +57,25 @@ export default function Home({ navigation }) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
+              navigation.navigate("Posts");
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              mode="contained"
+              icon="eye"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                View Posts
+              </Text>
+            </Button>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
               navigation.navigate("CreatePost");
             }}
           >
