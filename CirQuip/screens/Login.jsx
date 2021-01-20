@@ -41,7 +41,7 @@ export default class Login extends React.Component {
       });
   }
   toggleSignUp() {
-    this.setState({ toggleSignUp: true });
+    this.setState({ toggleSignUp: !this.state.toggleSignUp });
   }
   handleSignUp() {
     if (this.state.password !== this.state.password2) {
@@ -51,11 +51,13 @@ export default class Login extends React.Component {
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
+        this.props.handleStatus(true);
         Alert.alert("CirQuip", "Registeration Successful");
       })
       .catch(err => {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
+        this.props.handleStatus(false);
       });
   }
   render() {
@@ -130,6 +132,9 @@ export default class Login extends React.Component {
                 onPress={() => this.handleSignUp()}
               >
                 <Text style={styles.loginText}>Sign Up</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                <Text style={styles.loginText}>Sign In</Text>
               </TouchableOpacity>
             </>
           ) : (

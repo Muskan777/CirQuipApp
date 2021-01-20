@@ -37,7 +37,7 @@ export default function Home({ navigation }) {
       <View style={{ display: "flex", flexDirection: "column" }}>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate("Shop");
+            navigation.navigate({ name: "Shop", params: { type: "all" } });
           }}
         >
           <Button style={{ ...styles.shopButton }} icon="cart" mode="contained">
@@ -92,6 +92,44 @@ export default function Home({ navigation }) {
               }}
             >
               Sell Products
+            </Text>
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate({ name: "Shop", params: { type: "liked" } });
+          }}
+        >
+          <Button
+            style={{ ...styles.shopButton }}
+            icon="heart"
+            mode="contained"
+          >
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              Liked Products
+            </Text>
+          </Button>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate({ name: "Shop", params: { type: "my" } });
+          }}
+        >
+          <Button
+            style={{ ...styles.shopButton }}
+            icon="account"
+            mode="contained"
+          >
+            <Text
+              style={{
+                fontSize: 20,
+              }}
+            >
+              My Products
             </Text>
           </Button>
         </TouchableOpacity>

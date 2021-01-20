@@ -17,20 +17,23 @@ import {
   Card,
   Paragraph,
   Button,
+  FAB,
+  Avatar,
 } from "react-native-paper";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
-
-export default class App extends React.Component {
+import AsyncStorage from "@react-native-async-storage/async-storage";
+export default class Shop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       data: [],
       refreshing: true,
       searchQuery: "",
+      user: { likes: [] },
     };
   }
-  componentDidMount() {
+  refresh = async () => {
     this.props.navigation.setOptions({
       headerLeft: () => (
         <IconButton
@@ -41,60 +44,184 @@ export default class App extends React.Component {
         />
       ),
     });
-    this.fetchData();
+    (async () => {
+      let user = await AsyncStorage.getItem("user");
+      this.setState({ id: user });
+      let info;
+      await AsyncStorage.getItem("info").then(async res => {
+        if (res) {
+          info = JSON.parse(res);
+          if (info) {
+            this.setState({ user: info });
+          } else {
+            this.setState({ user: { likes: [] } });
+            await AsyncStorage.setItem("info", { likes: [] });
+          }
+        }
+      });
+    })();
+  };
+  async componentDidMount() {
+    await this.refresh().then(async () => {
+      await this.fetchData();
+    });
   }
 
-  fetchData() {
-    console.log(`${global.config.host}/shop/products/all`);
+  async fetchData() {
     this.setState({ refreshing: true });
-    axios
-      .get(`${global.config.host}/shop/products/all`)
-      .then(res => {
-        this.setState({ data: res.data });
-        this.setState({ refreshing: false });
+    await AsyncStorage.getItem("user").then(async id => {
+      await axios
+        .post(
+          `${global.config.host}/shop/products/${this.props.route.params.type}`,
+          { id: id }
+        )
+        .then(res => {
+          this.setState({ data: res.data });
+          this.setState({ refreshing: false });
+        })
+        .catch(e => {
+          Alert.alert("Error", "Something went wrong");
+          console.log(e);
+        });
+    });
+  }
+  handleLike = async id => {
+    console.log("inside like");
+    await axios
+      .put(`${global.config.host}/shop/like`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.push(id);
+            } else {
+              info["likes"] = [id];
+            }
+          } else {
+            info = { likes: [id] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+          this.setState({
+            user: {
+              likes: [...this.state.user.likes, id],
+            },
+          });
+        });
       })
       .catch(e => {
         Alert.alert("Error", "Something went wrong");
         console.log(e);
       });
-  }
+  };
 
+  handleDislike = async id => {
+    console.log("inside dislike");
+    await axios
+      .put(`${global.config.host}/shop/dislike`, {
+        user: this.state.id,
+        productId: id,
+      })
+      .then(async res => {
+        let info;
+        await AsyncStorage.getItem("info").then(async res => {
+          if (res) info = JSON.parse(res);
+          if (info) {
+            if (info.likes) {
+              info.likes.splice(info.likes.indexOf(id), 1);
+            } else {
+              info["likes"] = [];
+            }
+          } else {
+            info = { likes: [] };
+          }
+          await AsyncStorage.setItem("info", JSON.stringify(info));
+        });
+        let temp_likes = this.state.user.likes;
+        temp_likes.splice(temp_likes.indexOf(id), 1);
+        this.setState({
+          user: {
+            likes: temp_likes,
+          },
+        });
+      })
+      .catch(e => {
+        Alert.alert("Error", "Something went wrong");
+        console.log(e);
+      });
+  };
   onChangeSearch = query => this.setState({ searchQuery: query });
-  renderItemComponent = ({ item: data, index }) => {
+  renderItemComponent = obj => {
+    const { item: data, index } = obj;
+    console.log(this.state.user);
     return (
-      <TouchableOpacity
-        onPress={() =>
-          this.props.navigation.navigate({
-            name: "Product",
-            params: data,
-          })
-        }
-        style={{
-          ...styles.container,
-          //borderRightWidth: index % 2 ? 0 : 1,
-          //borderLeftWidth: index % 2 ? 1 : 0,
-          borderColor: "black",
-          justifyContent: "flex-start",
-        }}
-      >
-        <Card>
-          <Card.Cover
-            source={{
-              uri: `data:image/jpg;base64,${data.image}`,
-            }}
+      <>
+        <TouchableOpacity
+          key={this.state.user.likes}
+          onPress={() =>
+            this.props.navigation.navigate({
+              name: "Product",
+              params: {
+                ...data,
+                onGoBack: async () => await this.refresh(),
+                type: this.props.route.params.type,
+              },
+            })
+          }
+          style={{
+            ...styles.container,
+            borderColor: "black",
+            justifyContent: "flex-start",
+          }}
+        >
+          <TouchableOpacity
             style={{
-              minHeight: 250,
-              width: width / 2 - 10,
-              //borderWidth: 1,
-              //borderColor: "black",
+              position: "absolute",
+              zIndex: 1000,
+              elevation: 10,
+              alignSelf: "flex-end",
             }}
-          />
-          <Card.Content style={{ height: 50 }}>
-            <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
-            <Paragraph>₹ {data.price}</Paragraph>
-          </Card.Content>
-        </Card>
-      </TouchableOpacity>
+            onPress={() =>
+              this.state?.user?.likes.includes(data._id)
+                ? this.handleDislike(data._id)
+                : this.handleLike(data._id)
+            }
+          >
+            <Avatar.Icon
+              color={
+                this.state?.user?.likes.includes(data._id) ? "red" : "gray"
+              }
+              icon="heart"
+              style={{
+                ...styles.like,
+                display:
+                  this.props.route.params.type === "my" ? "none" : "flex",
+              }}
+            />
+          </TouchableOpacity>
+          <Card>
+            <Card.Cover
+              source={{
+                uri: `data:image/jpg;base64,${data.image}`,
+              }}
+              style={{
+                minHeight: 250,
+                width: width / 2 - 10,
+                //borderWidth: 1,
+                //borderColor: "black",
+              }}
+            />
+            <Card.Content style={{ height: 50 }}>
+              <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
+              <Paragraph>₹ {data.price}</Paragraph>
+            </Card.Content>
+          </Card>
+        </TouchableOpacity>
+      </>
     );
   };
 
@@ -119,16 +246,33 @@ export default class App extends React.Component {
     return (
       <>
         <SafeAreaView>
-          <Title style={{ textAlign: "center" }}>New Recommendations</Title>
-          <FlatList
-            numColumns={2}
-            data={this.state.data}
-            renderItem={item => this.renderItemComponent(item)}
-            keyExtractor={item => item._id}
-            //ItemSeparatorComponent={this.ItemSeparator}
-            refreshing={this.state.refreshing}
-            onRefresh={this.handleRefresh}
+          <Searchbar
+            style={{ margin: 5 }}
+            placeholder="Search"
+            onChangeText={this.onChangeSearch}
+            value={this.state.searchQuery}
           />
+          <Title style={{ textAlign: "center" }}>
+            {this.props.route.params.type === "liked"
+              ? "Your Wishlist"
+              : this.props.route.params.type === "my"
+              ? "My Listed Products"
+              : "New Recommendations"}
+          </Title>
+          {this.state.data && this.state.data.length !== 0 ? (
+            <FlatList
+              numColumns={2}
+              data={this.state.data}
+              renderItem={item => this.renderItemComponent(item)}
+              keyExtractor={item => item._id}
+              //ItemSeparatorComponent={this.ItemSeparator}
+              refreshing={this.state.refreshing}
+              onRefresh={this.handleRefresh}
+              style={{ marginBottom: 5 }}
+            />
+          ) : (
+            <></>
+          )}
         </SafeAreaView>
       </>
     );
@@ -155,11 +299,11 @@ const styles = StyleSheet.create({
     height: 250,
     borderRadius: 4,
   },
+  like: {
+    //borderColor: "black",
+    //borderWidth: 2,
+    backgroundColor: "white",
+    transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
+    color: "red",
+  },
 });
-
-//<Searchbar
-//style={{ margin: 5 }}
-//placeholder="Search"
-//onChangeText={this.onChangeSearch}
-//value={this.state.searchQuery}
-///>
