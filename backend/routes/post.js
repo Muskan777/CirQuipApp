@@ -18,14 +18,13 @@ router.route("/getPosts").get((req, res) => {
 // @desc Creates new post
 
 router.route("/createPost").post((req, res) => {
-  let { content, caption, likes } = req.body;
+  let { content, caption } = req.body;
   const createdAt = Date.now();
-  likes = parseInt(likes);
 
   const newPost = new Post({
     content,
     caption,
-    likes,
+    likes: 0,
     createdAt,
     comments: [],
   });

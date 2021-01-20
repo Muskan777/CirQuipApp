@@ -8,6 +8,7 @@ import {
   Button,
   TextInput,
   Dimensions,
+  Alert,
 } from "react-native";
 import {
   MaterialIcons,
@@ -16,9 +17,24 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { IconButton } from "react-native-paper";
+import axios from "axios";
 export default function CreatePost({ navigation }) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
+  const handleSubmit = () => {
+    axios
+      .post(`${global.config.host}/post/createPost`, {
+        content: postText, //to be changed to an image
+        caption: postText,
+      })
+      .then(() => {
+        Alert.alert("CirQuip", "New Post Created");
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
+      });
+  };
   useEffect(() => {
     navigation.setOptions({
       headerLeft: () => (
@@ -56,7 +72,9 @@ export default function CreatePost({ navigation }) {
               name="send"
               style={{ ...styles.Icons, marginTop: 20 }}
               size={24}
-              onPress={() => setModalOpen(false)}
+              onPress={() => {
+                handleSubmit();
+              }}
             />
           </View>
           <View style={styles.PostArea}>
@@ -81,7 +99,7 @@ export default function CreatePost({ navigation }) {
           <View style={styles.bottomContainer}>
             <View style={{ flexDirection: "row" }}>
               <Entypo
-                name="camera"
+                name="camera" //function to upload images to be added here
                 style={{ ...styles.Icons, marginHorizontal: 5 }}
                 size={24}
               />
