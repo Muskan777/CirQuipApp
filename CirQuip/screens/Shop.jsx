@@ -160,6 +160,7 @@ export default class Shop extends React.Component {
     console.log(this.state.user);
     return (
       <>
+        <View style={{flexDirection: "column"}}>
         <TouchableOpacity
           key={this.state.user.likes}
           onPress={() =>
@@ -174,7 +175,7 @@ export default class Shop extends React.Component {
           }
           style={{
             ...styles.container,
-            borderColor: "black",
+            borderColor: "white",
             justifyContent: "flex-start",
           }}
         >
@@ -203,24 +204,53 @@ export default class Shop extends React.Component {
               }}
             />
           </TouchableOpacity>
-          <Card>
+          <Card  style={{borderColor: "#fff", width: width/2-50, height: 220, alignSelf: "center"}}>
             <Card.Cover
               source={{
                 uri: `data:image/jpg;base64,${data.image}`,
               }}
               style={{
-                minHeight: 250,
-                width: width / 2 - 10,
-                //borderWidth: 1,
+                minHeight: 220,
+                width: width / 2 - 50,
+                alignSelf: 'center'
+                //borderWidth: 0,
                 //borderColor: "black",
               }}
             />
-            <Card.Content style={{ height: 50 }}>
-              <Text style={{ fontWeight: "bold" }}>{data.name}</Text>
-              <Paragraph>₹ {data.price}</Paragraph>
-            </Card.Content>
+            {/* <Card.Content style={{ height: 50, padding: 0}}>
+              <Text style={styles.name}>{data.name}</Text>
+              <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
+            </Card.Content> */}
           </Card>
         </TouchableOpacity>
+        
+        <Text style={styles.name}>{data.name}</Text>
+            <View style={{marginLeft: 26, marginBottom: 40, flexDirection: 'row', alignItems: "center", width: width/2-50, justifyContent: "space-between"}}>
+              <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
+              <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
+                <TouchableOpacity>
+                  <Avatar.Icon
+                    size={32}
+                    color= "#a4c639 "
+                    icon="phone"
+                    backgroundColor="#fff"
+                    elevation={10}    
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity>
+                  <Avatar.Icon
+                    size={33}
+                    color= "#fff"
+                    icon="whatsapp"
+                    backgroundColor="#4FCE5D"
+                    elevation={10}
+                    marginLeft={8}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+          </View>
       </>
     );
   };
@@ -245,14 +275,14 @@ export default class Shop extends React.Component {
   render() {
     return (
       <>
-        <SafeAreaView>
+        <SafeAreaView style={{backgroundColor: "#fff"}}>
           <Searchbar
             style={{ margin: 5 }}
             placeholder="Search"
             onChangeText={this.onChangeSearch}
             value={this.state.searchQuery}
           />
-          <Title style={{ textAlign: "center" }}>
+          <Title style={{ textAlign: "left", margin: 10, marginVertical: 20, color: "rgba(112, 112, 112, 1)", fontSize: 20, fontFamily: "Segoe UI" }}>
             {this.props.route.params.type === "liked"
               ? "Your Wishlist"
               : this.props.route.params.type === "my"
@@ -268,7 +298,7 @@ export default class Shop extends React.Component {
               //ItemSeparatorComponent={this.ItemSeparator}
               refreshing={this.state.refreshing}
               onRefresh={this.handleRefresh}
-              style={{ marginBottom: 5 }}
+              style={{ marginBottom: 5}}
             />
           ) : (
             <></>
@@ -287,7 +317,7 @@ const styles = StyleSheet.create({
     marginBottom: width / 30,
   },
   container: {
-    height: 300,
+    height: 225,
     width: width / 2 - 4,
     margin: 2,
     backgroundColor: "#FFF",
@@ -302,8 +332,27 @@ const styles = StyleSheet.create({
   like: {
     //borderColor: "black",
     //borderWidth: 2,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 1,
+      height: 4,
+    },
+    elevation: 10,
     backgroundColor: "white",
     transform: [{ scaleX: 0.5 }, { scaleY: 0.5 }],
     color: "red",
   },
+  name: {
+    marginLeft: 26,
+    fontWeight: "bold", 
+    color: "rgba(64, 64, 64, 1)" ,
+    fontFamily : "Segoe UI",
+    fontSize: 16 
+  },
+  price: {
+    color: "#000",
+    fontWeight: "700",
+    fontSize: 15,
+    fontFamily: "Segoe UI"
+  }
 });
