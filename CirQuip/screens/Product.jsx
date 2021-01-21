@@ -83,7 +83,20 @@ export default class Product extends React.Component {
       }
     })();
   }
-
+  buyProduct = () => {
+    axios
+      .post(`{global.config.host}/shop/buy`, {
+        productId: this.state?._id,
+        user: this.state.id,
+      })
+      .then(res => {
+        alert("Buy Request is sent to the seller");
+      })
+      .catch(err => {
+        if (global.config.debug) console.log(err);
+        Alert.alert("Error", "Something went wrong");
+      });
+  };
   handleLike = async id => {
     console.log("inside like");
     await axios
@@ -287,6 +300,7 @@ export default class Product extends React.Component {
                   mode="contained"
                   icon="cart"
                   style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                  onPress={() => this.buyProduct()}
                 >
                   <Text style={{ fontSize: 20 }}>Buy</Text>
                 </Button>

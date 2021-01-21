@@ -337,7 +337,7 @@ export default class Shop extends React.Component {
   render() {
     return (
       <>
-        <SafeAreaView style={{ backgroundColor: "#fff" }}>
+        <SafeAreaView style={{ backgroundColor: "#fff", marginBottom: 10 }}>
           <Searchbar
             style={{ margin: 5 }}
             placeholder="Search"
