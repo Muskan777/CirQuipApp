@@ -23,6 +23,7 @@ import {
   Avatar,
   FAB,
 } from "react-native-paper";
+import { CommonActions } from "@react-navigation/native";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 const width = Dimensions.get("screen").width;
@@ -34,6 +35,7 @@ export default class Product extends React.Component {
     this.state = {
       ...this.props.route.params,
       user: { likes: [] },
+      type: this.props.route.params.type,
     };
   }
   componentDidMount() {
@@ -51,7 +53,13 @@ export default class Product extends React.Component {
       ),
     });
     axios
-      .get(`${global.config.host}/user/getUserWithId/${this.state.seller}`)
+      .get(
+        `${global.config.host}/user/getUserWithId/${
+          this.props.route.params.type === "requests"
+            ? this.state.reserved
+            : this.state.seller
+        }`
+      )
       .then(res => {
         this.setState({ seller: { ...res.data } });
       })
@@ -59,7 +67,10 @@ export default class Product extends React.Component {
         Alert.alert("Error", "Something Went Wrong In Fetching Seller");
         console.log(err);
       });
-    this.props.navigation.setOptions({ title: this.state.name });
+
+    this.props.navigation.setOptions({
+      title: this.state.type == "requests" ? "Buy Request" : this.state.name,
+    });
 
     (async () => {
       try {
@@ -91,7 +102,10 @@ export default class Product extends React.Component {
         user: this.state.id,
       })
       .then(res => {
-        alert("Buy Request is sent to the seller");
+        this.props.navigation.navigate({
+          name: "Published",
+          params: { type: "buy" },
+        });
       })
       .catch(err => {
         if (global.config.debug) console.log(err);
@@ -185,7 +199,10 @@ export default class Product extends React.Component {
       })
       .catch(err => console.log(err));
   };
-  whatsappMsg = `Hi, I am interested to buy ${this.state?.name} posted by you on CirQuip`;
+  whatsappMsg =
+    this.props.route.params.type === "requests"
+      ? `Hey I received your request for buying ${this.state?.name}. Let's talk....`
+      : `Hi, I am interested to buy ${this.state?.name} posted by you on CirQuip`;
   onShare = async () => {
     try {
       const result = await Share.share({
@@ -204,6 +221,46 @@ export default class Product extends React.Component {
       alert(error.message);
     }
   };
+  handleSell = async () => {
+    await axios
+      .delete(`${global.config.host}/shop/sell/${this.state?._id}`)
+      .then(res => {
+        Alert.alert(
+          "Congratulations",
+          "Your product has been marked as sold !"
+        );
+        this.props.navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "Home" }],
+          })
+        );
+      })
+      .catch(err => {
+        if (global.config.debug) console.log(err);
+        Alert.alert("Error", "Something went wrong");
+      });
+  };
+  handleRevoke = async () => {
+    await axios
+      .put(`${global.config.host}/shop/revoke/${this.state?._id}`)
+      .then(res => {
+        Alert.alert(
+          "Success",
+          "The Product has been moved to selling arena again !"
+        );
+        this.props.navigation.dispatch(
+          CommonActions.reset({
+            index: 1,
+            routes: [{ name: "Home" }],
+          })
+        );
+      })
+      .catch(err => {
+        if (global.config.debug) console.log(err);
+        Alert.alert("Error", "Something went wrong");
+      });
+  };
   render() {
     const LeftContent = props => <Avatar.Icon {...props} icon="account" />; //replace with user image later
     const RightContent = props => (
@@ -211,7 +268,13 @@ export default class Product extends React.Component {
         <Avatar.Icon
           {...props}
           icon="share"
-          style={{ marginRight: 10, scaleX: 1.5, scaleY: 1.5 }}
+          style={{
+            marginRight: 10,
+            scaleX: 1.5,
+            scaleY: 1.5,
+            display:
+              this.props.route.params.type === "requests" ? "none" : "flex",
+          }}
         />
       </TouchableOpacity>
     ); //add share to it later
@@ -259,7 +322,14 @@ export default class Product extends React.Component {
                       : "gray"
                   }
                   icon="heart"
-                  style={styles.like}
+                  style={{
+                    ...styles.like,
+                    display:
+                      this.props.route.params.type === "my" ||
+                      this.props.route.params.type === "requests"
+                        ? "none"
+                        : "flex",
+                  }}
                 />
               </TouchableOpacity>
             )}
@@ -296,6 +366,27 @@ export default class Product extends React.Component {
                 >
                   <Text style={{ fontSize: 20 }}>Delete</Text>
                 </Button>
+              ) : this.state.type === "requests" ? (
+                <>
+                  <View style={{ display: "flex", justifyContent: "center" }}>
+                    <Button
+                      mode="contained"
+                      icon="cart"
+                      style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                      onPress={() => this.handleSell()}
+                    >
+                      <Text style={{ fontSize: 15 }}>Sell</Text>
+                    </Button>
+                    <Button
+                      mode="contained"
+                      icon="cancel"
+                      style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                      onPress={() => this.handleRevoke()}
+                    >
+                      <Text style={{ fontSize: 15 }}>Revoke Request</Text>
+                    </Button>
+                  </View>
+                </>
               ) : (
                 <Button
                   mode="contained"

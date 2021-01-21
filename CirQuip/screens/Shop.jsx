@@ -247,7 +247,10 @@ export default class Shop extends React.Component {
                 style={{
                   ...styles.like,
                   display:
-                    this.props.route.params.type === "my" ? "none" : "flex",
+                    this.props.route.params.type === "my" ||
+                    this.props.route.params.type === "requests"
+                      ? "none"
+                      : "flex",
                 }}
               />
             </TouchableOpacity>
@@ -297,7 +300,15 @@ export default class Shop extends React.Component {
                 <View
                   style={{ flexDirection: "row", justifyContent: "flex-end" }}
                 >
-                  <TouchableOpacity onPress={() => this.phoneCall(data.seller)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.phoneCall(
+                        this.props.route.params.type === "requests"
+                          ? data.reserved
+                          : data.seller
+                      )
+                    }
+                  >
                     <Avatar.Icon
                       size={32}
                       color="#a4c639 "
@@ -306,7 +317,15 @@ export default class Shop extends React.Component {
                       elevation={10}
                     />
                   </TouchableOpacity>
-                  <TouchableOpacity onPress={() => this.whatsapp(data.seller)}>
+                  <TouchableOpacity
+                    onPress={() =>
+                      this.whatsapp(
+                        this.props.route.params.type === "requests"
+                          ? data.reserved
+                          : data.seller
+                      )
+                    }
+                  >
                     <Avatar.Icon
                       size={33}
                       color="#fff"

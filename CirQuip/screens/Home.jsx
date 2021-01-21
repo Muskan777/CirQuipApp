@@ -173,7 +173,7 @@ export default function Home({ navigation }) {
             onPress={() => {
               navigation.navigate({
                 name: "Shop",
-                params: { type: "requests" },
+                params: { title: "Buy Requests", type: "requests" },
               });
             }}
           >

@@ -111,7 +111,10 @@ export default class Sell extends React.Component {
       .then(res => {
         this.setState({ published: true });
         //Alert.alert("Success", "Your Product Is Live");
-        this.props.navigation.navigate("Published");
+        this.props.navigation.navigate({
+          name: "Published",
+          params: { type: "sell" },
+        });
       })
       .catch(e => {
         Alert.alert("Error", "Something went wrong");

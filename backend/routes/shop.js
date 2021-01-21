@@ -30,7 +30,7 @@ router.post("/products/:type", async (req, resp) => {
         return resp.status(400).json("Error Retreieving data");
       }
     }
-    case "request": {
+    case "requests": {
       try {
         const products = await Shop.find({
           seller: id,
@@ -141,21 +141,31 @@ router.post("/buy", async (req, resp) => {
   }
 });
 
-// @route POST api/shop/revoke
+// @route post api/shop/revoke
 // @desc to revoke a buy request
 router.put("/revoke/:productId", async (req, resp) => {
   const productId = req.params.productId;
-  try {
-    await Shop.findByIdAndUpdate(productId, { $set: { reserved: undefined } });
-    return resp.status(200).json("success");
-  } catch (err) {
-    log("revoke", err);
-    return resp.status(400).json(err);
-  }
+  Shop.findById(productId, (err, product) => {
+    if (err) throw err;
+    product.set("reserved", undefined, { strict: false });
+    product
+      .save()
+      .then(res => {
+        return resp.status(200).json("success");
+      })
+      .catch(err => {
+        log("revoke save error", err);
+
+        return resp.status(400).json(err);
+      });
+  });
 });
 
+// @route post api/shop/sell
+// @desc to mark a product as sold
 router.delete("/sell/:productId", async (req, resp) => {
   const productId = req.params.productId;
+  log("sell id", productId);
   try {
     await Shop.findByIdAndDelete(productId);
     return resp.status(200).json("success");
