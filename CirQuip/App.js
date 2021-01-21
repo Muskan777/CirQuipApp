@@ -22,7 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
-import ImageBrowser from "./screens/ImageBrowserScreen";
+import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import CreatePostCamera from "./screens/CreatePostCamera";
 const Stack = createStackNavigator();
 const theme = {
@@ -145,8 +145,8 @@ export default function App() {
             }}
           />
           <Stack.Screen
-            name="ImageBrowser"
-            component={ImageBrowser}
+            name="CreatePostImageBrowser"
+            component={CreatePostImageBrowser}
             options={{
               title: "Select files",
             }}

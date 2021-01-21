@@ -115,11 +115,7 @@ export default function CreatePost(props) {
               value={postText}
               numberOfLines={30}
             />
-            <ImageBrowser
-              max={4}
-              onChange={callback => {}}
-              callback={(num, onSubmit) => {}}
-            />
+
             <ScrollView>
               {photos.map((item, i) => renderImage(item, i))}
             </ScrollView>
@@ -141,7 +137,7 @@ export default function CreatePost(props) {
 
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.navigate("ImageBrowser");
+                  props.navigation.navigate("CreatePostImageBrowser");
                   setModalOpen(false);
                 }}
               >
