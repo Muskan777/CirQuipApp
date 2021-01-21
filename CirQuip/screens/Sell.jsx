@@ -122,9 +122,18 @@ export default class Sell extends React.Component {
     return (
       <>
         <View style={styles.container}>
-          <View style={{flexDirection: "row", marginBottom: 28, alignItems: "center"}}>
+          <View
+            style={{
+              flexDirection: "row",
+              marginBottom: 28,
+              alignItems: "center",
+            }}
+          >
             <TouchableOpacity>
-              <Image style={{height: 25.2, width: 30, marginLeft: 20}} source={require("../assets/menu_sells.png")}/>
+              <Image
+                style={{ height: 25.2, width: 30, marginLeft: 20 }}
+                source={require("../assets/menu_sells.png")}
+              />
             </TouchableOpacity>
             <Text style={styles.header}>Product Details</Text>
           </View>
@@ -190,7 +199,7 @@ export default class Sell extends React.Component {
                 style={{
                   justifyContent: "center",
                   alignItems: "center",
-                  width: '100%',
+                  width: "100%",
                   height: 100,
                   padding: 10,
                 }}
@@ -200,7 +209,7 @@ export default class Sell extends React.Component {
                   style={{
                     margin: 5,
                     backgroundColor: "rgba(54, 181, 165, 1)",
-                    width: '90%',
+                    width: "90%",
                     alignSelf: "center",
                     fontSize: 14,
                     fontWeight: "400",
@@ -256,14 +265,15 @@ export default class Sell extends React.Component {
                     flexDirection: "row",
                     padding: 10,
                     height: 300,
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <Button
                     mode="contained"
                     style={{
                       margin: 5,
-                      backgroundColor: "rgba(189, 196, 204, 0.14901960784313725)",
+                      backgroundColor:
+                        "rgba(189, 196, 204, 0.14901960784313725)",
                       width: 125,
                       height: 50,
                       justifyContent: "center",
@@ -271,16 +281,14 @@ export default class Sell extends React.Component {
                     }}
                     onPress={() => this.onPageChange(0)}
                   >
-                    <Text style={{color: "#000"}}>
-                    Previous
-                    </Text>
+                    <Text style={{ color: "#000" }}>Previous</Text>
                   </Button>
                   <Button
                     mode="contained"
                     style={{
                       margin: 5,
                       backgroundColor: "rgba(54, 181, 165, 1)",
-                      justifyContent: 'center',
+                      justifyContent: "center",
                       width: 125,
                       height: 50,
                       fontWeight: "400",
@@ -324,17 +332,74 @@ export default class Sell extends React.Component {
                   </View>
                 )}
                 <View style={{ alignItems: "center", padding: 10 }}>
-                  <Title style={{ color: "#000", fontSize: 20, fontWeight: "700", fontFamily: "Segoe UI" }}>{this.state.pName}</Title>
-                  <Text style={{color: "#000", fontSize: 12, fontWeight: "400", fontFamily: "SF Pro Display"}}>Details</Text>
-                  <Text style={{ color: "#000", fontSize: 14, lineHeight: 32, fontFamily: "SF Pro Display" }}>{this.state.pDetails}</Text>
-                  <Title style={{ color: "rgba(146, 146, 146, 1)", fontSize: 14, fontFamily: "SF Pro Display" }}>
+                  <Title
+                    style={{
+                      color: "#000",
+                      fontSize: 20,
+                      fontWeight: "700",
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    {this.state.pName}
+                  </Title>
+                  <Text
+                    style={{
+                      color: "#000",
+                      fontSize: 12,
+                      fontWeight: "400",
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    Details
+                  </Text>
+                  <Text
+                    style={{
+                      color: "#000",
+                      fontSize: 14,
+                      lineHeight: 32,
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    {this.state.pDetails}
+                  </Text>
+                  <Title
+                    style={{
+                      color: "rgba(146, 146, 146, 1)",
+                      fontSize: 14,
+                      fontFamily: "sans-serif",
+                    }}
+                  >
                     PRICE
                   </Title>
-                  <Text style={{fontSize: 21, fontWeight: "700", fontFamily: "SF Pro Display", color: "#000"}}>₹{this.state.pPrice}</Text>
-                  <Text style={{fontSize: 14, marginTop: 75, fontFamily: "Segoe UI", color: "#000", fontWeight: "400"}}>
+                  <Text
+                    style={{
+                      fontSize: 21,
+                      fontWeight: "700",
+                      fontFamily: "sans-serif",
+                      color: "#000",
+                    }}
+                  >
+                    ₹{this.state.pPrice}
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      marginTop: 75,
+                      fontFamily: "sans-serif",
+                      color: "#000",
+                      fontWeight: "400",
+                    }}
+                  >
                     CirQuip will help you find best buyer in minimum
                   </Text>
-                  <Text style={{fontSize: 14, fontFamily: "Segoe UI", color: "#000", fontWeight: "400"}}>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      fontFamily: "sans-serif",
+                      color: "#000",
+                      fontWeight: "400",
+                    }}
+                  >
                     time within your college.
                   </Text>
                 </View>
@@ -347,14 +412,15 @@ export default class Sell extends React.Component {
                     flexDirection: "row",
                     height: 120,
                     padding: 20,
-                    alignItems: "flex-end"
+                    alignItems: "flex-end",
                   }}
                 >
                   <Button
                     mode="contained"
                     style={{
                       margin: 5,
-                      backgroundColor: "rgba(189, 196, 204, 0.14901960784313725)",
+                      backgroundColor:
+                        "rgba(189, 196, 204, 0.14901960784313725)",
                       width: 125,
                       height: 50,
                       justifyContent: "center",
@@ -362,7 +428,7 @@ export default class Sell extends React.Component {
                     }}
                     onPress={() => this.onPageChange(1)}
                   >
-                    <Text style={{color: "#000"}}>Back</Text>
+                    <Text style={{ color: "#000" }}>Back</Text>
                   </Button>
                   <Button
                     mode="contained"
@@ -370,7 +436,7 @@ export default class Sell extends React.Component {
                     style={{
                       margin: 5,
                       backgroundColor: "rgba(54, 181, 165, 1)",
-                      justifyContent: 'center',
+                      justifyContent: "center",
                       width: 125,
                       height: 50,
                       fontWeight: "400",
@@ -398,12 +464,12 @@ const styles = StyleSheet.create({
     padding: 10,
     justifyContent: "flex-start",
   },
-  header:{
+  header: {
     color: "rgba(54, 181, 165, 1)",
     fontSize: 24,
     fontWeight: "600",
     fontStyle: "normal",
-    fontFamily: "SF Pro Display",
+    fontFamily: "sans-serif",
     marginLeft: 80,
   },
   inputView: {
@@ -423,7 +489,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "400",
     fontStyle: "normal",
-    fontFamily: "SF Pro Display",
+    fontFamily: "sans-serif",
   },
   forgot: {
     color: "white",
@@ -432,12 +498,12 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 14,
-    fontFamily: "SF Pro Display",
+    fontFamily: "sans-serif",
     color: "rgba(0, 0, 0, 0.5)",
     marginBottom: 10,
     fontStyle: "normal",
     fontWeight: "400",
-    marginTop: 30
+    marginTop: 30,
   },
   loginBtn: {
     width: "80%",
@@ -453,4 +519,3 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
-

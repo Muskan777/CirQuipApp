@@ -160,97 +160,112 @@ export default class Shop extends React.Component {
     console.log(this.state.user);
     return (
       <>
-        <View style={{flexDirection: "column"}}>
-        <TouchableOpacity
-          key={this.state.user.likes}
-          onPress={() =>
-            this.props.navigation.navigate({
-              name: "Product",
-              params: {
-                ...data,
-                onGoBack: async () => await this.refresh(),
-                type: this.props.route.params.type,
-              },
-            })
-          }
-          style={{
-            ...styles.container,
-            borderColor: "white",
-            justifyContent: "flex-start",
-          }}
-        >
+        <View style={{ flexDirection: "column" }}>
           <TouchableOpacity
-            style={{
-              position: "absolute",
-              zIndex: 1000,
-              elevation: 10,
-              alignSelf: "flex-end",
-            }}
+            key={this.state.user.likes}
             onPress={() =>
-              this.state?.user?.likes.includes(data._id)
-                ? this.handleDislike(data._id)
-                : this.handleLike(data._id)
+              this.props.navigation.navigate({
+                name: "Product",
+                params: {
+                  ...data,
+                  onGoBack: async () => await this.refresh(),
+                  type: this.props.route.params.type,
+                },
+              })
             }
+            style={{
+              ...styles.container,
+              borderColor: "white",
+              justifyContent: "flex-start",
+            }}
           >
-            <Avatar.Icon
-              color={
-                this.state?.user?.likes.includes(data._id) ? "red" : "gray"
+            <TouchableOpacity
+              style={{
+                position: "absolute",
+                zIndex: 1000,
+                elevation: 10,
+                alignSelf: "flex-end",
+              }}
+              onPress={() =>
+                this.state?.user?.likes.includes(data._id)
+                  ? this.handleDislike(data._id)
+                  : this.handleLike(data._id)
               }
-              icon="heart"
+            >
+              <Avatar.Icon
+                color={
+                  this.state?.user?.likes.includes(data._id) ? "red" : "gray"
+                }
+                icon="heart"
+                style={{
+                  ...styles.like,
+                  display:
+                    this.props.route.params.type === "my" ? "none" : "flex",
+                }}
+              />
+            </TouchableOpacity>
+            <Card
               style={{
-                ...styles.like,
-                display:
-                  this.props.route.params.type === "my" ? "none" : "flex",
-              }}
-            />
-          </TouchableOpacity>
-          <Card  style={{borderColor: "#fff", width: width/2-50, height: 220, alignSelf: "center"}}>
-            <Card.Cover
-              source={{
-                uri: `data:image/jpg;base64,${data.image}`,
-              }}
-              style={{
-                minHeight: 220,
+                borderColor: "#fff",
                 width: width / 2 - 50,
-                alignSelf: 'center'
-                //borderWidth: 0,
-                //borderColor: "black",
+                height: 220,
+                alignSelf: "center",
               }}
-            />
-            {/* <Card.Content style={{ height: 50, padding: 0}}>
+            >
+              <Card.Cover
+                source={{
+                  uri: `data:image/jpg;base64,${data.image}`,
+                }}
+                style={{
+                  minHeight: 220,
+                  width: width / 2 - 50,
+                  alignSelf: "center",
+                  //borderWidth: 0,
+                  //borderColor: "black",
+                }}
+              />
+              {/* <Card.Content style={{ height: 50, padding: 0}}>
               <Text style={styles.name}>{data.name}</Text>
               <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
             </Card.Content> */}
-          </Card>
-        </TouchableOpacity>
-        
-        <Text style={styles.name}>{data.name}</Text>
-            <View style={{marginLeft: 26, marginBottom: 40, flexDirection: 'row', alignItems: "center", width: width/2-50, justifyContent: "space-between"}}>
-              <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
-              <View style={{flexDirection: "row", justifyContent: "flex-end"}}>
-                <TouchableOpacity>
-                  <Avatar.Icon
-                    size={32}
-                    color= "#a4c639 "
-                    icon="phone"
-                    backgroundColor="#fff"
-                    elevation={10}    
-                  />
-                </TouchableOpacity>
-                <TouchableOpacity>
-                  <Avatar.Icon
-                    size={33}
-                    color= "#fff"
-                    icon="whatsapp"
-                    backgroundColor="#4FCE5D"
-                    elevation={10}
-                    marginLeft={8}
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
+            </Card>
+          </TouchableOpacity>
 
+          <Text style={styles.name}>{data.name}</Text>
+          <View
+            style={{
+              marginLeft: 26,
+              marginBottom: 40,
+              flexDirection: "row",
+              alignItems: "center",
+              width: width / 2 - 50,
+              justifyContent: "space-between",
+            }}
+          >
+            <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
+            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
+              <TouchableOpacity>
+                <Avatar.Icon
+                  size={32}
+                  color="#a4c639 "
+                  icon="phone"
+                  backgroundColor="#fff"
+                  elevation={10}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Avatar.Icon
+                  size={33}
+                  color="#fff"
+                  icon="whatsapp"
+                  backgroundColor="#4FCE5D"
+                  elevation={10}
+                  marginLeft={8}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
+        </View>
       </>
     );
   };
@@ -275,14 +290,23 @@ export default class Shop extends React.Component {
   render() {
     return (
       <>
-        <SafeAreaView style={{backgroundColor: "#fff"}}>
+        <SafeAreaView style={{ backgroundColor: "#fff" }}>
           <Searchbar
             style={{ margin: 5 }}
             placeholder="Search"
             onChangeText={this.onChangeSearch}
             value={this.state.searchQuery}
           />
-          <Title style={{ textAlign: "left", margin: 10, marginVertical: 20, color: "rgba(112, 112, 112, 1)", fontSize: 20, fontFamily: "Segoe UI" }}>
+          <Title
+            style={{
+              textAlign: "left",
+              margin: 5,
+              marginVertical: 10,
+              color: "rgba(112, 112, 112, 1)",
+              fontSize: 20,
+              fontFamily: "sans-serif",
+            }}
+          >
             {this.props.route.params.type === "liked"
               ? "Your Wishlist"
               : this.props.route.params.type === "my"
@@ -298,7 +322,7 @@ export default class Shop extends React.Component {
               //ItemSeparatorComponent={this.ItemSeparator}
               refreshing={this.state.refreshing}
               onRefresh={this.handleRefresh}
-              style={{ marginBottom: 5}}
+              style={{ marginBottom: 5 }}
             />
           ) : (
             <></>
@@ -344,15 +368,15 @@ const styles = StyleSheet.create({
   },
   name: {
     marginLeft: 26,
-    fontWeight: "bold", 
-    color: "rgba(64, 64, 64, 1)" ,
-    fontFamily : "Segoe UI",
-    fontSize: 16 
+    fontWeight: "bold",
+    color: "rgba(64, 64, 64, 1)",
+    fontFamily: "sans-serif",
+    fontSize: 16,
   },
   price: {
     color: "#000",
     fontWeight: "700",
     fontSize: 15,
-    fontFamily: "Segoe UI"
-  }
+    fontFamily: "sans-serif",
+  },
 });
