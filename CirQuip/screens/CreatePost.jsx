@@ -9,6 +9,8 @@ import {
   TextInput,
   Dimensions,
   Alert,
+  TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import {
   MaterialIcons,
@@ -17,10 +19,12 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { IconButton } from "react-native-paper";
+import { ImageBrowser } from "expo-image-picker-multiple";
 import axios from "axios";
-export default function CreatePost({ navigation }) {
+export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
+  const [photos, setPhotos] = React.useState([]);
   const handleSubmit = () => {
     axios
       .post(`${global.config.host}/post/createPost`, {
@@ -36,17 +40,33 @@ export default function CreatePost({ navigation }) {
       });
   };
   useEffect(() => {
-    navigation.setOptions({
+    props.navigation.setOptions({
       headerLeft: () => (
         <IconButton
           icon="arrow-left"
           color="#000"
           size={30}
-          onPress={() => navigation.goBack()}
+          onPress={() => props.navigation.goBack()}
         />
       ),
     });
   });
+  useEffect(() => {
+    const { params } = props.route;
+    if (params) {
+      const { photos } = params;
+      if (photos) setPhotos({ photos });
+    }
+  });
+  function renderImage(item, i) {
+    return (
+      <Image
+        style={{ height: 100, width: 100 }}
+        source={{ uri: item.uri }}
+        key={i}
+      />
+    );
+  }
   return (
     <View style={styles.container}>
       <Button
@@ -95,19 +115,42 @@ export default function CreatePost({ navigation }) {
               value={postText}
               numberOfLines={30}
             />
+            <ImageBrowser
+              max={4}
+              onChange={callback => {}}
+              callback={(num, onSubmit) => {}}
+            />
+            <ScrollView>
+              {photos.map((item, i) => renderImage(item, i))}
+            </ScrollView>
           </View>
           <View style={styles.bottomContainer}>
             <View style={{ flexDirection: "row" }}>
-              <Entypo
-                name="camera" //function to upload images to be added here
-                style={{ ...styles.Icons, marginHorizontal: 5 }}
-                size={24}
-              />
-              <Entypo
-                name="image-inverted"
-                style={{ ...styles.Icons, marginHorizontal: 5 }}
-                size={24}
-              />
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate("Camera");
+                  setModalOpen(false);
+                }}
+              >
+                <Entypo
+                  name="camera" //function to upload images to be added here
+                  style={{ ...styles.Icons, marginHorizontal: 5 }}
+                  size={24}
+                />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={() => {
+                  props.navigation.navigate("ImageBrowser");
+                  setModalOpen(false);
+                }}
+              >
+                <Entypo
+                  name="image-inverted"
+                  style={{ ...styles.Icons, marginHorizontal: 5 }}
+                  size={24}
+                />
+              </TouchableOpacity>
               <Entypo
                 name="attachment"
                 style={{ ...styles.Icons, marginHorizontal: 5 }}
