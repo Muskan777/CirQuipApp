@@ -9,6 +9,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Alert,
+  Linking,
 } from "react-native";
 import {
   IconButton,
@@ -33,6 +34,26 @@ export default class Shop extends React.Component {
       user: { likes: [] },
     };
   }
+  callNumber = phone => {
+    console.log("callNumber ----> ", phone);
+    let phoneNumber = phone;
+    if (Platform.OS !== "android") {
+      phoneNumber = `telprompt:${phone}`;
+    } else {
+      phoneNumber = `tel:${phone}`;
+    }
+    Linking.canOpenURL(phoneNumber)
+      .then(supported => {
+        if (!supported) {
+          Alert.alert("Phone number is not available");
+        } else {
+          return Linking.openURL(phoneNumber);
+        }
+      })
+      .catch(err => console.log(err));
+  };
+  whatsappMsg = name =>
+    `Hi, I am interested to buy ${name} posted by you on CirQuip`;
   refresh = async () => {
     this.props.navigation.setOptions({
       headerLeft: () => (
@@ -116,6 +137,32 @@ export default class Shop extends React.Component {
       .catch(e => {
         Alert.alert("Error", "Something went wrong");
         console.log(e);
+      });
+  };
+  phoneCall = async sellerId => {
+    await axios
+      .get(`${global.config.host}/user/getUserWithId/${sellerId}`)
+      .then(res => {
+        this.callNumber(res.data.phone);
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something went wrong");
+        if (global.config.debug) console.log(err);
+      });
+  };
+  whatsapp = async sellerId => {
+    await axios
+      .get(`${global.config.host}/user/getUserWithId/${sellerId}`)
+      .then(res => {
+        Linking.openURL(
+          `whatsapp://send?phone=${res.data.phone}&text=${this.whatsappMsg(
+            res.data.name
+          )}`
+        );
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something went wrong");
+        if (global.config.debug) console.log(err);
       });
   };
 
@@ -244,7 +291,7 @@ export default class Shop extends React.Component {
           >
             <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
             <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.phoneCall(data.seller)}>
                 <Avatar.Icon
                   size={32}
                   color="#a4c639 "
@@ -253,7 +300,7 @@ export default class Shop extends React.Component {
                   elevation={10}
                 />
               </TouchableOpacity>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => this.whatsapp(data.seller)}>
                 <Avatar.Icon
                   size={33}
                   color="#fff"

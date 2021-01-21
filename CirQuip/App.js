@@ -124,7 +124,7 @@ export default function App() {
             component={Shop}
             options={{
               ...stackOptions,
-              title: "Shop",
+              title: "Store",
             }}
           />
           <Stack.Screen
@@ -165,6 +165,3 @@ export default function App() {
     <Login handleStatus={handleStatus} />
   );
 }
-
-
-
