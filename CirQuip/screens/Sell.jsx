@@ -53,8 +53,8 @@ export default class Sell extends React.Component {
     stepIndicatorCurrentColor: "rgba(54, 181, 165, 1)",
     stepIndicatorLabelFontSize: 13,
     currentStepIndicatorLabelFontSize: 13,
-    stepIndicatorLabelCurrentColor: "rgba(54, 181, 165, 1)",
-    stepIndicatorLabelFinishedColor: "rgba(54, 181, 165, 1)",
+    stepIndicatorLabelCurrentColor: "#fff",
+    stepIndicatorLabelFinishedColor: "#fff",
     stepIndicatorLabelUnFinishedColor: "#aaaaaa",
     labelColor: "#999999",
     labelSize: 15,
@@ -100,7 +100,7 @@ export default class Sell extends React.Component {
 
     console.log(result.type);
 
-    if (!result.arrow - leftled) {
+    if (!result.cancelled) {
       this.setState({ image: result.base64 });
     }
   };
@@ -127,15 +127,13 @@ export default class Sell extends React.Component {
               flexDirection: "row",
               marginBottom: 28,
               alignItems: "center",
+              width: width,
+              justifyContent: "center",
             }}
           >
-            <TouchableOpacity>
-              <Image
-                style={{ height: 25.2, width: 30, marginLeft: 20 }}
-                source={require("../assets/menu_sells.png")}
-              />
-            </TouchableOpacity>
-            <Text style={styles.header}>Product Details</Text>
+            <Text style={{ ...styles.header }}>
+              {this.labels[this.state.currentPosition]}
+            </Text>
           </View>
           <StepIndicator
             stepCount={3}
@@ -153,7 +151,7 @@ export default class Sell extends React.Component {
             }}
           />
           {this.state.currentPosition === 0 ? (
-            <View style={{ marginTop: 10 }}>
+            <ScrollView style={{ marginTop: 10 }}>
               <Text style={styles.logo}>Product Name</Text>
               <View style={styles.inputView}>
                 <TextInput
@@ -221,10 +219,10 @@ export default class Sell extends React.Component {
                   Next
                 </Button>
               </View>
-            </View>
+            </ScrollView>
           ) : this.state.currentPosition === 1 ? (
             <>
-              <View style={{ marginTop: 10 }}>
+              <ScrollView style={{ marginTop: 10 }}>
                 <Text style={styles.logo}>Upload Product Image</Text>
                 {this.state.image && (
                   <View
@@ -264,7 +262,7 @@ export default class Sell extends React.Component {
                     display: "flex",
                     flexDirection: "row",
                     padding: 10,
-                    height: 300,
+                    height: 200,
                     alignItems: "flex-end",
                   }}
                 >
@@ -300,14 +298,14 @@ export default class Sell extends React.Component {
                     Next
                   </Button>
                 </View>
-              </View>
+              </ScrollView>
             </>
           ) : (
             <>
-              <View
+              <ScrollView
+                justifyContent="center"
                 style={{
                   marginTop: 10,
-                  justifyContent: "center",
                   alignContent: "center",
                 }}
               >
@@ -448,7 +446,7 @@ export default class Sell extends React.Component {
                     Sell
                   </Button>
                 </View>
-              </View>
+              </ScrollView>
             </>
           )}
         </View>
@@ -470,7 +468,8 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     fontStyle: "normal",
     fontFamily: "sans-serif",
-    marginLeft: 80,
+    textAlign: "center",
+    //marginLeft: 80,
   },
   inputView: {
     width: "100%",
@@ -519,3 +518,8 @@ const styles = StyleSheet.create({
     color: "white",
   },
 });
+
+//<Image
+//style={{ height: 25.2, width: 30, marginLeft: 20 }}
+//source={require("../assets/menu_sells.png")}
+///>;
