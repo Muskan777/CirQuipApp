@@ -84,8 +84,9 @@ export default class Product extends React.Component {
     })();
   }
   buyProduct = () => {
+    console.log(`${global.config.host}/shop/buy`);
     axios
-      .post(`{global.config.host}/shop/buy`, {
+      .post(`${global.config.host}/shop/buy`, {
         productId: this.state?._id,
         user: this.state.id,
       })

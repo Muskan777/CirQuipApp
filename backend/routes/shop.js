@@ -30,9 +30,27 @@ router.post("/products/:type", async (req, resp) => {
         return resp.status(400).json("Error Retreieving data");
       }
     }
+    case "request": {
+      try {
+        const products = await Shop.find({
+          seller: id,
+          reserved: { $exists: true },
+        });
+        //log("products", products);
+        return resp.status(200).json(products);
+      } catch (err) {
+        console.log(err);
+        return resp.status(400).json("Error Retreieving data");
+      }
+    }
+
     case "liked": {
       try {
-        const user = await User.findOne({ _id: id });
+        const user = await User.findOne({
+          _id: id,
+          reserved: { $exists: false },
+          seller: { $ne: id },
+        });
         if (!user._doc.likes || user._doc.likes.length === 0)
           return resp.status(200).json([]);
         const products = await Shop.find({
@@ -48,7 +66,7 @@ router.post("/products/:type", async (req, resp) => {
 
     default: {
       try {
-        const data = await Shop.find({});
+        const data = await Shop.find({ reserved: { $exists: false } });
         //log("products data", data);
         return resp.status(200).json(data);
       } catch (err) {
@@ -106,6 +124,44 @@ router.put("/dislike", async (req, resp) => {
   } catch (err) {
     console.log(err);
     return resp.status(400).json("Error Saving data");
+  }
+});
+
+// @route POST api/shop/buy
+// @desc to buy a product
+router.post("/buy", async (req, resp) => {
+  const { user, productId } = req.body;
+  console.log(user, productId);
+  try {
+    await Shop.findByIdAndUpdate(productId, { reserved: user });
+    return resp.status(200).json("success");
+  } catch (err) {
+    log("Buy", err);
+    return resp.status(400).json(err);
+  }
+});
+
+// @route POST api/shop/revoke
+// @desc to revoke a buy request
+router.put("/revoke/:productId", async (req, resp) => {
+  const productId = req.params.productId;
+  try {
+    await Shop.findByIdAndUpdate(productId, { $set: { reserved: undefined } });
+    return resp.status(200).json("success");
+  } catch (err) {
+    log("revoke", err);
+    return resp.status(400).json(err);
+  }
+});
+
+router.delete("/sell/:productId", async (req, resp) => {
+  const productId = req.params.productId;
+  try {
+    await Shop.findByIdAndDelete(productId);
+    return resp.status(200).json("success");
+  } catch (err) {
+    log("sell", err);
+    return resp.status(400).json(err);
   }
 });
 module.exports = router;

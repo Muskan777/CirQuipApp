@@ -290,27 +290,35 @@ export default class Shop extends React.Component {
             }}
           >
             <Paragraph style={styles.price}>₹ {data.price}</Paragraph>
-            <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-              <TouchableOpacity onPress={() => this.phoneCall(data.seller)}>
-                <Avatar.Icon
-                  size={32}
-                  color="#a4c639 "
-                  icon="phone"
-                  backgroundColor="#fff"
-                  elevation={10}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.whatsapp(data.seller)}>
-                <Avatar.Icon
-                  size={33}
-                  color="#fff"
-                  icon="whatsapp"
-                  backgroundColor="#4FCE5D"
-                  elevation={10}
-                  marginLeft={8}
-                />
-              </TouchableOpacity>
-            </View>
+            {this.props.route.params.type === "my" ? (
+              <></>
+            ) : (
+              <>
+                <View
+                  style={{ flexDirection: "row", justifyContent: "flex-end" }}
+                >
+                  <TouchableOpacity onPress={() => this.phoneCall(data.seller)}>
+                    <Avatar.Icon
+                      size={32}
+                      color="#a4c639 "
+                      icon="phone"
+                      backgroundColor="#fff"
+                      elevation={10}
+                    />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.whatsapp(data.seller)}>
+                    <Avatar.Icon
+                      size={33}
+                      color="#fff"
+                      icon="whatsapp"
+                      backgroundColor="#4FCE5D"
+                      elevation={10}
+                      marginLeft={8}
+                    />
+                  </TouchableOpacity>
+                </View>
+              </>
+            )}
           </View>
         </View>
       </>
@@ -358,6 +366,8 @@ export default class Shop extends React.Component {
               ? "Your Wishlist"
               : this.props.route.params.type === "my"
               ? "My Listed Products"
+              : this.props.route.params.type === "requests"
+              ? "Buy Requests"
               : "New Recommendations"}
           </Title>
           {this.state.data && this.state.data.length !== 0 ? (
