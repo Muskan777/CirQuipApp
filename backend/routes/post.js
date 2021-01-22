@@ -1,5 +1,6 @@
 const router = require("express").Router();
 let Post = require("../models/Post");
+const auth = require("../middlewares/auth");
 
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
@@ -17,17 +18,21 @@ router.route("/getPosts").get((req, res) => {
 // @route POST /api/post/createPost
 // @desc Creates new post
 
-router.route("/createPost").post((req, res) => {
+router.route("/createPost").post(auth, (req, res) => {
   let { content, caption } = req.body;
   const createdAt = Date.now();
 
   const newPost = new Post({
+    userId: req.payload.id,
+    userName: req.payload.name,
+    userRole: req.payload.role,
     content,
     caption,
     likes: 0,
     createdAt,
     comments: [],
   });
+
   try {
     newPost
       .save()

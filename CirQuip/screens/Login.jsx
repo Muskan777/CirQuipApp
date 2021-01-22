@@ -19,6 +19,7 @@ export default class Login extends React.Component {
       phone: "9906330301",
       college: "COEP",
       password2: "123",
+      role: "Software Developer",
       toggleSignUp: false,
     };
   }

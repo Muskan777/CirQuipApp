@@ -7,6 +7,10 @@ const UserSchema = mongoose.Schema(
       required: true,
       maxLength: 100,
     },
+    role: {
+      type: String,
+      required: true,
+    },
     phone: {
       type: String,
       required: true,

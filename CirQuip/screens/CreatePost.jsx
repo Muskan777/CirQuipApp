@@ -21,16 +21,26 @@ import {
 import { IconButton } from "react-native-paper";
 import { ImageBrowser } from "expo-image-picker-multiple";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
   const [photos, setPhotos] = React.useState([]);
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
-      .post(`${global.config.host}/post/createPost`, {
-        content: postText, //to be changed to an image
-        caption: postText,
-      })
+      .post(
+        `${global.config.host}/post/createPost`,
+        {
+          content: postText, //changing postText to photos results in error
+          caption: postText,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
       .then(() => {
         Alert.alert("CirQuip", "New Post Created");
       })
