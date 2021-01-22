@@ -93,7 +93,7 @@ export default function App() {
   React.useEffect(() => {
     checkJWT();
   });
-  return status ? (
+  return !status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Stack.Navigator>
