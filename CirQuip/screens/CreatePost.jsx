@@ -53,115 +53,117 @@ export default function CreatePost(props) {
   });
   useEffect(() => {
     const { params } = props.route;
+    // console.log(images);
     if (params) {
-      const { photos } = params;
-      if (photos) setPhotos({ photos });
+      const { images } = params;
+      if (images) setPhotos(images);
     }
   });
   function renderImage(item, i) {
     return (
       <Image
         style={{ height: 100, width: 100 }}
-        source={{ uri: item.uri }}
+        source={{ uri: item }}
         key={i}
       />
     );
   }
   return (
-    <View style={styles.container}>
-      <Button
+    // <View>
+    <View style={styles.mainContent}>
+      {/* <Button
         onPress={() => {
           setModalOpen(true);
         }}
         title="New Post"
-      />
-
-      <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.modalContent}>
-          <View style={styles.topContainer}>
-            <MaterialIcons
-              name="close"
-              style={{ ...styles.Icons, marginTop: 20 }}
-              size={24}
-              onPress={() => {
-                setModalOpen(false);
-                setPostText(null);
-              }}
-            />
-            <FontAwesome
-              name="send"
-              style={{ ...styles.Icons, marginTop: 20 }}
-              size={24}
-              onPress={() => {
-                handleSubmit();
-              }}
-            />
-          </View>
-          <View style={styles.PostArea}>
-            <Image
-              style={styles.PostAreaImage}
-              source={require("../assets/ellipse174b251b3.png")}
-            />
-            <TextInput
-              style={{
-                // borderWidth: 1,
-                // borderColor: "gray",
-                ...styles.PrimaryTextInput,
-              }}
-              editable
-              multiline
-              onChangeText={text => setPostText(text)}
-              placeholder=" What do you want to CirQuip ?"
-              value={postText}
-              numberOfLines={30}
-            />
-
-            <ScrollView>
-              {photos.map((item, i) => renderImage(item, i))}
-            </ScrollView>
-          </View>
-          <View style={styles.bottomContainer}>
-            <View style={{ flexDirection: "row" }}>
-              <TouchableOpacity
-                onPress={() => {
-                  props.navigation.navigate("Camera");
-                  setModalOpen(false);
-                }}
-              >
-                <Entypo
-                  name="camera" //function to upload images to be added here
-                  style={{ ...styles.Icons, marginHorizontal: 5 }}
-                  size={24}
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  props.navigation.navigate("CreatePostImageBrowser");
-                  setModalOpen(false);
-                }}
-              >
-                <Entypo
-                  name="image-inverted"
-                  style={{ ...styles.Icons, marginHorizontal: 5 }}
-                  size={24}
-                />
-              </TouchableOpacity>
-              <Entypo
-                name="attachment"
-                style={{ ...styles.Icons, marginHorizontal: 5 }}
-                size={24}
-              />
-            </View>
-            <AntDesign
-              name="pluscircle"
+      /> */}
+      <View style={styles.topContainer}>
+        <MaterialIcons
+          name="close"
+          style={{ ...styles.Icons, marginTop: 20 }}
+          size={24}
+          onPress={() => {
+            setModalOpen(false);
+            setPostText(null);
+          }}
+        />
+        <FontAwesome
+          name="send"
+          style={{ ...styles.Icons, marginTop: 20 }}
+          size={24}
+          onPress={() => {
+            handleSubmit();
+          }}
+        />
+      </View>
+      <View style={styles.PostArea}>
+        <View style={styles.ProfilePicAndCaption}>
+          <Image
+            style={styles.PostAreaImage}
+            source={require("../assets/ellipse174b251b3.png")}
+          />
+          <TextInput
+            style={{
+              // borderWidth: 1,
+              // borderColor: "gray",
+              ...styles.PrimaryTextInput,
+            }}
+            editable
+            multiline
+            onChangeText={text => setPostText(text)}
+            placeholder=" What do you want to CirQuip ?"
+            value={postText}
+            numberOfLines={30}
+          />
+        </View>
+        <View
+          style={{ display: "flex", flexDirection: "row", overflow: "scroll" }}
+        >
+          {photos?.map((item, i) => renderImage(item, i))}
+        </View>
+      </View>
+      <View style={styles.bottomContainer}>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("Camera");
+              setModalOpen(false);
+            }}
+          >
+            <Entypo
+              name="camera" //function to upload images to be added here
               style={{ ...styles.Icons, marginHorizontal: 5 }}
               size={24}
             />
-          </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => {
+              props.navigation.navigate("CreatePostImageBrowser");
+              setModalOpen(false);
+            }}
+          >
+            <Entypo
+              name="image-inverted"
+              style={{ ...styles.Icons, marginHorizontal: 5 }}
+              size={24}
+            />
+          </TouchableOpacity>
+          <Entypo
+            name="attachment"
+            style={{ ...styles.Icons, marginHorizontal: 5 }}
+            size={24}
+          />
         </View>
-      </Modal>
+        <AntDesign
+          name="pluscircle"
+          style={{ ...styles.Icons, marginHorizontal: 5 }}
+          size={24}
+        />
+      </View>
+      <Modal visible={modalOpen} animationType="slide"></Modal>
     </View>
+    // </View>
   );
 }
 
@@ -182,7 +184,10 @@ const styles = StyleSheet.create({
     color: "#4FB5A5",
     marginBottom: 10,
   },
-
+  PostArea: {
+    display: "flex",
+    flex: 1,
+  },
   PrimaryTextInput: {
     fontSize: 18,
     color: "#000",
@@ -193,10 +198,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginLeft: 10,
   },
-  PostArea: {
+  ProfilePicAndCaption: {
     flex: 1,
     display: "flex",
     flexDirection: "row",
+    height: "50%",
     marginHorizontal: 15,
     marginVertical: 15,
   },
@@ -229,7 +235,7 @@ const styles = StyleSheet.create({
     maxHeight: 60,
     justifyContent: "space-between",
   },
-  modalContent: {
+  mainContent: {
     flex: 1,
     flexDirection: "column",
   },

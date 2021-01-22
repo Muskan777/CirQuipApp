@@ -9,9 +9,15 @@ const ForceInset = {
   bottom: "never",
 };
 
-export default function CreatePostImageBrowser() {
+export default function CreatePostImageBrowser(props) {
   const onDone = data => {
-    Alert.alert("Selected items are", JSON.stringify(data));
+    // Alert.alert("Selected items are", JSON.stringify(data));
+    const images = data;
+    for (let i = 0; i < data.length; i++) {
+      images[i] = images[i]?.uri;
+    }
+    // console.log(images);
+    props.navigation.navigate("CreatePost", { images: images });
   };
 
   const goBack = () => {
