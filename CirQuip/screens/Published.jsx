@@ -14,6 +14,8 @@ import {
 import { Button } from "react-native-paper";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { CommonActions } from "@react-navigation/native";
 const width = Dimensions.get("screen").width;
 
 export default class Published extends React.Component {
@@ -24,6 +26,13 @@ export default class Published extends React.Component {
     };
   }
   async componentDidMount() {
+    this.props.navigation.setOptions({
+      headerLeft: () => <></>,
+    });
+    if (this.state.type === "buy")
+      this.props.navigation.setOptions({
+        title: "Success",
+      });
     await AsyncStorage.getItem("user").then(id => {
       axios
         .get(`${global.config.host}/user/getUserWithId/${id}`)
@@ -48,21 +57,55 @@ export default class Published extends React.Component {
             style={{ height: 220, width: 220, marginBottom: 28 }}
           />
           <Text style={styles.logo}>
-            Congratulations{" "}
-            {JSON.stringify(this.state.user && this.state.user.name)}!
+            {this.state.type === "buy"
+              ? "Success"
+              : "Congratulations " +
+                JSON.stringify(this.state.user && this.state.user.name)}
           </Text>
-          <View style={{ alignSelf: "center", padding: 10 }}>
-            <Text style={styles.desc}>• Your product is live now !</Text>
-            <Text style={styles.desc}>
-              • Reasonable and Less price attracts more buyers.
-            </Text>
-            <Text style={styles.desc}>
-              • Delete your Ads when your product is sold for your convinience.
-            </Text>
-            <Text style={styles.desc}>
-              • Non valuaeble for you is valuaeble for someone, so keep selling
-              on CirQuip and help your Community.
-            </Text>
+          {this.state.type === "buy" ? (
+            <>
+              <View style={{ alignSelf: "center", padding: 10 }}>
+                <Text style={styles.desc}>
+                  • Buy request is sent to the seller !
+                </Text>
+                <Text style={styles.desc}>
+                  • Seller will contact you soon !
+                </Text>
+              </View>
+            </>
+          ) : (
+            <View style={{ alignSelf: "center", padding: 10 }}>
+              <Text style={styles.desc}>• Your product is live now !</Text>
+              <Text style={styles.desc}>
+                • Reasonable and Less price attracts more buyers.
+              </Text>
+              <Text style={styles.desc}>
+                • Delete your Ads when your product is sold for your
+                convinience.
+              </Text>
+              <Text style={styles.desc}>
+                • Non valuaeble for you is valuaeble for someone, so keep
+                selling on CirQuip and help your Community.
+              </Text>
+            </View>
+          )}
+          <View
+            style={{ display: "flex", justifyContent: "center", marginTop: 4 }}
+          >
+            <Button
+              mode="contained"
+              icon="close"
+              onPress={() => {
+                this.props.navigation.dispatch(
+                  CommonActions.reset({
+                    index: 1,
+                    routes: [{ name: "Home" }],
+                  })
+                );
+              }}
+            >
+              Close
+            </Button>
           </View>
         </View>
       </>
@@ -84,7 +127,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     fontWeight: "700",
     fontStyle: "normal",
-    fontFamily: "Segoe UI"
+    fontFamily: "sans-serif",
   },
   inputView: {
     width: "80%",
@@ -123,6 +166,6 @@ const styles = StyleSheet.create({
     color: "rgba(112, 112, 112, 1)",
     fontWeight: "400",
     fontStyle: "normal",
-    fontFamily: "Segoe UI",
+    fontFamily: "sans-serif",
   },
 });

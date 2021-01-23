@@ -169,6 +169,28 @@ export default function Home({ navigation }) {
               </Text>
             </Button>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate({
+                name: "Shop",
+                params: { title: "Buy Requests", type: "requests" },
+              });
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="account"
+              mode="contained"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Buy Requests
+              </Text>
+            </Button>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

@@ -19,6 +19,7 @@ export default class Login extends React.Component {
       phone: "9906330301",
       college: "COEP",
       password2: "123",
+      role: "Software Developer",
       toggleSignUp: false,
     };
   }
@@ -36,8 +37,13 @@ export default class Login extends React.Component {
         }
       })
       .catch(err => {
-        console.log(err.response.data);
-        Alert.alert("Error", err.response.data);
+        console.log(
+          err?.response?.data ? error.response.data : "Something went wrong"
+        );
+        Alert.alert(
+          "Error",
+          err?.response?.data ? err.response.data : "Something went wrong"
+        );
       });
   }
   toggleSignUp() {

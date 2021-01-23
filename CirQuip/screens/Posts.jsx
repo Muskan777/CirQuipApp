@@ -26,7 +26,7 @@ export default function Posts() {
     setIsRefreshing(true);
     fetchData();
     setIsRefreshing(false);
-  }
+  };
 
   const fetchData = () => {
     axios
@@ -35,7 +35,7 @@ export default function Posts() {
         setData(res.data.post);
       })
       .catch(e => console.log(e));
-  }
+  };
 
   if(data.length === 0){
     console.log("im here")
@@ -47,7 +47,17 @@ export default function Posts() {
     <SafeAreaView style={styles.post}>
       <FlatList
         data={data}
-        renderItem={({item}) => <Post createdAt={item.createdAt} caption={item.caption} comments={item.comments} likes={item.likes} content={item.content} />}
+        renderItem={({ item }) => (
+          <Post
+            name={item.userName}
+            role={item.userRole}
+            createdAt={item.createdAt}
+            caption={item.caption}
+            comments={item.comments}
+            likes={item.likes}
+            content={item.content}
+          />
+        )}
         keyExtractor={item => item._id}
         onRefresh={() => onRefresh()}
         refreshing={isRefreshing}

@@ -9,7 +9,14 @@ import {
 } from "react-native";
 import { Card } from "react-native-material-cards";
 
-export default function Post({ createdAt, caption, comments, likes, content }) {
+export default function Post({
+  createdAt,
+  caption,
+  comments,
+  likes,
+  name,
+  role,
+}) {
   var date =
     createdAt.substr(8, 2) +
     "-" +
@@ -30,8 +37,8 @@ export default function Post({ createdAt, caption, comments, likes, content }) {
           source={require("../assets/ellipse1adfd341c.png")}
         />
         <View style={styles.about}>
-          <Text style={styles.name}>Aniket Jha</Text>
-          <Text>Student at College of Engineering, Pune</Text>
+          <Text style={styles.name}>{name}</Text>
+          <Text>{role}</Text>
         </View>
       </View>
       <View style={styles.info}>
