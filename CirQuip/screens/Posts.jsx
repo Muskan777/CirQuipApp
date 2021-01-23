@@ -12,6 +12,7 @@ import {
 import { Card } from "react-native-material-cards";
 import axios from "axios";
 import Post from '../components/Post'
+import Loader from "./Loader";
 
 export default function Posts() {
   const [data, setData] = useState([]);
@@ -32,11 +33,16 @@ export default function Posts() {
       .get(`${global.config.host}/post/getPosts`)
       .then(res => {
         setData(res.data.post);
-        console.log(data)
       })
       .catch(e => console.log(e));
   }
 
+  if(data.length === 0){
+    console.log("im here")
+    return (
+      <Loader />
+    )
+  }
   return (
     <SafeAreaView style={styles.post}>
       <FlatList
