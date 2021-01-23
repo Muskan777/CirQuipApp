@@ -11,6 +11,7 @@ import {
   Alert,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
 } from "react-native";
 import {
   MaterialIcons,
@@ -19,13 +20,14 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { IconButton } from "react-native-paper";
-import { ImageBrowser } from "expo-image-picker-multiple";
+import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
   const [photos, setPhotos] = React.useState([]);
+  const [documentSource, setDocumentSource] = React.useState(null);
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
@@ -70,13 +72,29 @@ export default function CreatePost(props) {
     }
   });
   function renderImage(item, i) {
+    let dimensions = Dimensions.get("window");
+    let imageHeight = Math.round((dimensions.width * 6) / 16);
+    let imageWidth = imageHeight;
+
     return (
       <Image
-        style={{ height: 100, width: 100 }}
+        style={{
+          height: imageHeight,
+          width: imageWidth,
+          borderWidth: 5,
+          borderColor: "#000",
+        }}
         source={{ uri: item }}
         key={i}
       />
     );
+  }
+  async function pickDocument() {
+    const doc = await DocumentPicker.getDocumentAsync();
+    if (doc.type === "success") setDocumentSource(doc);
+    else {
+      Alert.alert("Something went wrong in Picking Document");
+    }
   }
   return (
     // <View>
@@ -93,7 +111,7 @@ export default function CreatePost(props) {
           style={{ ...styles.Icons, marginTop: 20 }}
           size={24}
           onPress={() => {
-            setModalOpen(false);
+            props.navigation.goBack();
             setPostText(null);
           }}
         />
@@ -106,7 +124,7 @@ export default function CreatePost(props) {
           }}
         />
       </View>
-      <View style={styles.PostArea}>
+      <KeyboardAvoidingView style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
           <Image
             style={styles.PostAreaImage}
@@ -127,17 +145,43 @@ export default function CreatePost(props) {
           />
         </View>
         <View
-          style={{ display: "flex", flexDirection: "row", overflow: "scroll" }}
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            marginLeft: 10,
+            alignSelf: "flex-start",
+          }}
+        >
+          <View style={styles.fileContainer}>
+            <AntDesign
+              name="file1"
+              style={{ ...styles.Icons, marginRight: 8 }}
+              size={24}
+              color="black"
+            />
+            <Text>{documentSource?.name}</Text>
+          </View>
+        </View>
+        <View
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            justifyContent: "flex-start",
+            marginLeft: 10,
+            alignSelf: "flex-start",
+          }}
         >
           {photos?.map((item, i) => renderImage(item, i))}
         </View>
-      </View>
+      </KeyboardAvoidingView>
       <View style={styles.bottomContainer}>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate("Camera");
-              setModalOpen(false);
             }}
           >
             <Entypo
@@ -150,7 +194,6 @@ export default function CreatePost(props) {
           <TouchableOpacity
             onPress={() => {
               props.navigation.navigate("CreatePostImageBrowser");
-              setModalOpen(false);
             }}
           >
             <Entypo
@@ -159,19 +202,42 @@ export default function CreatePost(props) {
               size={24}
             />
           </TouchableOpacity>
-          <Entypo
-            name="attachment"
+          <TouchableOpacity onPress={pickDocument}>
+            <Entypo
+              name="attachment"
+              style={{ ...styles.Icons, marginHorizontal: 5 }}
+              size={24}
+            />
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={() => setModalOpen(true)}>
+          <AntDesign
+            name="pluscircle"
             style={{ ...styles.Icons, marginHorizontal: 5 }}
             size={24}
           />
-        </View>
-        <AntDesign
-          name="pluscircle"
-          style={{ ...styles.Icons, marginHorizontal: 5 }}
-          size={24}
-        />
+        </TouchableOpacity>
       </View>
-      <Modal visible={modalOpen} animationType="slide"></Modal>
+      <Modal visible={modalOpen} animationType="slide">
+        <View style={styles.topContainer}>
+          <MaterialIcons
+            name="close"
+            style={{ ...styles.Icons, marginTop: 20 }}
+            size={24}
+            onPress={() => {
+              setModalOpen(false);
+            }}
+          />
+          <FontAwesome
+            name="send"
+            style={{ ...styles.Icons, marginTop: 20 }}
+            size={24}
+            onPress={() => {
+              handleSubmit();
+            }}
+          />
+        </View>
+      </Modal>
     </View>
     // </View>
   );
@@ -209,12 +275,28 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   ProfilePicAndCaption: {
-    flex: 1,
+    flex: 0.2,
     display: "flex",
     flexDirection: "row",
-    height: "50%",
     marginHorizontal: 15,
     marginVertical: 15,
+  },
+  fileContainer: {
+    display: "flex",
+    minWidth: "60%",
+    flexWrap: "wrap",
+    flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+    // maxHeight: 40,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#4FB5A5",
+    elevation: 3,
   },
   topContainer: {
     display: "flex",
@@ -248,5 +330,6 @@ const styles = StyleSheet.create({
   mainContent: {
     flex: 1,
     flexDirection: "column",
+    position: "relative",
   },
 });
