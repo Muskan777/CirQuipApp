@@ -1,11 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
 import { Camera } from "expo-camera";
 import { Entypo } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as MediaLibrary from "expo-media-library";
+import * as Permissions from "expo-permissions";
 export default function CreatePostCamera() {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
+  const [source, setSource] = useState("");
   const cam = useRef();
   const _takePicture = async () => {
     const option = {
@@ -14,14 +25,25 @@ export default function CreatePostCamera() {
       skipProcessing: false,
     };
     if (cam.current) {
-      let photo = await cam.current.takePictureAsync(option);
-      console.log(cam.current.getSupportedRatiosAsync());
-      const source = photo.uri;
-      if (source) {
-        // cam.current.resumePreview();
-        console.log("picture source", source);
+      const photo = await cam.current.takePictureAsync(option);
+      // console.log(cam.current.getSupportedRatiosAsync());
+      // console.log(photo.uri, source);
+      if (photo.uri) {
+        setSource(photo.uri);
       }
+      // cam.current.resumePreview();
+      console.log("picture source", photo.uri);
     }
+  };
+  const handleSave = async source => {
+    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    if (status === "granted") {
+      const asset = await MediaLibrary.createAssetAsync(source);
+      MediaLibrary.createAlbumAsync("Cirquip", asset);
+    } else {
+      Alert.alert("Access to Gallery Permission is required");
+    }
+    setSource(null);
   };
   useEffect(() => {
     (async () => {
@@ -38,30 +60,60 @@ export default function CreatePostCamera() {
   }
   return (
     <View style={styles.container}>
-      <Camera ref={cam} style={styles.camera} type={type}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.FlipButton}
-            onPress={() => {
-              setType(
-                type === Camera.Constants.Type.back
-                  ? Camera.Constants.Type.front
-                  : Camera.Constants.Type.back
-              );
+      {source ? (
+        <View style={styles.camera}>
+          <Image
+            flex={1}
+            source={{
+              uri: source,
             }}
-          >
-            <MaterialIcons name="flip-camera-ios" size={60} color="white" />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.CaptureButton}
-            onPress={() => {
-              _takePicture();
-            }}
-          >
-            <Entypo name="circle" size={60} color="white" />
-          </TouchableOpacity>
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.FlipButton}
+              onPress={() => {
+                setSource(null);
+              }}
+            >
+              <Feather name="x-square" size={60} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.CaptureButton}
+              onPress={() => {
+                Alert.alert("saved to gallery");
+                handleSave(source);
+              }}
+            >
+              <MaterialIcons name="done" size={60} color="white" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </Camera>
+      ) : (
+        <Camera ref={cam} style={styles.camera} type={type}>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={styles.FlipButton}
+              onPress={() => {
+                setType(
+                  type === Camera.Constants.Type.back
+                    ? Camera.Constants.Type.front
+                    : Camera.Constants.Type.back
+                );
+              }}
+            >
+              <MaterialIcons name="flip-camera-ios" size={60} color="white" />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.CaptureButton}
+              onPress={() => {
+                _takePicture();
+              }}
+            >
+              <Entypo name="circle" size={60} color="white" />
+            </TouchableOpacity>
+          </View>
+        </Camera>
+      )}
     </View>
   );
 }
