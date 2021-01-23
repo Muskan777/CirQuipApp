@@ -9,7 +9,7 @@ const auth = require("../middlewares/auth");
 
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
-  let { name, phone, college, email, password } = req.body;
+  let { name, phone, college, email, password, role } = req.body;
   phone = parseInt(phone);
   try {
     User.findOne({ email }).then(user => {
@@ -22,6 +22,7 @@ router.post("/register", (req, res) => {
           college,
           email,
           password,
+          role,
           Post: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
@@ -58,6 +59,7 @@ router.post("/login", (req, res) => {
           const payload = {
             id: user.id,
             name: user.name,
+            role: user.role,
           };
           jwt.sign(
             payload,

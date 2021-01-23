@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
-import Post from '../components/Post'
+import Post from "../components/Post";
 
 export default function Posts() {
   const [data, setData] = useState([]);
@@ -25,23 +25,33 @@ export default function Posts() {
     setIsRefreshing(true);
     fetchData();
     setIsRefreshing(false);
-  }
+  };
 
   const fetchData = () => {
     axios
       .get(`${global.config.host}/post/getPosts`)
       .then(res => {
         setData(res.data.post);
-        console.log(data)
+        console.log(data);
       })
       .catch(e => console.log(e));
-  }
+  };
 
   return (
     <SafeAreaView style={styles.post}>
       <FlatList
         data={data}
-        renderItem={({item}) => <Post createdAt={item.createdAt} caption={item.caption} comments={item.comments} likes={item.likes} content={item.content} />}
+        renderItem={({ item }) => (
+          <Post
+            name={item.userName}
+            role={item.userRole}
+            createdAt={item.createdAt}
+            caption={item.caption}
+            comments={item.comments}
+            likes={item.likes}
+            content={item.content}
+          />
+        )}
         keyExtractor={item => item._id}
         onRefresh={() => onRefresh()}
         refreshing={isRefreshing}
