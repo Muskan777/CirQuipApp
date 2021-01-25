@@ -40,7 +40,8 @@ export default class Shop extends React.Component {
     if (Platform.OS !== "android") {
       phoneNumber = `telprompt:${phone}`;
     } else {
-      phoneNumber = `tel:${phone}`;
+      //phoneNumber = `tel:${phone}`;
+      phoneNumber = "tel:" + phone;
     }
     Linking.canOpenURL(phoneNumber)
       .then(supported => {
@@ -101,13 +102,14 @@ export default class Shop extends React.Component {
           this.setState({ refreshing: false });
         })
         .catch(e => {
+          this.setState({ refreshing: false });
           Alert.alert("Error", "Something went wrong");
           console.log(e);
         });
     });
   }
   handleLike = async id => {
-    console.log("inside like");
+    //console.log("inside like");
     await axios
       .put(`${global.config.host}/shop/like`, {
         user: this.state.id,
@@ -199,6 +201,24 @@ export default class Shop extends React.Component {
       .catch(e => {
         Alert.alert("Error", "Something went wrong");
         console.log(e);
+      });
+  };
+  performSearch = () => {
+    if (this.state.searchQuery === "") {
+      this.fetchData();
+      return;
+    }
+    this.setState({ refreshing: true });
+    axios
+      .get(`${global.config.host}/shop/search/${this.state.searchQuery}`)
+      .then(res => {
+        this.setState({ data: res.data });
+        this.setState({ refreshing: false });
+      })
+      .catch(err => {
+        this.setState({ refreshing: false });
+        Alert.alert("Error", "Something went wrong !");
+        console.log(err);
       });
   };
   onChangeSearch = query => this.setState({ searchQuery: query });
@@ -366,6 +386,8 @@ export default class Shop extends React.Component {
       <>
         <SafeAreaView style={{ backgroundColor: "#fff", marginBottom: 10 }}>
           <Searchbar
+            onSubmitEditing={() => this.performSearch()}
+            returnKeyType="search"
             style={{ margin: 5 }}
             placeholder="Search"
             onChangeText={this.onChangeSearch}
@@ -400,8 +422,16 @@ export default class Shop extends React.Component {
               onRefresh={this.handleRefresh}
               style={{ marginBottom: 5 }}
             />
-          ) : (
+          ) : this.state.refreshing ? (
             <></>
+          ) : (
+            <>
+              <View style={{ justifyContent: "center" }}>
+                <Title style={{ width: width, textAlign: "center" }}>
+                  Could not find any products :({" "}
+                </Title>
+              </View>
+            </>
           )}
         </SafeAreaView>
       </>

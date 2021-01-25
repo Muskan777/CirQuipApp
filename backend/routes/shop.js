@@ -8,11 +8,22 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 //const ObjectId = require("mongodb").ObjectID;
 
 /*
- * @route POST api/shop/products/type
- * @desc get the products available for sale depending on type
- * {type = all {default} | liked | my}
+ * @route POST api/shop/search/query
+ * @desc get the products on basis of search query
  */
 
+router.get("/search/:query", async (req, resp) => {
+  const query = req.params.query;
+  // '^' + query
+  const regex = new RegExp(query, "i");
+  try {
+    const data = await Shop.find({ name: { $regex: regex } });
+    return resp.status(200).json(data);
+  } catch (err) {
+    log("search", err);
+    return resp.status(401).json("Error in searching query");
+  }
+});
 router.post("/products/:type", async (req, resp) => {
   const type = req.params.type;
   const { id } = req.body;
