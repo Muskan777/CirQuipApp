@@ -12,18 +12,18 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
  * @desc get the products on basis of search query
  */
 
-router.get("/search/:query", async (req, resp) => {
-  const query = req.params.query;
-  // '^' + query
-  const regex = new RegExp(query, "i");
-  try {
-    const data = await Shop.find({ name: { $regex: regex } });
-    return resp.status(200).json(data);
-  } catch (err) {
-    log("search", err);
-    return resp.status(401).json("Error in searching query");
-  }
-});
+//router.get("/search/:query", async (req, resp) => {
+//const query = req.params.query;
+//// '^' + query
+//const regex = new RegExp(query, "i");
+//try {
+//const data = await Shop.find({ name: { $regex: regex } });
+//return resp.status(200).json(data);
+//} catch (err) {
+//log("search", err);
+//return resp.status(401).json("Error in searching query");
+//}
+//});
 router.post("/products/:type/:query", async (req, resp) => {
   const query = req.params.query;
   const type = req.params.type;
