@@ -3,8 +3,12 @@ const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieparser = require("cookie-parser");
 const connectDB = require("./config/config");
+const users = {};
 
 const app = express();
+
+const server = require("http").createServer(app);
+const io = require("socket.io")(server);
 
 app.use(bodyparser.urlencoded({ extended: false }));
 app.use(bodyparser.json());
@@ -20,7 +24,29 @@ const routes = ["post", "comment", "user", "shop"];
 
 routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
+// io.on("connection", socket => {
+//   console.log("A user connected :)");
+//   socket.on("new user", function (data) {
+//     users[socket.email] = socket;
+//     console.log(users);
+//   });
+
+//   socket.on("send message", data => {
+//     console.log(data);
+//     users[email].emit("new message", { msg: data, nick: socket.email });
+//   });
+
+//   socket.on("disconnect", function (data) {
+//     if (!socket.email) {
+//       return;
+//     }
+//     delete users[socket.email];
+//     updatenicknames();
+//   });
+// });
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+
+server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

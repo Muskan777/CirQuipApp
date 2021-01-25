@@ -6,4 +6,5 @@ global.config = {
   host: __DEV__
     ? "http://" + Constants.default.manifest.hostUri.split(":")[0] + ":3000/api"
     : "https://cirquip.vasusharma.me",
+  admin: "vasusharma656@gmail.com",
 };

@@ -102,6 +102,16 @@ router.get("/getUserWithId/:id", async (req, res) => {
   }
 });
 
+router.route("/getUsers").get((req, res) => {
+  try {
+    User.find()
+      .then(post => res.status(200).send({ post: post }))
+      .catch(err => res.status(400).json("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 router.post("/verifyJWT", auth, (req, res) => {
   req.payload
     ? res.status(200).json(req.payload.id)
