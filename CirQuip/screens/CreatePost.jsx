@@ -154,15 +154,17 @@ export default function CreatePost(props) {
             alignSelf: "flex-start",
           }}
         >
-          <View style={styles.fileContainer}>
-            <AntDesign
-              name="file1"
-              style={{ ...styles.Icons, marginRight: 8 }}
-              size={24}
-              color="black"
-            />
-            <Text>{documentSource?.name}</Text>
-          </View>
+          {documentSource && (
+            <View style={styles.fileContainer}>
+              <AntDesign
+                name="file1"
+                style={{ ...styles.Icons, marginRight: 8 }}
+                size={24}
+                color="black"
+              />
+              <Text>{documentSource?.name}</Text>
+            </View>
+          )}
         </View>
         <View
           style={{

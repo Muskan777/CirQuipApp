@@ -13,7 +13,7 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import * as Permissions from "expo-permissions";
-export default function CreatePostCamera() {
+export default function CreatePostCamera(props) {
   const [hasPermission, setHasPermission] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [source, setSource] = useState("");
@@ -32,7 +32,7 @@ export default function CreatePostCamera() {
         setSource(photo.uri);
       }
       // cam.current.resumePreview();
-      console.log("picture source", photo.uri);
+      // console.log("picture source", photo.uri);
     }
   };
   const handleSave = async source => {
@@ -43,6 +43,7 @@ export default function CreatePostCamera() {
     } else {
       Alert.alert("Access to Gallery Permission is required");
     }
+    props.navigation.navigate("CreatePost", { images: [source] });
     setSource(null);
   };
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function CreatePostCamera() {
             <TouchableOpacity
               style={styles.CaptureButton}
               onPress={() => {
-                Alert.alert("saved to gallery");
+                // Alert.alert("saved to gallery");
                 handleSave(source);
               }}
             >
