@@ -94,7 +94,7 @@ export default class Shop extends React.Component {
     await AsyncStorage.getItem("user").then(async id => {
       await axios
         .post(
-          `${global.config.host}/shop/products/${this.props.route.params.type}`,
+          `${global.config.host}/shop/products/${this.props.route.params.type}/*`,
           { id: id }
         )
         .then(res => {
@@ -203,23 +203,29 @@ export default class Shop extends React.Component {
         console.log(e);
       });
   };
-  performSearch = () => {
+  performSearch = async () => {
     if (this.state.searchQuery === "") {
       this.fetchData();
       return;
     }
     this.setState({ refreshing: true });
-    axios
-      .get(`${global.config.host}/shop/search/${this.state.searchQuery}`)
-      .then(res => {
-        this.setState({ data: res.data });
-        this.setState({ refreshing: false });
-      })
-      .catch(err => {
-        this.setState({ refreshing: false });
-        Alert.alert("Error", "Something went wrong !");
-        console.log(err);
-      });
+    await AsyncStorage.getItem("user").then(async id => {
+      axios
+        .post(
+          `${global.config.host}/shop/products/${this.props.route.params.type}/${this.state.searchQuery}`,
+          { id: id },
+          { headers: { search: true } }
+        )
+        .then(res => {
+          this.setState({ data: res.data });
+          this.setState({ refreshing: false });
+        })
+        .catch(err => {
+          this.setState({ refreshing: false });
+          Alert.alert("Error", "Something went wrong !");
+          console.log(err);
+        });
+    });
   };
   onChangeSearch = query => this.setState({ searchQuery: query });
   renderItemComponent = obj => {
