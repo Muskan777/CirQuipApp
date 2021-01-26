@@ -1,6 +1,7 @@
 import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
+import { Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import {
@@ -22,8 +23,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
+import { ChatWithUser } from "./screens/ChatWithUser";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import CreatePostCamera from "./screens/CreatePostCamera";
+
 const Stack = createStackNavigator();
 const theme = {
   ...DefaultTheme,
@@ -59,6 +62,7 @@ export default function App() {
   const handleStatus = param => setStatus(param);
 
   const [status, setStatus] = React.useState(false);
+
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
       if (global.config.debug) console.log("jwt", jwt);
@@ -77,6 +81,19 @@ export default function App() {
             //console.log("data", res.data);
             try {
               await AsyncStorage.setItem("user", res.data);
+              //console.log(res.data);
+              axios
+                .get(`${global.config.host}/user/getUserWithId/${res.data}`)
+                .then(res => {
+                  console.log(res.data.email);
+                })
+                .catch(err => {
+                  Alert.alert(
+                    "Error",
+                    "Something Went Wrong In Fetching Admin 1"
+                  );
+                  console.log(err);
+                });
             } catch {}
             setStatus(true);
           })
@@ -90,9 +107,11 @@ export default function App() {
       }
     });
   };
+
   React.useEffect(() => {
     checkJWT();
-  });
+  }, []);
+
   return status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
@@ -166,13 +185,20 @@ export default function App() {
               title: "Create Post",
             }}
           />
-
           <Stack.Screen
             name="ChatWithAdmin"
             component={ChatWithAdmin}
             options={{
               ...stackOptions,
-              title: "Chat With Admin",
+              title: "ChatBox",
+            }}
+          />
+          <Stack.Screen
+            name="ChatWithUser"
+            component={ChatWithUser}
+            options={{
+              ...stackOptions,
+              title: "Chat With User",
             }}
           />
         </Stack.Navigator>

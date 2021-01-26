@@ -8,20 +8,37 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 //const ObjectId = require("mongodb").ObjectID;
 
 /*
- * @route POST api/shop/products/type
- * @desc get the products available for sale depending on type
- * {type = all {default} | liked | my}
+ * @route POST api/shop/search/query
+ * @desc get the products on basis of search query
  */
 
-router.post("/products/:type", async (req, resp) => {
+//router.get("/search/:query", async (req, resp) => {
+//const query = req.params.query;
+//// '^' + query
+//const regex = new RegExp(query, "i");
+//try {
+//const data = await Shop.find({ name: { $regex: regex } });
+//return resp.status(200).json(data);
+//} catch (err) {
+//log("search", err);
+//return resp.status(401).json("Error in searching query");
+//}
+//});
+router.post("/products/:type/:query", async (req, resp) => {
+  const query = req.params.query;
   const type = req.params.type;
   const { id } = req.body;
+  let regex;
+  if (req.header("search")) regex = new RegExp(query, "i");
+  else regex = new RegExp(".*");
+
   console.log(type);
   switch (type) {
     case "my": {
       try {
         const products = await Shop.find({
           seller: id,
+          name: { $regex: regex },
         });
         //log("products", products);
         return resp.status(200).json(products);
@@ -34,6 +51,7 @@ router.post("/products/:type", async (req, resp) => {
       try {
         const products = await Shop.find({
           seller: id,
+          name: { $regex: regex },
           reserved: { $exists: true },
         });
         //log("products", products);
@@ -48,13 +66,15 @@ router.post("/products/:type", async (req, resp) => {
       try {
         const user = await User.findOne({
           _id: id,
-          reserved: { $exists: false },
-          seller: { $ne: id },
         });
+        console.log(user);
         if (!user._doc.likes || user._doc.likes.length === 0)
           return resp.status(200).json([]);
         const products = await Shop.find({
           _id: { $in: user._doc.likes },
+          reserved: { $exists: false },
+          //seller: { $ne: id },
+          name: { $regex: regex },
         });
         log("products", products);
         return resp.status(200).json(products);
@@ -66,7 +86,10 @@ router.post("/products/:type", async (req, resp) => {
 
     default: {
       try {
-        const data = await Shop.find({ reserved: { $exists: false } });
+        const data = await Shop.find({
+          reserved: { $exists: false },
+          name: { $regex: regex },
+        });
         //log("products data", data);
         return resp.status(200).json(data);
       } catch (err) {

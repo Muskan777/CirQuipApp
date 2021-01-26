@@ -26,6 +26,7 @@ export default function CreatePostCamera(props) {
     };
     if (cam.current) {
       const photo = await cam.current.takePictureAsync(option);
+      console.log(photo);
       // console.log(cam.current.getSupportedRatiosAsync());
       // console.log(photo.uri, source);
       if (photo.uri) {

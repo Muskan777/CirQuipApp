@@ -17,19 +17,44 @@ import {
   Card,
   Paragraph,
 } from "react-native-paper";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import "../config";
 
 const { width, height } = Dimensions.get("window");
 // #25f183
 export default function Home({ navigation }) {
   const [margin, setMargin] = useState(0);
-
   let [data, setData] = useState([1, 2, 3, 4]);
+  let [email, setemail] = useState("");
+  const [assign, setassign] = React.useState(false);
+
+  const findEmail = async () => {
+    let user = await AsyncStorage.getItem("user");
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          setemail(res.data.email);
+          setassign(true);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
+          console.log(err);
+        });
+    }
+  };
 
   useEffect(() => {
+    findEmail();
+  });
+
+  useEffect(() => {
+    findEmail();
     setMargin(getStatusBarHeight());
   }, []);
 
-  return (
+  return assign ? (
     <ScrollView>
       <View style={styles.container}>
         <Title style={styles.title}>
@@ -93,25 +118,7 @@ export default function Home({ navigation }) {
               </Text>
             </Button>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("ChatWithAdmin");
-            }}
-          >
-            <Button
-              style={{ ...styles.shopButton }}
-              mode="contained"
-              icon="pen"
-            >
-              <Text
-                style={{
-                  fontSize: 20,
-                }}
-              >
-                Chat With Admin
-              </Text>
-            </Button>
-          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => {
               navigation.navigate("Sell");
@@ -191,9 +198,58 @@ export default function Home({ navigation }) {
               </Text>
             </Button>
           </TouchableOpacity>
+          {email == global.config.admin ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate({
+                  name: "ChatWithUser",
+                  params: { email: email },
+                });
+              }}
+            >
+              <Button
+                style={{ ...styles.shopButton }}
+                mode="contained"
+                icon="pen"
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                  }}
+                >
+                  Chat With User
+                </Text>
+              </Button>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate({
+                  name: "ChatWithAdmin",
+                  params: { email: email },
+                });
+              }}
+            >
+              <Button
+                style={{ ...styles.shopButton }}
+                mode="contained"
+                icon="pen"
+              >
+                <Text
+                  style={{
+                    fontSize: 20,
+                  }}
+                >
+                  Chat With Admin
+                </Text>
+              </Button>
+            </TouchableOpacity>
+          )}
         </View>
       </View>
     </ScrollView>
+  ) : (
+    <Text>Loading...</Text>
   );
 }
 
