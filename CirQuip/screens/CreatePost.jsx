@@ -23,18 +23,30 @@ import { IconButton } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
   const [photos, setPhotos] = React.useState([]);
+  const [users, setUsers] = React.useState([]);
   const [documentSource, setDocumentSource] = React.useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`${global.config.host}/user/getUsers`)
+      .then(res => {
+        setUsers(res.data.users);
+      })
+      .catch(e => console.log(e));
+  }, []);
+
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: postText, //changing postText to photos results in error
+          content: photos,
           caption: postText,
         },
         {
