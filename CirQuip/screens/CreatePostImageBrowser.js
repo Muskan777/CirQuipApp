@@ -3,6 +3,7 @@ import { Text, View, StyleSheet, SafeAreaView, Alert } from "react-native";
 import { AssetsSelector } from "expo-images-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const ForceInset = {
   top: "never",
@@ -10,19 +11,38 @@ const ForceInset = {
 };
 
 export default function CreatePostImageBrowser(props) {
-  const onDone = data => {
+  const onDone = async data => {
     // Alert.alert("Selected items are", JSON.stringify(data));
     const images = data;
+    // const base64 = await ConvertBase64(data[0]?.uri);
+    console.log(data[0].uri);
+    // console.log(manipResult.base64);
     for (let i = 0; i < data.length; i++) {
-      images[i] = images[i]?.uri;
+      const manipResult = await ImageManipulator.manipulateAsync(
+        data[i].uri,
+        [],
+        {
+          base64: true,
+        }
+      );
+      images[i] = manipResult.base64;
     }
     // console.log(images);
     props.navigation.navigate("CreatePost", { images: images });
   };
 
-  const goBack = () => {
-    console.log("Going back use Navigator goBack() hook");
-  };
+  // const ConvertBase64 = file => {
+  //   return new Promise((resolve, reject) => {
+  //     const fileReader = new FileReader();
+  //     fileReader.readAsDataURL(file);
+  //     fileReader.onload = () => {
+  //       resolve(fileReader.result);
+  //     };
+  //     fileReader.onerror = err => {
+  //       reject(err);
+  //     };
+  //   });
+  // };
 
   return (
     <SafeAreaProvider>
@@ -59,7 +79,7 @@ export default function CreatePostImageBrowser(props) {
                 goBackText: "BACK ",
                 textStyle: styles.textStyle,
                 buttonStyle: styles.buttonStyle,
-                backFunction: () => goBack(),
+                backFunction: () => props.navigation.goBack(),
                 doneFunction: data => onDone(data),
               },
 
