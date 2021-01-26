@@ -29,22 +29,22 @@ export default function CreatePostCamera(props) {
       console.log(photo);
       // console.log(cam.current.getSupportedRatiosAsync());
       // console.log(photo.uri, source);
-      if (photo.uri) {
-        setSource(photo.uri);
+      if (photo.base64) {
+        setSource(photo);
       }
       // cam.current.resumePreview();
       // console.log("picture source", photo.uri);
     }
   };
   const handleSave = async source => {
-    const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
-    if (status === "granted") {
-      const asset = await MediaLibrary.createAssetAsync(source);
-      MediaLibrary.createAlbumAsync("Cirquip", asset);
-    } else {
-      Alert.alert("Access to Gallery Permission is required");
-    }
-    props.navigation.navigate("CreatePost", { images: [source] });
+    // const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+    // if (status === "granted") {
+    //   const asset = await MediaLibrary.createAssetAsync(source.uri);
+    //   MediaLibrary.createAlbumAsync("Cirquip", asset);
+    // } else {
+    //   Alert.alert("Access to Gallery Permission is required");
+    // }
+    props.navigation.navigate("CreatePost", { images: [source.base64] });
     setSource(null);
   };
   useEffect(() => {
@@ -67,7 +67,7 @@ export default function CreatePostCamera(props) {
           <Image
             flex={1}
             source={{
-              uri: source,
+              uri: `data:image/jpg;base64,${source.base64}`,
             }}
           />
           <View style={styles.buttonContainer}>

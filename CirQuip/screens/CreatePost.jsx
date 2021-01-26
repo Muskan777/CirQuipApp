@@ -75,7 +75,7 @@ export default function CreatePost(props) {
     let dimensions = Dimensions.get("window");
     let imageHeight = Math.round((dimensions.width * 6) / 16);
     let imageWidth = imageHeight;
-
+    console.log(item);
     return (
       <Image
         style={{
@@ -84,7 +84,9 @@ export default function CreatePost(props) {
           borderWidth: 5,
           borderColor: "#000",
         }}
-        source={{ uri: item }}
+        source={{
+          uri: `data:image/jpg;base64,${item}`,
+        }}
         key={i}
       />
     );
