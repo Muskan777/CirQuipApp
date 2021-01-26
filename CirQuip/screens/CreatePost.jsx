@@ -23,7 +23,7 @@ import { IconButton } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as FileSystem from "expo-file-system";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postText, setPostText] = React.useState(null);
@@ -105,8 +105,14 @@ export default function CreatePost(props) {
   }
   async function pickDocument() {
     const doc = await DocumentPicker.getDocumentAsync();
-    if (doc.type === "success") setDocumentSource(doc);
-    else {
+    if (doc.type === "success") {
+      const docBase64 = await FileSystem.readAsStringAsync(doc.uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      doc["base64"] = docBase64;
+      setDocumentSource(doc);
+      // console.log("loged", documentSource["base64"]);
+    } else {
       Alert.alert("Something went wrong in Picking Document");
     }
   }
@@ -337,6 +343,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     // borderWidth: 1,
     // borderColor: "gray",
+    backgroundColor: "#fff",
     flex: 1,
     paddingTop: 10,
     flexDirection: "row",
