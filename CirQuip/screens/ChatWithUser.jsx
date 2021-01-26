@@ -13,7 +13,7 @@ export function ChatWithUser(props) {
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
         if (props.route.params.email == global.config.admin) {
-          const thread = res.data.post.map(user => {
+          const thread = res.data.users.map(user => {
             return {
               _id: user.email,
               name: user.name,
