@@ -23,13 +23,16 @@ export default class Login extends React.Component {
       toggleSignUp: false,
     };
   }
-  handleLogin() {
-    axios
+  async handleLogin() {
+    await axios
       .post(`${global.config.host}/user/login`, this.state)
       .then(async res => {
         try {
+          console.log("response", res.data);
           await AsyncStorage.setItem("cirquip-auth-token", res.data.token);
-          //Alert.alert("CirQuip", res.data.token);
+          await AsyncStorage.setItem("user", res.data._id);
+          let info = { likes: res.data.likes ? res.data.likes : [] };
+          await AsyncStorage.setItem("info", JSON.stringify(info));
           this.props.handleStatus(true);
         } catch (err) {
           console.log(err);

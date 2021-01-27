@@ -70,6 +70,7 @@ router.post("/login", (req, res) => {
             (err, token) => {
               if (token) {
                 res.status(200).json({
+                  ...user._doc,
                   token: token,
                   msg: "User successfully logged in",
                 });
