@@ -20,6 +20,7 @@ import {
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "../config";
+import Loader from "./Loader.jsx";
 
 const { width, height } = Dimensions.get("window");
 // #25f183
@@ -249,7 +250,7 @@ export default function Home({ navigation }) {
       </View>
     </ScrollView>
   ) : (
-    <Text>Loading...</Text>
+    <Loader />
   );
 }
 
