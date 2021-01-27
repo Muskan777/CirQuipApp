@@ -203,7 +203,10 @@ export default function CreatePost(props) {
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("Camera");
+              props.navigation.navigate({
+                name: "Camera",
+                params: { from: "CreatePost" },
+              });
             }}
           >
             <Entypo
