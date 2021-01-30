@@ -78,10 +78,9 @@ export default function App() {
             }
           )
           .then(async res => {
-            //console.log("data", res.data);
+            console.log("data", res.data);
             try {
               await AsyncStorage.setItem("user", res.data);
-              //console.log(res.data);
               axios
                 .get(`${global.config.host}/user/getUserWithId/${res.data}`)
                 .then(res => {

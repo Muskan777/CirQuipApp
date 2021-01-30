@@ -44,7 +44,9 @@ export default function CreatePostCamera(props) {
     // } else {
     //   Alert.alert("Access to Gallery Permission is required");
     // }
-    props.navigation.navigate("CreatePost", { images: [source.base64] });
+    props.navigation.navigate(props.route.params.from, {
+      images: [source.base64],
+    });
     setSource(null);
   };
   useEffect(() => {

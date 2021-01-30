@@ -91,6 +91,7 @@ export default class Shop extends React.Component {
 
   async fetchData() {
     this.setState({ refreshing: true });
+    console.log(this.props.route.params.type);
     await AsyncStorage.getItem("user").then(async id => {
       await axios
         .post(
@@ -230,7 +231,7 @@ export default class Shop extends React.Component {
   onChangeSearch = query => this.setState({ searchQuery: query });
   renderItemComponent = obj => {
     const { item: data, index } = obj;
-    console.log(this.state.user);
+    //console.log(this.state.user);
     return (
       <>
         <View style={{ flexDirection: "column" }}>
