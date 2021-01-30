@@ -5,13 +5,13 @@ import {
   View,
   Modal,
   Image,
-  Button,
   TextInput,
   Dimensions,
   Alert,
   TouchableOpacity,
-  ScrollView,
   KeyboardAvoidingView,
+  FlatList,
+  SafeAreaView,
 } from "react-native";
 import {
   MaterialIcons,
@@ -19,23 +19,28 @@ import {
   FontAwesome,
   AntDesign,
 } from "@expo/vector-icons";
-import { IconButton } from "react-native-paper";
+import { IconButton, Searchbar } from "react-native-paper";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
+import { ScrollView } from "react-native-gesture-handler";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [postText, setPostText] = React.useState(null);
-  const [photos, setPhotos] = React.useState([]);
-  const [users, setUsers] = React.useState([]);
-  const [documentSource, setDocumentSource] = React.useState(null);
-
+  const [postText, setPostText] = useState(null);
+  const [photos, setPhotos] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [requiredusers, setRequiredUsers] = useState([]);
+  const [documentSource, setDocumentSource] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isTagged, setIsTagged] = useState(false);
+  const [taggedList, setTaggedList] = useState([]);
   useEffect(() => {
     axios
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
         setUsers(res.data.users);
+        setRequiredUsers(res.data.users);
       })
       .catch(e => console.log(e));
   }, []);
@@ -116,6 +121,22 @@ export default function CreatePost(props) {
       Alert.alert("Something went wrong in Picking Document");
     }
   }
+  const searchFunction = () => {
+    console.log(searchQuery);
+    if (searchQuery == "") {
+      setRequiredUsers(users);
+    }
+    // console.log(users[0]);
+    setRequiredUsers(
+      users?.filter(user => {
+        return (
+          user.name.includes(searchQuery) || user.role.includes(searchQuery)
+        );
+      })
+    );
+  };
+  useEffect(searchFunction, [searchQuery]);
+
   return (
     // <View>
     <View style={styles.mainContent}>
@@ -146,10 +167,29 @@ export default function CreatePost(props) {
       </View>
       <KeyboardAvoidingView style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
-          <Image
-            style={styles.PostAreaImage}
-            source={require("../assets/ellipse174b251b3.png")}
-          />
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <Image
+              style={{ ...styles.PostAreaImage }}
+              source={require("../assets/ellipse174b251b3.png")}
+            />
+            <ScrollView
+              style={{
+                fontSize: 14,
+                marginHorizontal: 10,
+                maxWidth: "84%",
+                display: "flex",
+              }}
+            >
+              <Text style={{ fontWeight: "bold" }}>User's Name</Text>
+              <Text style={{ fontWeight: "bold" }}>
+                {taggedList && <Text>with </Text>}
+                {taggedList &&
+                  taggedList.map((user, i) => {
+                    return <Text key={i}>{user.name}, </Text>;
+                  })}
+              </Text>
+            </ScrollView>
+          </View>
           <TextInput
             style={{
               // borderWidth: 1,
@@ -244,22 +284,59 @@ export default function CreatePost(props) {
         </TouchableOpacity>
       </View>
       <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.topContainer}>
+        <View style={styles.tagContainer}>
           <MaterialIcons
             name="close"
             style={{ ...styles.Icons, marginTop: 20 }}
-            size={24}
+            size={28}
             onPress={() => {
               setModalOpen(false);
             }}
           />
-          <FontAwesome
-            name="send"
-            style={{ ...styles.Icons, marginTop: 20 }}
-            size={24}
-            onPress={() => {
-              handleSubmit();
+          <TextInput
+            style={{ flex: 1, margin: 5, fontSize: 20, maxHeight: "100%" }}
+            // onSubmitEditing={() => performSearch()}
+            placeholder="Search"
+            onChangeText={query => {
+              // console.log(users);
+              setSearchQuery(query);
             }}
+            value={searchQuery}
+          />
+          <TouchableOpacity onPress={() => {}}>
+            <MaterialIcons
+              name="check"
+              style={{ ...styles.Icons, marginTop: 20 }}
+              size={28}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 0.8 }}>
+          <FlatList
+            data={requiredusers}
+            keyExtractor={item => item._id}
+            renderItem={user => (
+              <TouchableOpacity
+                onPress={() => {
+                  setTaggedList(previous => [
+                    ...previous,
+                    { _id: user.item._id, name: user.item.name },
+                  ]);
+                  // console.log(user.item._id);
+                }}
+              >
+                <View style={{ ...styles.tagCard }}>
+                  <Image
+                    style={styles.tagImage}
+                    source={require("../assets/ellipse174b251b3.png")}
+                  />
+                  <Text style={{ fontSize: 18 }}>{`${user.item.name}  |`}</Text>
+                  <Text style={{ marginLeft: 8, fontSize: 12 }}>
+                    {user.item.role}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
           />
         </View>
       </Modal>
@@ -274,6 +351,27 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
+  },
+  tagImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+  tagCard: {
+    display: "flex",
+    flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+  },
+  tagContainer: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    maxHeight: 70,
+    justifyContent: "space-between",
+    borderBottomWidth: 0.5,
   },
   PostAreaImage: {
     width: 62,
@@ -302,7 +400,7 @@ const styles = StyleSheet.create({
   ProfilePicAndCaption: {
     flex: 0.2,
     display: "flex",
-    flexDirection: "row",
+    // flexDirection: "row",
     marginHorizontal: 15,
     marginVertical: 15,
   },
