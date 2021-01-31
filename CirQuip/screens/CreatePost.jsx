@@ -136,16 +136,15 @@ export default function CreatePost(props) {
     );
   };
   useEffect(searchFunction, [searchQuery]);
+  const removeTags = indexToRemove => {
+    setTaggedList([
+      ...taggedList.filter((_, index) => index !== indexToRemove),
+    ]);
+  };
 
   return (
     // <View>
     <View style={styles.mainContent}>
-      {/* <Button
-        onPress={() => {
-          setModalOpen(true);
-        }}
-        title="New Post"
-      /> */}
       <View style={styles.topContainer}>
         <MaterialIcons
           name="close"
@@ -174,19 +173,24 @@ export default function CreatePost(props) {
             />
             <ScrollView
               style={{
-                fontSize: 14,
                 marginHorizontal: 10,
                 maxWidth: "84%",
                 display: "flex",
               }}
             >
-              <Text style={{ fontWeight: "bold" }}>User's Name</Text>
-              <Text style={{ fontWeight: "bold" }}>
-                {taggedList && <Text>with </Text>}
-                {taggedList &&
-                  taggedList.map((user, i) => {
-                    return <Text key={i}>{user.name}, </Text>;
-                  })}
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
+                Kartik Mandhan
+              </Text>
+              <Text
+                onPress={() => setModalOpen(true)}
+                style={{ fontWeight: "bold" }}
+              >
+                {taggedList.length != 0 && <Text>with </Text>}
+                {taggedList.length != 0 && (
+                  <Text style={{ color: "#4FB5A5" }}>
+                    {taggedList[0]?.name}, and {taggedList?.length - 1} others
+                  </Text>
+                )}
               </Text>
             </ScrollView>
           </View>
@@ -284,13 +288,14 @@ export default function CreatePost(props) {
         </TouchableOpacity>
       </View>
       <Modal visible={modalOpen} animationType="slide">
-        <View style={styles.tagContainer}>
+        <View style={styles.tagSearchContainer}>
           <MaterialIcons
             name="close"
             style={{ ...styles.Icons, marginTop: 20 }}
             size={28}
             onPress={() => {
               setModalOpen(false);
+              setTaggedList([]);
             }}
           />
           <TextInput
@@ -303,7 +308,12 @@ export default function CreatePost(props) {
             }}
             value={searchQuery}
           />
-          <TouchableOpacity onPress={() => {}}>
+
+          <TouchableOpacity
+            onPress={() => {
+              setModalOpen(false);
+            }}
+          >
             <MaterialIcons
               name="check"
               style={{ ...styles.Icons, marginTop: 20 }}
@@ -311,6 +321,38 @@ export default function CreatePost(props) {
             />
           </TouchableOpacity>
         </View>
+        <ScrollView style={styles.tagContainer}>
+          <View
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              flexDirection: "row",
+              padding: 2,
+              // borderWidth: 1,
+            }}
+          >
+            {taggedList.map((user, index) => {
+              return (
+                <View key={index} style={styles.tag}>
+                  <Text
+                    style={{
+                      color: "white",
+                    }}
+                  >
+                    {user.name}
+                  </Text>
+                  <MaterialIcons
+                    name="close"
+                    color="black"
+                    size={20}
+                    style={{ paddingLeft: 6 }}
+                    onPress={() => removeTags(index)}
+                  />
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
         <View style={{ flex: 0.8 }}>
           <FlatList
             data={requiredusers}
@@ -318,11 +360,21 @@ export default function CreatePost(props) {
             renderItem={user => (
               <TouchableOpacity
                 onPress={() => {
-                  setTaggedList(previous => [
-                    ...previous,
-                    { _id: user.item._id, name: user.item.name },
-                  ]);
-                  // console.log(user.item._id);
+                  // console.log(taggedList);
+                  const found = taggedList.findIndex(
+                    element =>
+                      element._id === user.item._id &&
+                      element.name === user.item.name
+                  );
+                  if (found !== -1) {
+                    removeTags(found);
+                  } else {
+                    setTaggedList(previous => [
+                      ...previous,
+                      { _id: user.item._id, name: user.item.name },
+                    ]);
+                    // console.log(user.item._id);
+                  }
                 }}
               >
                 <View style={{ ...styles.tagCard }}>
@@ -352,6 +404,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  tagContainer: {
+    display: "flex",
+    // flexDirection: "row",
+    // alignItems: "flex-start",
+    flexWrap: "wrap",
+    width: "95%",
+    maxHeight: "10%",
+    minHeight: 0,
+    alignSelf: "center",
+    paddingHorizontal: 8,
+    borderBottomWidth: 0.5,
+  },
+  tag: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7,
+    marginHorizontal: 5,
+    marginVertical: 3,
+    paddingVertical: 7,
+    borderRadius: 7,
+    backgroundColor: "#4FB5A5",
+    color: "white",
+  },
   tagImage: {
     width: 40,
     height: 40,
@@ -364,14 +440,13 @@ const styles = StyleSheet.create({
     padding: 10,
     alignItems: "center",
   },
-  tagContainer: {
+  tagSearchContainer: {
     display: "flex",
     flex: 1,
     flexDirection: "row",
     paddingHorizontal: 20,
     maxHeight: 70,
     justifyContent: "space-between",
-    borderBottomWidth: 0.5,
   },
   PostAreaImage: {
     width: 62,
