@@ -333,21 +333,7 @@ export default function CreatePost(props) {
           >
             {taggedList.map((user, index) => {
               return (
-                <View
-                  key={index}
-                  style={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                    paddingHorizontal: 7,
-                    marginHorizontal: 5,
-                    marginVertical: 3,
-                    paddingVertical: 7,
-                    borderRadius: 7,
-                    backgroundColor: "#4FB5A5",
-                    color: "white",
-                  }}
-                >
+                <View key={index} style={styles.tag}>
                   <Text
                     style={{
                       color: "white",
@@ -374,11 +360,21 @@ export default function CreatePost(props) {
             renderItem={user => (
               <TouchableOpacity
                 onPress={() => {
-                  setTaggedList(previous => [
-                    ...previous,
-                    { _id: user.item._id, name: user.item.name },
-                  ]);
-                  // console.log(user.item._id);
+                  // console.log(taggedList);
+                  const found = taggedList.findIndex(
+                    element =>
+                      element._id === user.item._id &&
+                      element.name === user.item.name
+                  );
+                  if (found !== -1) {
+                    removeTags(found);
+                  } else {
+                    setTaggedList(previous => [
+                      ...previous,
+                      { _id: user.item._id, name: user.item.name },
+                    ]);
+                    // console.log(user.item._id);
+                  }
                 }}
               >
                 <View style={{ ...styles.tagCard }}>
@@ -419,6 +415,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 8,
     borderBottomWidth: 0.5,
+  },
+  tag: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 7,
+    marginHorizontal: 5,
+    marginVertical: 3,
+    paddingVertical: 7,
+    borderRadius: 7,
+    backgroundColor: "#4FB5A5",
+    color: "white",
   },
   tagImage: {
     width: 40,
