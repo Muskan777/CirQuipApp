@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   StatusBar,
@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
 } from "react-native";
 import { Card } from "react-native-material-cards";
+import axios from "axios";
 
 export default function Post({
   createdAt,
@@ -16,6 +17,7 @@ export default function Post({
   likes,
   name,
   role,
+  id,
 }) {
   var date =
     createdAt.substr(8, 2) +
@@ -28,6 +30,29 @@ export default function Post({
   } else {
     var time = createdAt.substr(11, 5) + " AM";
   }
+  const [currentLikes, setCurrentLikes] = useState(likes);
+  const [liked, setLiked] = useState(false);
+  const handleLikes = () => {
+    let tempLikes;
+    setLiked(true);
+    if (liked) {
+      setCurrentLikes(currentLikes - 1);
+      tempLikes = currentLikes - 1;
+    } else {
+      setCurrentLikes(currentLikes + 1);
+      tempLikes = currentLikes + 1;
+    }
+
+    axios
+      .patch(`${global.config.host}/post/likePost`, {
+        id: id,
+        likes: tempLikes,
+      })
+      .then(res => {
+        setCurrentLikes(res.data.post.likes);
+      })
+      .catch(e => console.log(e));
+  };
 
   return (
     <Card style={styles.box}>
@@ -63,13 +88,13 @@ export default function Post({
       </View>
       <View style={styles.response}>
         <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
+          <TouchableHighlight onPress={handleLikes}>
             <Image
               style={styles.likeimg}
               source={require("../assets/path243.png")}
             ></Image>
           </TouchableHighlight>
-          <Text>{likes}</Text>
+          <Text>{currentLikes}</Text>
         </View>
         <View style={styles.like}>
           <TouchableHighlight onPress={() => this.moveToAdd()}>
