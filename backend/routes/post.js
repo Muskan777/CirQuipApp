@@ -49,7 +49,7 @@ router.route("/createPost").post(auth, (req, res) => {
 // @desc Updates existing post
 
 router.route("/updatePost").patch(async (req, res) => {
-  let { content, caption, likes, comments } = req.body;
+  let { content, caption, comments } = req.body;
   likes = parseInt(likes);
   try {
     let post = await Post.findById(req.body.id);
@@ -58,9 +58,28 @@ router.route("/updatePost").patch(async (req, res) => {
     }
     Post.findOneAndUpdate(
       { _id: req.body.id },
-      { $set: { content, caption, likes, comments } }
+      { $set: { content, caption, comments } }
     )
-      .then(() => res.status(200).send("Post updated"))
+      .then(post => res.status(200).send({ post: post, msg: "Post updated" }))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/post/likePost
+// @desc like funcionality for existing post
+
+router.route("/likePost").patch(async (req, res) => {
+  let { likes } = req.body;
+  likes = parseInt(likes);
+  try {
+    let post = await Post.findById(req.body.id);
+    if (!post) {
+      res.status(400).send("Post with id not found");
+    }
+    Post.findOneAndUpdate({ _id: req.body.id }, { $set: { likes } })
+      .then(() => res.status(200).send("Likes updated"))
       .catch(err => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);
