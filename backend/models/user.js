@@ -29,6 +29,24 @@ const UserSchema = mongoose.Schema(
       required: true,
       minLength: 8,
     },
+    admissionYear: {
+      type: Number,
+    },
+    branch: {
+      type: String,
+    },
+    title: {
+      type: String,
+    },
+    projects: {
+      type: Array,
+    },
+    skills: {
+      type: Array,
+    },
+    clubs: {
+      type: Array,
+    },
     Post: [
       {
         type: mongoose.Schema.Types.ObjectId,
