@@ -13,9 +13,12 @@ import { Card } from "react-native-material-cards";
 import axios from "axios";
 import Post from "../components/Post";
 import Loader from "./Loader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function Posts({ navigation }) {
+export default function SavedPosts({ navigation }) {
   const [data, setData] = useState([]);
+  let savedData = [];
+  let postData = [];
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
@@ -28,11 +31,31 @@ export default function Posts({ navigation }) {
     setIsRefreshing(false);
   };
 
-  const fetchData = () => {
+  const fetchData = async () => {
     axios
       .get(`${global.config.host}/post/getPosts`)
       .then(res => {
-        setData(res.data.post);
+        res.data.post.map(post => {
+          postData.push(post);
+        });
+      })
+      .catch(e => console.log(e));
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .get(`${global.config.host}/user/getLikedPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
+      })
+      .then(res => {
+        for (var i = 0; i < res.data.savedPosts.length; i++) {
+          postData.map(post => {
+            if (res.data.savedPosts[i] === post._id) {
+              savedData.push(post);
+            }
+          });
+        }
+        setData(savedData);
       })
       .catch(e => console.log(e));
   };

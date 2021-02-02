@@ -29,7 +29,9 @@ router.post("/register", (req, res) => {
           projects: [],
           skills: [],
           clubs: [],
-          Post: [],
+          posts: [],
+          likedPosts: [],
+          savedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -69,6 +71,7 @@ router.post("/login", (req, res) => {
             email: user.email,
             phone: user.phone,
             likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
           };
           jwt.sign(
             payload,
@@ -158,7 +161,9 @@ router.route("/getLikedPosts").get(auth, async (req, res) => {
     User.findOne({ _id: req.payload.id })
       .then(user => {
         if (user) {
-          return res.status(200).send({ likedPosts: user.likedPosts });
+          return res
+            .status(200)
+            .send({ likedPosts: user.likedPosts, savedPosts: user.savedPosts });
         } else {
           return res.status(400).send("User not found");
         }

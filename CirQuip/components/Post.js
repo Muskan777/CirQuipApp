@@ -17,6 +17,7 @@ export default function Post({
   caption,
   comments,
   likes,
+  saves,
   name,
   role,
   navigation,
@@ -35,8 +36,9 @@ export default function Post({
     var time = createdAt.substr(11, 5) + " AM";
   }
   const [currentLikes, setCurrentLikes] = useState(likes);
+  const [currentSaves, setCurrentSaves] = useState(saves);
   const [liked, setLiked] = useState(false);
-  const [data, setData] = useState([]);
+  const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     fetchLikedPosts();
@@ -51,7 +53,6 @@ export default function Post({
         },
       })
       .then(res => {
-        setData(res.data.likedPosts);
         let tempLiked = false;
         for (var i = 0; i < res.data.likedPosts.length; i++) {
           if (res.data.likedPosts[i] === postId) {
@@ -59,8 +60,15 @@ export default function Post({
             break;
           }
         }
-        console.log(tempLiked);
+        let tempSaved = false;
+        for (var i = 0; i < res.data.savedPosts.length; i++) {
+          if (res.data.savedPosts[i] === postId) {
+            tempSaved = true;
+            break;
+          }
+        }
         setLiked(tempLiked);
+        setSaved(tempSaved);
       })
       .catch(e => console.log(e));
   };
@@ -84,6 +92,29 @@ export default function Post({
       .then(res => {
         setCurrentLikes(res.data.likes);
         setLiked(res.data.liked);
+      })
+      .catch(e => console.log(e));
+  };
+
+  const handleSave = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+
+    axios
+      .patch(
+        `${global.config.host}/post/savePost`,
+        {
+          id: postId,
+          saved: saved,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCurrentSaves(res.data.saves);
+        setSaved(res.data.saved);
       })
       .catch(e => console.log(e));
   };
@@ -143,10 +174,10 @@ export default function Post({
           <Text>{comments.length}</Text>
         </View>
         <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
+          <TouchableHighlight onPress={handleSave}>
             <Image source={require("../assets/path216f57cb052.png")}></Image>
           </TouchableHighlight>
-          <Text>2</Text>
+          <Text>{currentSaves}</Text>
         </View>
         <View style={styles.like}>
           <TouchableHighlight onPress={() => this.moveToAdd()}>
