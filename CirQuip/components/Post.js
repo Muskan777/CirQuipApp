@@ -66,7 +66,7 @@ export default function Post({
         <View style={styles.about}>
           <TouchableHighlight
             onPress={() => {
-              navigation.navigate("Profile");
+              navigation.navigate("Profile", { _id: id });
             }}
           >
             <Text style={styles.name}>{name}</Text>

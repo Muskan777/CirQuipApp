@@ -14,7 +14,7 @@ import axios from "axios";
 import Post from "../components/Post";
 import Loader from "./Loader";
 
-export default function Posts({navigation}) {
+export default function Posts({ navigation }) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -55,14 +55,13 @@ export default function Posts({navigation}) {
             likes={item.likes}
             content={item.content}
             navigation={navigation}
-            id={item._id}
+            id={item.userId}
           />
         )}
         keyExtractor={item => item._id}
         onRefresh={() => onRefresh()}
         refreshing={isRefreshing}
       />
-      
     </SafeAreaView>
   );
 }
