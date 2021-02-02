@@ -23,6 +23,12 @@ router.post("/register", (req, res) => {
           email,
           password,
           role,
+          admissionYear: 1970,
+          branch: "",
+          title: "",
+          projects: [],
+          skills: [],
+          clubs: [],
           Post: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
@@ -60,6 +66,8 @@ router.post("/login", (req, res) => {
             id: user.id,
             name: user.name,
             role: user.role,
+            email: user.email,
+            phone: user.phone,
           };
           jwt.sign(
             payload,
@@ -70,6 +78,7 @@ router.post("/login", (req, res) => {
             (err, token) => {
               if (token) {
                 res.status(200).json({
+                  ...user._doc,
                   token: token,
                   msg: "User successfully logged in",
                 });
@@ -109,7 +118,7 @@ router.post("/verifyJWT", auth, (req, res) => {
 });
 module.exports = router;
 
-// @route GET /api/post/getUsers
+// @route GET /api/user/getUsers
 // @desc Get all existing users
 
 router.route("/getUsers").get((req, res) => {
@@ -117,6 +126,24 @@ router.route("/getUsers").get((req, res) => {
     User.find()
       .then(user => res.status(200).send({ users: user }))
       .catch(err => res.status(400).json("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/user/updateUser
+// @desc Updates user profile
+
+router.route("/updateUser").patch(auth, async (req, res) => {
+  let { admissionYear, branch, title, projects, clubs, skills } = req.body;
+  admissionYear = parseInt(admissionYear);
+  try {
+    User.findOneAndUpdate(
+      { _id: req.payload.id },
+      { $set: { admissionYear, branch, title, projects, clubs, skills } }
+    )
+      .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);
   }

@@ -225,10 +225,7 @@ export default class Product extends React.Component {
     await axios
       .delete(`${global.config.host}/shop/sell/${this.state?._id}`)
       .then(res => {
-        Alert.alert(
-          "Congratulations",
-          "Your product has been marked as sold !"
-        );
+        Alert.alert("Congratulations", "Your product has been removed !");
         this.props.navigation.dispatch(
           CommonActions.reset({
             index: 1,
@@ -363,6 +360,7 @@ export default class Product extends React.Component {
                   mode="contained"
                   icon="delete"
                   style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                  onPress={() => this.handleSell()}
                 >
                   <Text style={{ fontSize: 20 }}>Delete</Text>
                 </Button>

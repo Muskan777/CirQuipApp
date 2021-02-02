@@ -63,6 +63,13 @@ export default class Sell extends React.Component {
   onPageChange(position) {
     this.setState({ currentPosition: position });
   }
+  componentDidUpdate() {
+    let image = this.props.route?.params?.images[0];
+    console.log(image);
+    if (image) {
+      this.setState({ image: image });
+    }
+  }
   componentDidMount() {
     this.props.navigation.setOptions({
       headerLeft: () => (
@@ -243,21 +250,50 @@ export default class Sell extends React.Component {
                     />
                   </View>
                 )}
-                <Button
-                  mode="contained"
-                  icon="folder"
+                <View
                   style={{
-                    margin: 5,
-                    backgroundColor: "rgba(104, 125, 219, 1)",
-                    width: 200,
-                    color: "rgba(245, 246, 250, 1)",
-                    fontSize: 14,
-                    fontWeight: "700",
+                    margin: 10,
+                    flexDirection: "row",
+                    width: width,
+                    display: "flex",
+                    justifyContent: "space-evenly",
+                    alignItems: "center",
                   }}
-                  onPress={() => this.pickImage()}
                 >
-                  Browse Files
-                </Button>
+                  <Button
+                    mode="contained"
+                    icon="folder"
+                    style={{
+                      backgroundColor: "rgba(104, 125, 219, 1)",
+                      width: 150,
+                      color: "rgba(245, 246, 250, 1)",
+                      fontSize: 14,
+                      fontWeight: "700",
+                    }}
+                    onPress={() => this.pickImage()}
+                  >
+                    Browse Files
+                  </Button>
+                  <Button
+                    mode="contained"
+                    icon="camera"
+                    style={{
+                      backgroundColor: "rgba(104, 125, 219, 1)",
+                      width: 150,
+                      color: "rgba(245, 246, 250, 1)",
+                      fontSize: 14,
+                      fontWeight: "700",
+                    }}
+                    onPress={() => {
+                      this.props.navigation.navigate({
+                        name: "Camera",
+                        params: { from: "Sell" },
+                      });
+                    }}
+                  >
+                    Camera
+                  </Button>
+                </View>
                 <View
                   style={{
                     justifyContent: "space-between",

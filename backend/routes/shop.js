@@ -76,7 +76,7 @@ router.post("/products/:type/:query", async (req, resp) => {
           //seller: { $ne: id },
           name: { $regex: regex },
         });
-        log("products", products);
+        //log("products", products);
         return resp.status(200).json(products);
       } catch (err) {
         console.log(err);

@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
-import Post from '../components/Post'
+import Post from "../components/Post";
 import Loader from "./Loader";
 
 export default function Posts({navigation}) {
@@ -37,11 +37,9 @@ export default function Posts({navigation}) {
       .catch(e => console.log(e));
   };
 
-  if(data.length === 0){
-    console.log("im here")
-    return (
-      <Loader />
-    )
+  if (data.length === 0) {
+    console.log("im here");
+    return <Loader />;
   }
   return (
     <SafeAreaView style={styles.post}>
@@ -57,6 +55,7 @@ export default function Posts({navigation}) {
             likes={item.likes}
             content={item.content}
             navigation={navigation}
+            id={item._id}
           />
         )}
         keyExtractor={item => item._id}
