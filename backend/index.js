@@ -24,26 +24,20 @@ const routes = ["post", "comment", "user", "shop"];
 
 routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
-// io.on("connection", socket => {
-//   console.log("A user connected :)");
-//   socket.on("new user", function (data) {
-//     users[socket.email] = socket;
-//     console.log(users);
-//   });
+io.on("connection", socket => {
+  socket.on("new user", function (data) {
+    users[data] = socket;
+  });
 
-//   socket.on("send message", data => {
-//     console.log(data);
-//     users[email].emit("new message", { msg: data, nick: socket.email });
-//   });
+  socket.on("send message", msg => {
+    users[msg.to].emit("new message", msg);
+  });
 
-//   socket.on("disconnect", function (data) {
-//     if (!socket.email) {
-//       return;
-//     }
-//     delete users[socket.email];
-//     updatenicknames();
-//   });
-// });
+  //   socket.on("disconnect", function (data) {
+  //     if (!socket.email) {
+  //       return;
+  //     }
+});
 
 const PORT = process.env.PORT || 3000;
 

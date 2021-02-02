@@ -54,7 +54,8 @@
     "rn-fetch-blob": "^0.12.0",
     "socket.io-client": "^3.1.0",
     "stream-chat": "^2.11.3",
-    "stream-chat-expo": "^2.1.2"
+    "stream-chat-expo": "^2.1.2",
+    "uuidv4": "^6.2.6"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
