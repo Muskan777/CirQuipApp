@@ -23,7 +23,15 @@ router.post("/register", (req, res) => {
           email,
           password,
           role,
-          Post: [],
+          admissionYear: 1970,
+          branch: "",
+          title: "",
+          projects: [],
+          skills: [],
+          clubs: [],
+          posts: [],
+          likedPosts: [],
+          savedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -60,6 +68,10 @@ router.post("/login", (req, res) => {
             id: user.id,
             name: user.name,
             role: user.role,
+            email: user.email,
+            phone: user.phone,
+            likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
           };
           jwt.sign(
             payload,
@@ -110,7 +122,7 @@ router.post("/verifyJWT", auth, (req, res) => {
 });
 module.exports = router;
 
-// @route GET /api/post/getUsers
+// @route GET /api/user/getUsers
 // @desc Get all existing users
 
 router.route("/getUsers").get((req, res) => {
@@ -118,6 +130,45 @@ router.route("/getUsers").get((req, res) => {
     User.find()
       .then(user => res.status(200).send({ users: user }))
       .catch(err => res.status(400).json("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/user/updateUser
+// @desc Updates user profile
+
+router.route("/updateUser").patch(auth, async (req, res) => {
+  let { admissionYear, branch, title, projects, clubs, skills } = req.body;
+  admissionYear = parseInt(admissionYear);
+  try {
+    User.findOneAndUpdate(
+      { _id: req.payload.id },
+      { $set: { admissionYear, branch, title, projects, clubs, skills } }
+    )
+      .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route GET /api/user/getLikedPosts
+// @desc Gets posts liked by user
+
+router.route("/getLikedPosts").get(auth, async (req, res) => {
+  try {
+    User.findOne({ _id: req.payload.id })
+      .then(user => {
+        if (user) {
+          return res
+            .status(200)
+            .send({ likedPosts: user.likedPosts, savedPosts: user.savedPosts });
+        } else {
+          return res.status(400).send("User not found");
+        }
+      })
+      .catch(err => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);
   }

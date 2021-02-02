@@ -29,7 +29,37 @@ const UserSchema = mongoose.Schema(
       required: true,
       minLength: 8,
     },
-    Post: [
+    admissionYear: {
+      type: Number,
+    },
+    branch: {
+      type: String,
+    },
+    title: {
+      type: String,
+    },
+    projects: {
+      type: Array,
+    },
+    skills: {
+      type: Array,
+    },
+    clubs: {
+      type: Array,
+    },
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post",
+      },
+    ],
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post",
+      },
+    ],
+    savedPosts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "post",

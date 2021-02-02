@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   StatusBar,
@@ -6,16 +6,23 @@ import {
   Text,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import { Card } from "react-native-material-cards";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Post({
   createdAt,
   caption,
   comments,
   likes,
+  saves,
   name,
   role,
+  navigation,
+  postId,
+  id,
 }) {
   var date =
     createdAt.substr(8, 2) +
@@ -28,6 +35,89 @@ export default function Post({
   } else {
     var time = createdAt.substr(11, 5) + " AM";
   }
+  const [currentLikes, setCurrentLikes] = useState(likes);
+  const [currentSaves, setCurrentSaves] = useState(saves);
+  const [liked, setLiked] = useState(false);
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    fetchLikedPosts();
+  }, []);
+
+  const fetchLikedPosts = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .get(`${global.config.host}/user/getLikedPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
+      })
+      .then(res => {
+        let tempLiked = false;
+        for (var i = 0; i < res.data.likedPosts.length; i++) {
+          if (res.data.likedPosts[i] === postId) {
+            tempLiked = true;
+            break;
+          }
+        }
+        let tempSaved = false;
+        for (var i = 0; i < res.data.savedPosts.length; i++) {
+          if (res.data.savedPosts[i] === postId) {
+            tempSaved = true;
+            break;
+          }
+        }
+        setLiked(tempLiked);
+        setSaved(tempSaved);
+      })
+      .catch(e => console.log(e));
+  };
+
+  const handleLikes = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+
+    axios
+      .patch(
+        `${global.config.host}/post/likePost`,
+        {
+          id: postId,
+          liked: liked,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCurrentLikes(res.data.likes);
+        setLiked(res.data.liked);
+      })
+      .catch(e => console.log(e));
+  };
+
+  const handleSave = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+
+    axios
+      .patch(
+        `${global.config.host}/post/savePost`,
+        {
+          id: postId,
+          saved: saved,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCurrentSaves(res.data.saves);
+        setSaved(res.data.saved);
+      })
+      .catch(e => console.log(e));
+  };
 
   return (
     <Card style={styles.box}>
@@ -37,7 +127,13 @@ export default function Post({
           source={require("../assets/ellipse1adfd341c.png")}
         />
         <View style={styles.about}>
-          <Text style={styles.name}>{name}</Text>
+          <TouchableHighlight
+            onPress={() => {
+              navigation.navigate("Profile", { _id: id });
+            }}
+          >
+            <Text style={styles.name}>{name}</Text>
+          </TouchableHighlight>
           <Text>{role}</Text>
         </View>
       </View>
@@ -63,13 +159,13 @@ export default function Post({
       </View>
       <View style={styles.response}>
         <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
+          <TouchableHighlight onPress={handleLikes}>
             <Image
               style={styles.likeimg}
               source={require("../assets/path243.png")}
             ></Image>
           </TouchableHighlight>
-          <Text>{likes}</Text>
+          <Text>{currentLikes}</Text>
         </View>
         <View style={styles.like}>
           <TouchableHighlight onPress={() => this.moveToAdd()}>
@@ -78,10 +174,10 @@ export default function Post({
           <Text>{comments.length}</Text>
         </View>
         <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
+          <TouchableHighlight onPress={handleSave}>
             <Image source={require("../assets/path216f57cb052.png")}></Image>
           </TouchableHighlight>
-          <Text>2</Text>
+          <Text>{currentSaves}</Text>
         </View>
         <View style={styles.like}>
           <TouchableHighlight onPress={() => this.moveToAdd()}>

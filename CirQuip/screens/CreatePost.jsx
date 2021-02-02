@@ -51,7 +51,7 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos,
+          content: postText,
           caption: postText,
         },
         {

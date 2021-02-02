@@ -17,11 +17,13 @@ import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
+import Profile from "./screens/Profile.jsx";
 import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
+import SavedPosts from "./screens/SavedPosts";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
@@ -156,6 +158,14 @@ export default function App() {
             }}
           />
           <Stack.Screen
+            name="SavedPosts"
+            component={SavedPosts}
+            options={{
+              ...stackOptions,
+              title: "Posts",
+            }}
+          />
+          <Stack.Screen
             name="Product"
             component={Product}
             options={{
@@ -183,6 +193,11 @@ export default function App() {
               ...stackOptions,
               title: "Create Post",
             }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ ...stackOptions, title: "Profile" }}
           />
           <Stack.Screen
             name="ChatWithAdmin"
