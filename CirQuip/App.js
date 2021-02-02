@@ -23,6 +23,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
+import SavedPosts from "./screens/SavedPosts";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
@@ -151,6 +152,14 @@ export default function App() {
           <Stack.Screen
             name="Posts"
             component={Posts}
+            options={{
+              ...stackOptions,
+              title: "Posts",
+            }}
+          />
+          <Stack.Screen
+            name="SavedPosts"
+            component={SavedPosts}
             options={{
               ...stackOptions,
               title: "Posts",

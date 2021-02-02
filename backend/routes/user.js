@@ -29,7 +29,9 @@ router.post("/register", (req, res) => {
           projects: [],
           skills: [],
           clubs: [],
-          Post: [],
+          posts: [],
+          likedPosts: [],
+          savedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -68,6 +70,8 @@ router.post("/login", (req, res) => {
             role: user.role,
             email: user.email,
             phone: user.phone,
+            likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
           };
           jwt.sign(
             payload,
@@ -143,6 +147,27 @@ router.route("/updateUser").patch(auth, async (req, res) => {
       { $set: { admissionYear, branch, title, projects, clubs, skills } }
     )
       .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route GET /api/user/getLikedPosts
+// @desc Gets posts liked by user
+
+router.route("/getLikedPosts").get(auth, async (req, res) => {
+  try {
+    User.findOne({ _id: req.payload.id })
+      .then(user => {
+        if (user) {
+          return res
+            .status(200)
+            .send({ likedPosts: user.likedPosts, savedPosts: user.savedPosts });
+        } else {
+          return res.status(400).send("User not found");
+        }
+      })
       .catch(err => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);
