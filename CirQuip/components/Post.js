@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   StatusBar,
@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Post({
   createdAt,
@@ -19,6 +20,7 @@ export default function Post({
   name,
   role,
   navigation,
+  postId,
   id,
 }) {
   var date =
@@ -34,24 +36,54 @@ export default function Post({
   }
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [liked, setLiked] = useState(false);
-  const handleLikes = () => {
-    let tempLikes;
-    setLiked(true);
-    if (liked) {
-      setCurrentLikes(currentLikes - 1);
-      tempLikes = currentLikes - 1;
-    } else {
-      setCurrentLikes(currentLikes + 1);
-      tempLikes = currentLikes + 1;
-    }
+  const [data, setData] = useState([]);
 
+  useEffect(() => {
+    fetchLikedPosts();
+  }, []);
+
+  const fetchLikedPosts = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
-      .patch(`${global.config.host}/post/likePost`, {
-        id: id,
-        likes: tempLikes,
+      .get(`${global.config.host}/user/getLikedPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
       })
       .then(res => {
-        setCurrentLikes(res.data.post.likes);
+        setData(res.data.likedPosts);
+        let tempLiked = false;
+        for (var i = 0; i < res.data.likedPosts.length; i++) {
+          if (res.data.likedPosts[i] === postId) {
+            tempLiked = true;
+            break;
+          }
+        }
+        console.log(tempLiked);
+        setLiked(tempLiked);
+      })
+      .catch(e => console.log(e));
+  };
+
+  const handleLikes = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+
+    axios
+      .patch(
+        `${global.config.host}/post/likePost`,
+        {
+          id: postId,
+          liked: liked,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCurrentLikes(res.data.likes);
+        setLiked(res.data.liked);
       })
       .catch(e => console.log(e));
   };

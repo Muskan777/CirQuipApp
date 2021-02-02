@@ -68,6 +68,7 @@ router.post("/login", (req, res) => {
             role: user.role,
             email: user.email,
             phone: user.phone,
+            likedPosts: user.likedPosts,
           };
           jwt.sign(
             payload,
@@ -143,6 +144,25 @@ router.route("/updateUser").patch(auth, async (req, res) => {
       { $set: { admissionYear, branch, title, projects, clubs, skills } }
     )
       .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route GET /api/user/getLikedPosts
+// @desc Gets posts liked by user
+
+router.route("/getLikedPosts").get(auth, async (req, res) => {
+  try {
+    User.findOne({ _id: req.payload.id })
+      .then(user => {
+        if (user) {
+          return res.status(200).send({ likedPosts: user.likedPosts });
+        } else {
+          return res.status(400).send("User not found");
+        }
+      })
       .catch(err => res.status(400).send("Error: " + err));
   } catch (e) {
     console.log(e);

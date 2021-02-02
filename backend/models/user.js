@@ -47,7 +47,19 @@ const UserSchema = mongoose.Schema(
     clubs: {
       type: Array,
     },
-    Post: [
+    posts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post",
+      },
+    ],
+    likedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post",
+      },
+    ],
+    savedPosts: [
       {
         type: mongoose.Schema.Types.ObjectId,
         ref: "post",

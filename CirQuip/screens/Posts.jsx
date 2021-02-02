@@ -55,6 +55,7 @@ export default function Posts({ navigation }) {
             likes={item.likes}
             content={item.content}
             navigation={navigation}
+            postId={item._id}
             id={item.userId}
           />
         )}

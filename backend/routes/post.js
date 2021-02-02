@@ -1,5 +1,6 @@
 const router = require("express").Router();
 let Post = require("../models/Post");
+let User = require("../models/user");
 const auth = require("../middlewares/auth");
 
 // @route GET /api/post/getPosts
@@ -70,17 +71,49 @@ router.route("/updatePost").patch(async (req, res) => {
 // @route PATCH /api/post/likePost
 // @desc like funcionality for existing post
 
-router.route("/likePost").patch(async (req, res) => {
-  let { likes } = req.body;
-  likes = parseInt(likes);
+router.route("/likePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     if (!post) {
       res.status(400).send("Post with id not found");
     }
-    Post.findOneAndUpdate({ _id: req.body.id }, { $set: { likes } })
-      .then(() => res.status(200).send("Likes updated"))
-      .catch(err => res.status(400).send("Error: " + err));
+    if (req.body.liked) {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { likes: post.likes - 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $pull: { likedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post unliked",
+              post: post,
+              likes: post.likes - 1,
+              liked: false,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { likes: post.likes + 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $push: { likedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post liked",
+              post: post,
+              likes: post.likes + 1,
+              liked: true,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    }
   } catch (e) {
     console.log(e);
   }
