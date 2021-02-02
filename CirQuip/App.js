@@ -17,6 +17,7 @@ import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
+import Profile from "./screens/Profile.jsx";
 import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -184,6 +185,11 @@ export default function App() {
               ...stackOptions,
               title: "Create Post",
             }}
+          />
+          <Stack.Screen
+            name="Profile"
+            component={Profile}
+            options={{ ...stackOptions, title: "Profile" }}
           />
           <Stack.Screen
             name="ChatWithAdmin"

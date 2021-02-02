@@ -6,6 +6,7 @@ import {
   Text,
   Image,
   TouchableHighlight,
+  TouchableOpacity,
 } from "react-native";
 import { Card } from "react-native-material-cards";
 
@@ -16,6 +17,7 @@ export default function Post({
   likes,
   name,
   role,
+  navigation,
 }) {
   var date =
     createdAt.substr(8, 2) +
@@ -37,7 +39,13 @@ export default function Post({
           source={require("../assets/ellipse1adfd341c.png")}
         />
         <View style={styles.about}>
-          <Text style={styles.name}>{name}</Text>
+          <TouchableHighlight
+            onPress={() => {
+              navigation.navigate("Profile");
+            }}
+          >
+            <Text style={styles.name}>{name}</Text>
+          </TouchableHighlight>
           <Text>{role}</Text>
         </View>
       </View>

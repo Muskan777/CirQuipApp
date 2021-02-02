@@ -14,7 +14,7 @@ import axios from "axios";
 import Post from '../components/Post'
 import Loader from "./Loader";
 
-export default function Posts() {
+export default function Posts({navigation}) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -56,97 +56,14 @@ export default function Posts() {
             comments={item.comments}
             likes={item.likes}
             content={item.content}
+            navigation={navigation}
           />
         )}
         keyExtractor={item => item._id}
         onRefresh={() => onRefresh()}
         refreshing={isRefreshing}
       />
-      {/* <ScrollView>
-        {data.map((data, key) => {
-          var date =
-            data.createdAt.substr(8, 2) +
-            "-" +
-            data.createdAt.substr(5, 2) +
-            "-" +
-            data.createdAt.substr(0, 4);
-          if (data.createdAt.substr(11, 2) > 12) {
-            var time = data.createdAt.substr(11, 5) + " PM";
-          } else {
-            var time = data.createdAt.substr(11, 5) + " AM";
-          }
-
-          return (
-            <Card style={styles.box} scrollEnabled={true} key={key}>
-              <View style={styles.container}>
-                <Image
-                  style={styles.contactimg}
-                  source={require("../assets/ellipse1adfd341c.png")}
-                />
-                <View style={styles.about}>
-                  <Text style={styles.name}>Aniket Jha</Text>
-                  <Text>Student at College of Engineering, Pune</Text>
-                </View>
-              </View>
-              <View style={styles.info}>
-                <Text> {data.caption}</Text>
-              </View>
-              <View style={styles.postimage}>
-                <Image
-                  style={styles.img}
-                  source={require("../assets/badBoysForLife5120x5120WillSmithMartinLawrence4k5k2020194680867b018.png")}
-                ></Image>
-              </View>
-              <View style={styles.datetime}>
-                <Text style={styles.time}>{time}</Text>
-                <Image
-                  styel={styles.dot}
-                  source={require("../assets/path261.png")}
-                ></Image>
-                <Text style={styles.date}>{date}</Text>
-              </View>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <View style={{ flex: 1, height: 1, backgroundColor: "#eee" }} />
-              </View>
-              <View style={styles.response}>
-                <View style={styles.like}>
-                  <TouchableHighlight onPress={() => this.moveToAdd()}>
-                    <Image
-                      style={styles.likeimg}
-                      source={require("../assets/path243.png")}
-                    ></Image>
-                  </TouchableHighlight>
-                  <Text>{data.likes}</Text>
-                </View>
-                <View style={styles.like}>
-                  <TouchableHighlight onPress={() => this.moveToAdd()}>
-                    <Image
-                      source={require("../assets/path227dcc55359.png")}
-                    ></Image>
-                  </TouchableHighlight>
-                  <Text>{data.comments.length}</Text>
-                </View>
-                <View style={styles.like}>
-                  <TouchableHighlight onPress={() => this.moveToAdd()}>
-                    <Image
-                      source={require("../assets/path216f57cb052.png")}
-                    ></Image>
-                  </TouchableHighlight>
-                  <Text>2</Text>
-                </View>
-                <View style={styles.like}>
-                  <TouchableHighlight onPress={() => this.moveToAdd()}>
-                    <Image
-                      source={require("../assets/path2385c2774f6.png")}
-                    ></Image>
-                  </TouchableHighlight>
-                  <Text>2</Text>
-                </View>
-              </View>
-            </Card>
-          );
-        })}
-      </ScrollView> */}
+      
     </SafeAreaView>
   );
 }
