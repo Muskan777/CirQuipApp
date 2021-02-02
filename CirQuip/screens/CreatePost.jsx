@@ -493,9 +493,8 @@ const styles = StyleSheet.create({
   },
   video: {
     padding: 10,
-    // marginTop: 10,
-    // height: "50%",
-    // maxHeight: 40,
+    borderWidth: 5,
+    borderColor: "#000",
   },
   topContainer: {
     display: "flex",
