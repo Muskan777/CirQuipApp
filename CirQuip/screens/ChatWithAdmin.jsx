@@ -2,6 +2,8 @@ import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import io from "socket.io-client";
 import Loader from "./Loader";
+import axios from "axios";
+import "../config";
 
 export function ChatWithAdmin(props) {
   const [messages, setMessages] = useState([]);
@@ -9,18 +11,31 @@ export function ChatWithAdmin(props) {
     return io("http://192.168.43.192:3000");
   });
   useEffect(() => {
-    setMessages([
-      {
-        _id: "Anonymous",
-        text: "Hello!!",
-        createdAt: new Date(),
-        user: {
-          _id: "abc",
-          name: "React Native",
-          avatar: "https://placeimg.com/140/140/any",
-        },
-      },
-    ]);
+    axios
+      .get(`${global.config.host}/message/getMessages`)
+      .then(res => {
+        let Messages = res.data.messages;
+        if (props.route.params.admin) {
+          let FilteredMessages = Messages.filter(msg => {
+            return (
+              props.route.params.thread._id === msg.to ||
+              props.route.params.thread._id === msg.user._id
+            );
+          });
+          FilteredMessages = FilteredMessages.reverse();
+          setMessages(FilteredMessages);
+        } else {
+          let FilteredMessages = Messages.filter(msg => {
+            return (
+              props.route.params.email === msg.to ||
+              props.route.params.email === msg.user._id
+            );
+          });
+          FilteredMessages = FilteredMessages.reverse();
+          setMessages(FilteredMessages);
+        }
+      })
+      .catch(e => console.log(e));
     props.route.params.admin
       ? socket.emit("new user", "Admin")
       : socket.emit("new user", props.route.params.email);
@@ -31,28 +46,33 @@ export function ChatWithAdmin(props) {
     if (props.route.params.admin) {
       to = props.route.params.thread._id;
       messages[0].to = to;
-      console.log("To User", messages);
     } else {
       to = "Admin";
       messages[0].to = to;
-      console.log("To admin", messages);
     }
-    console.log("Send", messages);
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, messages)
     );
+    let PostMsg = messages[0];
+    delete PostMsg["_id"];
+    axios
+      .post(`${global.config.host}/message/saveMessages`, PostMsg)
+      .then(function (response) {
+        console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     socket.emit("send message", messages[0]);
   }, []);
 
   const onRecv = useCallback((message = []) => {
-    console.log("message", message);
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, message)
     );
   });
 
   socket.on("new message", message => {
-    console.log("Recvd");
     onRecv(message);
   });
 
