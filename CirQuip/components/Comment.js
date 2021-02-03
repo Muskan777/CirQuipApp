@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     paddingRight: 20,
     backgroundColor: "white",
-    marginBottom: 20,
+    marginBottom: 10,
+    paddingVertical: 20,
   },
   PrimaryText: {
     fontSize: 22,
@@ -83,7 +84,7 @@ const styles = StyleSheet.create({
     },
     shadowRadius: 6,
     shadowColor: "#4FB5A5",
-    elevation: 3,
+    elevation: 10,
   },
   commentImage: {
     width: 62,

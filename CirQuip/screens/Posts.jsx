@@ -66,6 +66,6 @@ const styles = StyleSheet.create({
   post: {
     flex: 1,
     // marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: "transparent",
+    backgroundColor: "#eee",
   },
 });
