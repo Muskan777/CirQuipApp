@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     elevation: 2,
     padding: 10,
     paddingTop: 15,
-    backgroundColor: "transparent",
+    backgroundColor: "white",
   },
   TextStyle: {
     color: "#888",
@@ -271,13 +271,5 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
-  },
-  post: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: "transparent",
-  },
-  message: {
-    backgroundColor: "transparent",
   },
 });
