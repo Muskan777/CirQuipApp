@@ -125,19 +125,26 @@ export default function Post({
   };
 
   return (
-    <Card style={styles.box}>
+    <Card style={styles.PostContainer}>
       <View style={styles.topContainer}>
         <Image
           style={styles.contactimg}
           source={require("../assets/ellipse1adfd341c.png")}
         />
-        <View style={styles.about}>
+        <View>
           <TouchableHighlight
             onPress={() => {
               navigation.navigate("Profile", { _id: id });
             }}
           >
-            <Text style={styles.name}>{name}</Text>
+            <Text
+              style={{
+                color: "black",
+                fontSize: 20,
+              }}
+            >
+              {name}
+            </Text>
           </TouchableHighlight>
           <Text>{role}</Text>
         </View>
@@ -145,9 +152,9 @@ export default function Post({
       <View style={styles.postCaption}>
         <Text> {caption}</Text>
       </View>
-      <View style={styles.postimage}>
+      <View style={styles.postImageContainer}>
         <Image
-          style={styles.img}
+          style={styles.postImage}
           source={require("../assets/badBoysForLife5120x5120WillSmithMartinLawrence4k5k2020194680867b018.png")}
         ></Image>
       </View>
@@ -159,7 +166,7 @@ export default function Post({
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <View style={{ flex: 1, height: 1, backgroundColor: "#eee" }} />
       </View>
-      <View style={styles.response}>
+      <View style={styles.respnseButtons}>
         <View style={styles.IconContainer}>
           <TouchableOpacity onPress={handleLikes}>
             {liked ? (
@@ -198,7 +205,7 @@ export default function Post({
 }
 
 const styles = StyleSheet.create({
-  box: {
+  PostContainer: {
     width: "98%",
     alignContent: "center",
     shadowColor: "#000",
@@ -220,13 +227,6 @@ const styles = StyleSheet.create({
     marginTop: 5,
   },
 
-  name: {
-    color: "black",
-    fontSize: 20,
-  },
-  about: {
-    backgroundColor: "transparent",
-  },
   postCaption: {
     padding: 10,
   },
@@ -235,14 +235,13 @@ const styles = StyleSheet.create({
     color: "#4FB5A5",
     paddingHorizontal: 10,
   },
-  postimage: {
+  postImageContainer: {
     justifyContent: "center",
     marginTop: 10,
     width: "100%",
-    overflow: "hidden",
     borderRadius: 20,
   },
-  img: {
+  postImage: {
     alignSelf: "center",
     height: Dimensions.get("window").width,
     width: Dimensions.get("window").width,
@@ -258,7 +257,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     padding: 10,
   },
-  response: {
+  respnseButtons: {
     paddingVertical: 10,
     width: "100%",
     flexDirection: "row",
