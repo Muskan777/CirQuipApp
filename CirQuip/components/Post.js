@@ -7,11 +7,16 @@ import {
   Image,
   TouchableHighlight,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import {
+  FontAwesome,
+  MaterialCommunityIcons,
+  Entypo,
+} from "@expo/vector-icons";
 export default function Post({
   createdAt,
   caption,
@@ -121,7 +126,7 @@ export default function Post({
 
   return (
     <Card style={styles.box}>
-      <View style={styles.container}>
+      <View style={styles.topContainer}>
         <Image
           style={styles.contactimg}
           source={require("../assets/ellipse1adfd341c.png")}
@@ -137,7 +142,7 @@ export default function Post({
           <Text>{role}</Text>
         </View>
       </View>
-      <View style={styles.info}>
+      <View style={styles.postCaption}>
         <Text> {caption}</Text>
       </View>
       <View style={styles.postimage}>
@@ -147,43 +152,45 @@ export default function Post({
         ></Image>
       </View>
       <View style={styles.datetime}>
-        <Text style={styles.time}>{time}</Text>
-        <Image
-          styel={styles.dot}
-          source={require("../assets/path261.png")}
-        ></Image>
-        <Text style={styles.date}>{date}</Text>
+        <Text style={styles.TextStyle}>{time}</Text>
+        <Entypo name="dot-single" size={20} color="grey" />
+        <Text style={styles.TextStyle}>{date}</Text>
       </View>
       <View style={{ flexDirection: "row", alignItems: "center" }}>
         <View style={{ flex: 1, height: 1, backgroundColor: "#eee" }} />
       </View>
       <View style={styles.response}>
-        <View style={styles.like}>
-          <TouchableHighlight onPress={handleLikes}>
-            <Image
-              style={styles.likeimg}
-              source={require("../assets/path243.png")}
-            ></Image>
-          </TouchableHighlight>
-          <Text>{currentLikes}</Text>
+        <View style={styles.IconContainer}>
+          <TouchableOpacity onPress={handleLikes}>
+            {liked ? (
+              <FontAwesome name="heart" size={30} style={styles.Icons} />
+            ) : (
+              <FontAwesome name="heart-o" size={30} style={styles.Icons} />
+            )}
+          </TouchableOpacity>
+          <Text style={styles.TextStyle}>{currentLikes}</Text>
         </View>
-        <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
-            <Image source={require("../assets/path227dcc55359.png")}></Image>
-          </TouchableHighlight>
-          <Text>{comments.length}</Text>
+        <View style={styles.IconContainer}>
+          <TouchableOpacity onPress={() => this.moveToAdd()}>
+            <MaterialCommunityIcons
+              name="comment-processing"
+              size={30}
+              style={styles.Icons}
+            />
+          </TouchableOpacity>
+          <Text style={styles.TextStyle}>{comments.length}</Text>
         </View>
-        <View style={styles.like}>
-          <TouchableHighlight onPress={handleSave}>
-            <Image source={require("../assets/path216f57cb052.png")}></Image>
-          </TouchableHighlight>
-          <Text>{currentSaves}</Text>
+        <View style={styles.IconContainer}>
+          <TouchableOpacity onPress={handleSave}>
+            <FontAwesome name="bookmark" size={30} style={styles.Icons} />
+          </TouchableOpacity>
+          <Text style={styles.TextStyle}>{currentSaves}</Text>
         </View>
-        <View style={styles.like}>
-          <TouchableHighlight onPress={() => this.moveToAdd()}>
-            <Image source={require("../assets/path2385c2774f6.png")}></Image>
-          </TouchableHighlight>
-          <Text>2</Text>
+        <View style={styles.IconContainer}>
+          <TouchableOpacity onPress={() => this.moveToAdd()}>
+            <FontAwesome name="share-square-o" size={30} style={styles.Icons} />
+          </TouchableOpacity>
+          <Text style={styles.TextStyle}>2</Text>
         </View>
       </View>
     </Card>
@@ -198,23 +205,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
-    elevation: 5,
+    elevation: 2,
     padding: 10,
+    paddingTop: 15,
     backgroundColor: "transparent",
   },
-
-  container: {
-    height: 90,
+  TextStyle: {
+    color: "#888",
+  },
+  topContainer: {
     width: "100%",
     alignSelf: "center",
     flexDirection: "row",
     marginTop: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-    backgroundColor: "transparent",
   },
 
   name: {
@@ -224,51 +227,50 @@ const styles = StyleSheet.create({
   about: {
     backgroundColor: "transparent",
   },
-  info: {
-    margin: 5,
+  postCaption: {
+    padding: 10,
+  },
+  Icons: {
+    fontSize: 30,
+    color: "#4FB5A5",
+    paddingHorizontal: 10,
   },
   postimage: {
+    justifyContent: "center",
     marginTop: 10,
     width: "100%",
     overflow: "hidden",
+    borderRadius: 20,
   },
   img: {
-    height: 350,
-    width: 330,
+    alignSelf: "center",
+    height: Dimensions.get("window").width,
+    width: Dimensions.get("window").width,
     borderRadius: 20,
   },
   contactimg: {
-    margin: 5,
-    height: 55,
+    marginHorizontal: 10,
+    height: 56,
     width: 56,
+    borderRadius: 28,
   },
   datetime: {
     flexDirection: "row",
-    margin: 15,
-  },
-  time: {
-    marginRight: 10,
-  },
-  dot: {
-    marginTop: 10,
-    marginBottom: 10,
     padding: 10,
-    height: 10,
-    width: 10,
-  },
-  date: {
-    marginLeft: 10,
   },
   response: {
-    margin: 10,
+    paddingVertical: 10,
     width: "100%",
     flexDirection: "row",
+    borderTopWidth: 2,
+    borderTopColor: "#ddd",
     justifyContent: "space-around",
   },
-  like: {
-    width: "25%",
+  IconContainer: {
+    flex: 0.25,
     flexDirection: "row",
-    justifyContent: "space-around",
+    alignItems: "center",
+    justifyContent: "center",
   },
   post: {
     flex: 1,
