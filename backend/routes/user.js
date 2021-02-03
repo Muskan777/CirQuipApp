@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
+const emailHandler = require("./email");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -30,6 +31,7 @@ router.post("/register", (req, res) => {
           skills: [],
           clubs: [],
           Post: [],
+          verified: false,
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -41,6 +43,7 @@ router.post("/register", (req, res) => {
             )
             .catch(err => res.status(400).send("Error:" + err));
         });
+        emailHandler.email(newUser.email, 1234);
       }
     });
   } catch (e) {
