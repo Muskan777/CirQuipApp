@@ -30,8 +30,11 @@ io.on("connection", socket => {
   });
 
   socket.on("send message", msg => {
-
-    users[msg.to].emit("new message", msg);
+    if (users[msg.to]) {
+      users[msg.to].emit("new message", msg);
+    } else {
+      console.log("user offline");
+    }
   });
 
   //   socket.on("disconnect", function (data) {

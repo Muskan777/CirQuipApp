@@ -16,12 +16,9 @@ router.route("/getMessages").get((req, res) => {
 });
 
 router.route("/saveMessages").post((req, res) => {
-  console.log("Before Message");
   NewMessage = new Message({
     ...req.body,
   });
-  console.log("After Message", NewMessage);
-  console.log(req.body);
 
   try {
     NewMessage.save()

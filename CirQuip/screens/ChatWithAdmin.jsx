@@ -22,6 +22,7 @@ export function ChatWithAdmin(props) {
               props.route.params.thread._id === msg.user._id
             );
           });
+          FilteredMessages = FilteredMessages.reverse();
           setMessages(FilteredMessages);
         } else {
           let FilteredMessages = Messages.filter(msg => {
@@ -30,6 +31,7 @@ export function ChatWithAdmin(props) {
               props.route.params.email === msg.user._id
             );
           });
+          FilteredMessages = FilteredMessages.reverse();
           setMessages(FilteredMessages);
         }
       })
