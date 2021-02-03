@@ -26,6 +26,7 @@ routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
 io.on("connection", socket => {
   socket.on("new user", function (data) {
+    console.log("data", data);
     users[data] = socket;
   });
 
