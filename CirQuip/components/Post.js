@@ -189,7 +189,11 @@ export default function Post({
         </View>
         <View style={styles.IconContainer}>
           <TouchableOpacity onPress={handleSave}>
-            <FontAwesome name="bookmark" size={30} style={styles.Icons} />
+            {saved ? (
+              <FontAwesome name="bookmark" size={30} style={styles.Icons} />
+            ) : (
+              <FontAwesome name="bookmark-o" size={30} style={styles.Icons} />
+            )}
           </TouchableOpacity>
           <Text style={styles.TextStyle}>{currentSaves}</Text>
         </View>
