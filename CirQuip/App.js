@@ -23,6 +23,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePost from "./screens/CreatePost";
 import Posts from "./screens/Posts";
+import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
@@ -206,10 +207,19 @@ export default function App() {
               title: "Chat With User",
             }}
           />
+          <Stack.Screen name="OTP" component={OTP} />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
   ) : (
-    <Login handleStatus={handleStatus} />
+    <PaperProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Login">
+            {props => <Login {...props} handleStatus={handleStatus} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }

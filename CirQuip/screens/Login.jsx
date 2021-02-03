@@ -13,10 +13,9 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "vasusharma656@gmail.com",
-      password: "123",
-      name: "Vasu Sharma",
-      phone: "9906330301",
+      email: "aniketj18.comp@coep.ac.in",
+      name: "Aniket",
+      phone: "7620063711",
       college: "COEP",
       password2: "123",
       role: "Student",
@@ -53,25 +52,7 @@ export default class Login extends React.Component {
   toggleSignUp() {
     this.setState({ toggleSignUp: !this.state.toggleSignUp });
   }
-  verifyOTP() {
-    let otp = this.state.otp;
-    if (otp === "1234") {
-      axios
-        .patch(`${global.config.host}/user/verify`, this.state)
-        .then(res => {
-          if (res.status === 200) {
-            Alert.alert("CirQuip", "Successfully Verified");
-          } else {
-            Alert.alert("Error", "Verification failed");
-          }
-        })
-        .catch(e => {
-          console.log(e);
-        });
-    } else {
-      Alert.alert("Error", "Verification failed");
-    }
-  }
+
   handleSignUp() {
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
@@ -97,26 +78,7 @@ export default class Login extends React.Component {
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
         this.props.handleStatus(true);
-        Alert.alert("CirQuip", "OTP has been sent to your email ID!");
-        return (
-          <View style={styles.container}>
-            <TextInput
-              style={styles.inputText}
-              placeholder="Enter OTP"
-              placeholderTextColor="#003f5c"
-              onChangeText={text => this.setState({ otp: text })}
-              maxLength={4}
-            ></TextInput>
-            <TouchableOpacity
-              style={styles.loginBtn}
-              onPress={() => {
-                this.verifyOTP;
-              }}
-            >
-              <Text style={styles.loginText}>Verify</Text>
-            </TouchableOpacity>
-          </View>
-        );
+        this.props.navigation.navigate("OTP", { email: this.state.email });
       })
       .catch(err => {
         console.log(err.response.data);

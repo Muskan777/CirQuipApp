@@ -199,6 +199,28 @@ export default function Home({ navigation }) {
               </Text>
             </Button>
           </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate({
+                name: "OTP",
+                params: { title: "Verify your email" },
+              });
+            }}
+          >
+            <Button
+              style={{ ...styles.shopButton }}
+              icon="account"
+              mode="contained"
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Verify Your Email
+              </Text>
+            </Button>
+          </TouchableOpacity>
           {email == global.config.admin ? (
             <TouchableOpacity
               onPress={() => {
