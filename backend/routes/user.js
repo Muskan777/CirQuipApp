@@ -151,3 +151,16 @@ router.route("/updateUser").patch(auth, async (req, res) => {
     console.log(e);
   }
 });
+
+// @route PATCH /api/user/verify
+
+router.route("/verify").patch(async (req, res) => {
+  let { email } = req.body;
+  try {
+    User.findOneAndUpdate({ email: email }, { $set: { verified: true } })
+      .then(() => res.status(200).send("Verified"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});

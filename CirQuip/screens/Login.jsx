@@ -21,6 +21,7 @@ export default class Login extends React.Component {
       password2: "123",
       role: "Student",
       toggleSignUp: false,
+      otp: "0000",
     };
   }
   async handleLogin() {
@@ -52,16 +53,70 @@ export default class Login extends React.Component {
   toggleSignUp() {
     this.setState({ toggleSignUp: !this.state.toggleSignUp });
   }
+  verifyOTP() {
+    let otp = this.state.otp;
+    if (otp === "1234") {
+      axios
+        .patch(`${global.config.host}/user/verify`, this.state)
+        .then(res => {
+          if (res.status === 200) {
+            Alert.alert("CirQuip", "Successfully Verified");
+          } else {
+            Alert.alert("Error", "Verification failed");
+          }
+        })
+        .catch(e => {
+          console.log(e);
+        });
+    } else {
+      Alert.alert("Error", "Verification failed");
+    }
+  }
   handleSignUp() {
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
+      return;
+    }
+    let collegeName = this.state.college;
+    let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+    collegeName = collegeName.toLowerCase().replace(regex, "");
+    console.log(collegeName);
+    if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
+      Alert.alert(
+        "CirQuip",
+        "We are not in your college yet! Sit tight while we expand!"
+      );
+      return;
+    }
+    let emailId = this.state.email;
+    if (emailId.split("@")[1] !== "coep.ac.in") {
+      Alert.alert("CirQuip", "Please use valid college email address");
       return;
     }
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
         this.props.handleStatus(true);
-        Alert.alert("CirQuip", "Registeration Successful");
+        Alert.alert("CirQuip", "OTP has been sent to your email ID!");
+        return (
+          <View style={styles.container}>
+            <TextInput
+              style={styles.inputText}
+              placeholder="Enter OTP"
+              placeholderTextColor="#003f5c"
+              onChangeText={text => this.setState({ otp: text })}
+              maxLength={4}
+            ></TextInput>
+            <TouchableOpacity
+              style={styles.loginBtn}
+              onPress={() => {
+                this.verifyOTP;
+              }}
+            >
+              <Text style={styles.loginText}>Verify</Text>
+            </TouchableOpacity>
+          </View>
+        );
       })
       .catch(err => {
         console.log(err.response.data);
