@@ -28,6 +28,7 @@ import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [postHasImage, setPostHasImage] = useState(false);
   const [postText, setPostText] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [users, setUsers] = useState([]);
@@ -194,58 +195,61 @@ export default function CreatePost(props) {
               </Text>
             </ScrollView>
           </View>
-          <TextInput
+          <View style={{ alignItems: "flex-start", flex: 1 }}>
+            <TextInput
+              style={{
+                ...styles.PrimaryTextInput,
+              }}
+              editable
+              multiline
+              onChangeText={text => setPostText(text)}
+              placeholder=" What do you want to CirQuip ?"
+              value={postText}
+            />
+          </View>
+        </View>
+        <View style={styles.MediaArea}>
+          <View
             style={{
-              ...styles.PrimaryTextInput,
+              display: "flex",
+              justifyContent: "center",
             }}
-            editable
-            multiline
-            onChangeText={text => setPostText(text)}
-            placeholder=" What do you want to CirQuip ?"
-            value={postText}
-          />
-        </View>
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            marginLeft: 10,
-          }}
-        >
-          {videoSource && (
-            <View>
-              <Video
-                source={{
-                  uri: videoSource.uri,
-                }}
-                rate={1.0}
-                volume={1.0}
-                isMuted={true}
-                resizeMode="cover"
-                // shouldPlay
-                // isLooping
-                style={{
-                  ...styles.video,
-                  width: (dimensions.width * 9) / 10,
-                  height: dimensions.height / 2 - 60,
-                  display: "flex",
-                  justifyContent: "flex-end",
-                }}
-              />
-            </View>
-          )}
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "flex-start",
-            marginLeft: 10,
-            alignSelf: "flex-start",
-          }}
-        >
-          {photos?.map((item, i) => renderImage(item, i))}
+          >
+            {videoSource && (
+              <View>
+                <Video
+                  source={{
+                    uri: videoSource.uri,
+                  }}
+                  rate={1.0}
+                  volume={1.0}
+                  isMuted={true}
+                  resizeMode="cover"
+                  // shouldPlay
+                  // isLooping
+                  style={{
+                    ...styles.video,
+                    width: (dimensions.width * 8) / 10,
+                    height: (dimensions.width * 8) / 10,
+                    display: "flex",
+                    alignSelf: "center",
+                  }}
+                />
+              </View>
+            )}
+          </View>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              // justifyContent: "flex-start",
+              alignItems: "center",
+              margin: 10,
+            }}
+          >
+            {photos?.map((item, i) => renderImage(item, i))}
+          </View>
         </View>
       </KeyboardAvoidingView>
       <View style={styles.bottomContainer}>
@@ -253,6 +257,7 @@ export default function CreatePost(props) {
           <TouchableOpacity
             onPress={() => {
               setVideoSource(null);
+              setPostHasImage(true);
               props.navigation.navigate({
                 name: "Camera",
                 params: { from: "CreatePost" },
@@ -269,6 +274,7 @@ export default function CreatePost(props) {
           <TouchableOpacity
             onPress={() => {
               setVideoSource(null);
+              setPostHasImage(true);
 
               props.navigation.navigate("CreatePostImageBrowser");
             }}
@@ -281,13 +287,17 @@ export default function CreatePost(props) {
           </TouchableOpacity>
           <TouchableOpacity
             onPress={() => {
-              setPhotos([]);
               pickDocument();
             }}
+            disabled={postHasImage}
           >
             <FontAwesome
               name="video-camera"
-              style={{ ...styles.Icons, marginHorizontal: 5 }}
+              style={
+                postHasImage
+                  ? { ...styles.IconsDisabled, marginHorizontal: 5 }
+                  : { ...styles.Icons, marginHorizontal: 5 }
+              }
               size={24}
             />
           </TouchableOpacity>
@@ -411,12 +421,6 @@ export default function CreatePost(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: Dimensions.get("window").height,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   tagContainer: {
     display: "flex",
     // flexDirection: "row",
@@ -471,12 +475,18 @@ const styles = StyleSheet.create({
     color: "#4FB5A5",
     marginBottom: 10,
   },
+  IconsDisabled: {
+    fontSize: 30,
+    color: "#aaa",
+    marginBottom: 10,
+  },
   PostArea: {
     display: "flex",
     flex: 1,
   },
   PrimaryTextInput: {
     fontSize: 18,
+    width: "100%",
     color: "#000",
     flex: 1,
     textAlignVertical: "top",
@@ -485,11 +495,15 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   ProfilePicAndCaption: {
-    flex: 0.4,
+    flex: 0.25,
     display: "flex",
-    // flexDirection: "row",
     marginHorizontal: 15,
     marginVertical: 15,
+  },
+  MediaArea: {
+    flex: 0.75,
+    marginHorizontal: 15,
+    display: "flex",
   },
   video: {
     padding: 10,
@@ -517,8 +531,6 @@ const styles = StyleSheet.create({
   bottomContainer: {
     display: "flex",
     paddingHorizontal: 10,
-    // borderWidth: 1,
-    // borderColor: "gray",
     backgroundColor: "#fff",
     flex: 1,
     paddingTop: 10,
