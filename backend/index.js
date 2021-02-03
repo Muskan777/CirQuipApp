@@ -20,7 +20,7 @@ app.get("/", (req, res) => {
   res.status(200).send("CirQuip API");
 });
 
-const routes = ["post", "comment", "user", "shop"];
+const routes = ["post", "comment", "user", "shop", "message"];
 
 routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
@@ -30,6 +30,7 @@ io.on("connection", socket => {
   });
 
   socket.on("send message", msg => {
+
     users[msg.to].emit("new message", msg);
   });
 
