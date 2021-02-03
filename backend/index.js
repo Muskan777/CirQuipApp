@@ -36,6 +36,7 @@ io.on("connection", socket => {
     } else {
       console.log("user offline");
     }
+    console.log("[send-message]", msg);
   });
 
   //   socket.on("disconnect", function (data) {

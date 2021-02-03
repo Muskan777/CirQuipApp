@@ -1,90 +1,111 @@
 import React, { useState, useCallback, useEffect } from "react";
+import { Alert } from "react-native";
 import { GiftedChat } from "react-native-gifted-chat";
 import io from "socket.io-client";
 import Loader from "./Loader";
 import axios from "axios";
 import "../config";
-
-export function ChatWithAdmin(props) {
-  const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(() => {
-    return io("http://192.168.43.192:3000");
-  });
-  useEffect(() => {
+import * as Constants from "expo-constants";
+export class ChatWithAdmin extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      messages: [],
+      socket: io(`http://192.168.1.15:3000`),
+    };
+  }
+  componentDidMount() {
+    this.state.socket.on("new message", message => {
+      console.log("message", message);
+      this.onRecv(message);
+    });
     axios
       .get(`${global.config.host}/message/getMessages`)
       .then(res => {
         let Messages = res.data.messages;
-        if (props.route.params.admin) {
+        if (this.props.route.params.admin) {
           let FilteredMessages = Messages.filter(msg => {
             return (
-              props.route.params.thread._id === msg.to ||
-              props.route.params.thread._id === msg.user._id
+              this.props.route.params.thread._id === msg.to ||
+              this.props.route.params.thread._id === msg.user._id
             );
           });
           FilteredMessages = FilteredMessages.reverse();
-          setMessages(FilteredMessages);
+          this.setState({
+            messages: FilteredMessages,
+          });
         } else {
           let FilteredMessages = Messages.filter(msg => {
             return (
-              props.route.params.email === msg.to ||
-              props.route.params.email === msg.user._id
+              this.props.route.params.email === msg.to ||
+              this.props.route.params.email === msg.user._id
             );
           });
           FilteredMessages = FilteredMessages.reverse();
-          setMessages(FilteredMessages);
+          this.setState({
+            messages: FilteredMessages,
+          });
         }
       })
       .catch(e => console.log(e));
-    props.route.params.admin
-      ? socket.emit("new user", "Admin")
-      : socket.emit("new user", props.route.params.email);
-  }, []);
 
-  const onSend = useCallback((messages = []) => {
+    this.props.route.params.admin
+      ? this.state.socket.emit("new user", "Admin")
+      : this.state.socket.emit("new user", this.props.route.params.email);
+  }
+
+  onSend = (messages = []) => {
     let to = "";
-    if (props.route.params.admin) {
-      to = props.route.params.thread._id;
+    if (this.props.route.params.admin) {
+      to = this.props.route.params.thread._id;
       messages[0].to = to;
     } else {
       to = "Admin";
       messages[0].to = to;
     }
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, messages)
-    );
+    this.state.socket.emit("send message", messages[0]);
+    for (let i = 0; i < messages.length; i++)
+      messages[i] = { ...messages[i], _id: new Date().getTime() };
+    this.setState({
+      messages: GiftedChat.append(this.state.messages, {
+        ...messages[0],
+        _id: Math.round(Math.random() * 1000000),
+      }),
+    });
     let PostMsg = messages[0];
-    delete PostMsg["_id"];
+    //delete PostMsg["_id"];
     axios
       .post(`${global.config.host}/message/saveMessages`, PostMsg)
       .then(function (response) {
-        console.log(response);
+        //console.log(response);
       })
       .catch(function (error) {
         console.log(error);
       });
-    socket.emit("send message", messages[0]);
-  }, []);
+  };
 
-  const onRecv = useCallback((message = []) => {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, message)
+  onRecv = (message = []) => {
+    this.setState({
+      messages: GiftedChat.append(this.state.messages, {
+        ...message,
+        _id: Math.round(Math.random() * 1000000),
+      }),
+    });
+  };
+
+  render() {
+    return this.state.socket ? (
+      <GiftedChat
+        messages={this.state.messages}
+        onSend={messages => this.onSend(messages)}
+        user={{
+          _id: this.props.route.params.admin
+            ? "Admin"
+            : this.props.route.params.email,
+        }}
+      />
+    ) : (
+      <Loader />
     );
-  });
-
-  socket.on("new message", message => {
-    onRecv(message);
-  });
-
-  return socket ? (
-    <GiftedChat
-      messages={messages}
-      onSend={messages => onSend(messages)}
-      user={{
-        _id: props.route.params.admin ? "Admin" : props.route.params.email,
-      }}
-    />
-  ) : (
-    <Loader />
-  );
+  }
 }
