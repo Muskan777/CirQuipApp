@@ -5,6 +5,7 @@ import axios from "axios";
 import Post from "../components/Post";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Posts({ navigation }) {
   const [data, setData] = useState([]);
@@ -21,9 +22,14 @@ export default function Posts({ navigation }) {
     setIsRefreshing(false);
   };
 
-  const fetchData = () => {
+  const fetchData = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
-      .get(`${global.config.host}/post/getPosts`)
+      .get(`${global.config.host}/post/getPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
+      })
       .then(res => {
         setData(res.data.post);
         setLoading(false);

@@ -19,6 +19,9 @@ const PostSchema = mongoose.Schema(
       type: Date,
       default: Date.now,
     },
+    group: {
+      type: Array,
+    },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

@@ -6,10 +6,21 @@ const auth = require("../middlewares/auth");
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
 
-router.route("/getPosts").get((req, res) => {
+router.route("/getPosts").get(auth, (req, res) => {
   try {
     Post.find()
-      .then(post => res.status(200).send({ post: post }))
+      .then(post => {
+        let arr = [];
+        post.map(doc => {
+          for (var i = 0; i < doc.group.length; i++) {
+            if (doc.group[i] === req.payload.role) {
+              arr.push(doc);
+              break;
+            }
+          }
+        });
+        res.status(200).send({ post: arr });
+      })
       .catch(err => res.status(400).json("Error: " + err));
   } catch (e) {
     console.log(e);
@@ -20,13 +31,14 @@ router.route("/getPosts").get((req, res) => {
 // @desc Creates new post
 
 router.route("/createPost").post(auth, (req, res) => {
-  let { content, caption } = req.body;
+  let { content, caption, group } = req.body;
   const createdAt = Date.now();
 
   const newPost = new Post({
     userId: req.payload.id,
     userName: req.payload.name,
     userRole: req.payload.role,
+    group,
     content,
     caption,
     likes: 0,

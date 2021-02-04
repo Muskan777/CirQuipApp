@@ -13,6 +13,7 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
+// import { Button, Paragraph, Dialog, Portal } from "react-native-paper";
 import {
   MaterialIcons,
   Entypo,
@@ -20,7 +21,15 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import { IconButton, Searchbar } from "react-native-paper";
+import {
+  IconButton,
+  Button,
+  Paragraph,
+  Dialog,
+  Portal,
+  Searchbar,
+} from "react-native-paper";
+import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -36,6 +45,13 @@ export default function CreatePost(props) {
   const [videoSource, setVideoSource] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [taggedList, setTaggedList] = useState([]);
+  const [visible, setVisible] = React.useState(false);
+  const [checkedA, setCheckedA] = React.useState(false);
+  const [checkedB, setCheckedB] = React.useState(false);
+  const [checkedC, setCheckedC] = React.useState(false);
+
+  const handleDialog = () => setVisible(!visible);
+
   useEffect(() => {
     axios
       .get(`${global.config.host}/user/getUsers`)
@@ -48,12 +64,23 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    let group = [];
+    if (checkedA) {
+      group.push("Alumni");
+    }
+    if (checkedB) {
+      group.push("Faculty");
+    }
+    if (checkedC) {
+      group.push("Student");
+    }
     axios
       .post(
         `${global.config.host}/post/createPost`,
         {
           content: photos[0],
           caption: postText,
+          group: group,
         },
         {
           headers: {
@@ -160,7 +187,8 @@ export default function CreatePost(props) {
           style={{ ...styles.Icons, marginTop: 20 }}
           size={24}
           onPress={() => {
-            handleSubmit();
+            // handleSubmit();
+            handleDialog();
           }}
         />
       </View>
@@ -250,6 +278,86 @@ export default function CreatePost(props) {
           >
             {photos?.map((item, i) => renderImage(item, i))}
           </View>
+        </View>
+        <View>
+          <Portal>
+            <Dialog
+              visible={visible}
+              onDismiss={handleDialog}
+              style={styles.dialog}
+            >
+              <Dialog.Title
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: "#4FB5A5",
+                  fontWeight: "bold",
+                }}
+              >
+                Send post to
+              </Dialog.Title>
+              <Dialog.Content>
+                <View style={styles.item}>
+                  <CheckBox
+                    checked={checkedA}
+                    color={checkedA ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedA(!checkedA)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedA ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Alumni
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  <CheckBox
+                    checked={checkedB}
+                    color={checkedB ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedB(!checkedB)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedB ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Faculty
+                  </Text>
+                </View>
+                <View style={styles.item}>
+                  <CheckBox
+                    checked={checkedC}
+                    color={checkedC ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedC(!checkedC)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedC ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Students
+                  </Text>
+                </View>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={handleDialog} color="gray" fontSize="15">
+                  Back
+                </Button>
+                <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
+                  Send
+                </Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
         </View>
       </KeyboardAvoidingView>
       <View style={styles.bottomContainer}>
@@ -432,6 +540,20 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 8,
     borderBottomWidth: 0.5,
+  },
+  checkBoxTxt: {
+    marginLeft: 20,
+  },
+  dialog: {
+    backgroundColor: "#f5f5f5",
+  },
+  item: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: "row",
   },
   tag: {
     display: "flex",
