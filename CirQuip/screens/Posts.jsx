@@ -20,6 +20,7 @@ export default function Posts({ navigation }) {
   const [CCPIndex, setCCPIndex] = useState(null);
   const [commentText, setCommentText] = useState(null);
   const [comments, setComments] = useState([]);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -36,6 +37,7 @@ export default function Posts({ navigation }) {
       .get(`${global.config.host}/post/getPosts`)
       .then(res => {
         setData(res.data.post);
+        setLoading(false);
       })
       .catch(e => console.log(e));
   };
@@ -64,34 +66,35 @@ export default function Posts({ navigation }) {
     }
   };
 
-  if (data.length === 0) {
-    return <Loader />;
-  }
   return (
     <SafeAreaView style={styles.post}>
-      <FlatList
-        data={data}
-        renderItem={({ item, index }) => (
-          <Post
-            name={item.userName}
-            role={item.userRole}
-            createdAt={item.createdAt}
-            caption={item.caption}
-            comments={item.comments}
-            likes={item.likes}
-            saves={item.saves}
-            content={item.content}
-            onCommentClick={onCommentClick}
-            navigation={navigation}
-            postId={item._id}
-            postIndex={index}
-            id={item.userId}
-          />
-        )}
-        keyExtractor={item => item._id}
-        onRefresh={() => onRefresh()}
-        refreshing={isRefreshing}
-      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({ item, index }) => (
+            <Post
+              name={item.userName}
+              role={item.userRole}
+              createdAt={item.createdAt}
+              caption={item.caption}
+              comments={item.comments}
+              likes={item.likes}
+              saves={item.saves}
+              content={item.content}
+              onCommentClick={onCommentClick}
+              navigation={navigation}
+              postId={item._id}
+              postIndex={index}
+              id={item.userId}
+            />
+          )}
+          keyExtractor={item => item._id}
+          onRefresh={() => onRefresh()}
+          refreshing={isRefreshing}
+        />
+      )}
       <Modal visible={modalOpen} animationType="slide">
         <View style={styles.topContainer}>
           <MaterialIcons

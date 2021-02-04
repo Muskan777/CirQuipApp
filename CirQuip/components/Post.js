@@ -21,6 +21,7 @@ export default function Post({
   createdAt,
   caption,
   comments,
+  content,
   likes,
   saves,
   name,
@@ -157,7 +158,7 @@ export default function Post({
       <View style={styles.postImageContainer}>
         <Image
           style={styles.postImage}
-          source={require("../assets/badBoysForLife5120x5120WillSmithMartinLawrence4k5k2020194680867b018.png")}
+          source={{ uri: `data:image/jpg;base64,${content}` }}
         ></Image>
       </View>
       <View style={styles.datetime}>
