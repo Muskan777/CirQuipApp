@@ -20,6 +20,7 @@ export default function SavedPosts({ navigation }) {
   let savedData = [];
   let postData = [];
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -38,54 +39,56 @@ export default function SavedPosts({ navigation }) {
         res.data.post.map(post => {
           postData.push(post);
         });
+        axios
+          .get(`${global.config.host}/user/getLikedPosts`, {
+            headers: {
+              "cirquip-auth-token": token,
+            },
+          })
+          .then(res => {
+            for (var i = 0; i < res.data.savedPosts.length; i++) {
+              postData.map(post => {
+                if (res.data.savedPosts[i] === post._id) {
+                  savedData.push(post);
+                }
+              });
+            }
+            setData(savedData);
+            setLoading(false);
+          })
+          .catch(e => console.log(e));
       })
       .catch(e => console.log(e));
     let token = await AsyncStorage.getItem("cirquip-auth-token");
-    axios
-      .get(`${global.config.host}/user/getLikedPosts`, {
-        headers: {
-          "cirquip-auth-token": token,
-        },
-      })
-      .then(res => {
-        for (var i = 0; i < res.data.savedPosts.length; i++) {
-          postData.map(post => {
-            if (res.data.savedPosts[i] === post._id) {
-              savedData.push(post);
-            }
-          });
-        }
-        setData(savedData);
-      })
-      .catch(e => console.log(e));
   };
 
-  if (data.length === 0) {
-    return <Loader />;
-  }
   return (
     <SafeAreaView style={styles.post}>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <Post
-            name={item.userName}
-            role={item.userRole}
-            createdAt={item.createdAt}
-            caption={item.caption}
-            comments={item.comments}
-            likes={item.likes}
-            saves={item.saves}
-            content={item.content}
-            navigation={navigation}
-            postId={item._id}
-            id={item.userId}
-          />
-        )}
-        keyExtractor={item => item._id}
-        onRefresh={() => onRefresh()}
-        refreshing={isRefreshing}
-      />
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({ item }) => (
+            <Post
+              name={item.userName}
+              role={item.userRole}
+              createdAt={item.createdAt}
+              caption={item.caption}
+              comments={item.comments}
+              likes={item.likes}
+              saves={item.saves}
+              content={item.content}
+              navigation={navigation}
+              postId={item._id}
+              id={item.userId}
+            />
+          )}
+          keyExtractor={item => item._id}
+          onRefresh={() => onRefresh()}
+          refreshing={isRefreshing}
+        />
+      )}
     </SafeAreaView>
   );
 }
