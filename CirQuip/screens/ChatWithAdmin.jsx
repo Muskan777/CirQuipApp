@@ -16,7 +16,6 @@ export class ChatWithAdmin extends React.Component {
   }
   componentDidMount() {
     this.state.socket.on("new message", message => {
-      console.log("message", message);
       this.onRecv(message);
     });
     axios
@@ -75,10 +74,7 @@ export class ChatWithAdmin extends React.Component {
         _id: Math.round(Math.random() * 1000000),
       }),
     });
-    let PostMsg = messages[0];
     this.state.socket.emit("send message", messages[0]);
-    console.log(PostMsg);
-    //delete PostMsg["_id"];
   };
 
   onRecv = (message = []) => {
