@@ -11,7 +11,7 @@ export class ChatWithAdmin extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      socket: io(`http://192.168.1.15:3000`),
+      socket: io(`http://192.168.43.192:3000`),
     };
   }
   componentDidMount() {
@@ -54,6 +54,10 @@ export class ChatWithAdmin extends React.Component {
       : this.state.socket.emit("new user", this.props.route.params.email);
   }
 
+  componentWillUnmount() {
+    this.state.socket.disconnect();
+  }
+
   onSend = (messages = []) => {
     let to = "";
     if (this.props.route.params.admin) {
@@ -63,7 +67,6 @@ export class ChatWithAdmin extends React.Component {
       to = "Admin";
       messages[0].to = to;
     }
-    this.state.socket.emit("send message", messages[0]);
     for (let i = 0; i < messages.length; i++)
       messages[i] = { ...messages[i], _id: new Date().getTime() };
     this.setState({
@@ -73,15 +76,9 @@ export class ChatWithAdmin extends React.Component {
       }),
     });
     let PostMsg = messages[0];
+    this.state.socket.emit("send message", messages[0]);
+    console.log(PostMsg);
     //delete PostMsg["_id"];
-    axios
-      .post(`${global.config.host}/message/saveMessages`, PostMsg)
-      .then(function (response) {
-        //console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   };
 
   onRecv = (message = []) => {

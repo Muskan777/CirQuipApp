@@ -1,6 +1,12 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import { List, Divider } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
@@ -13,7 +19,10 @@ export function ChatWithUser(props) {
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
         if (props.route.params.email == global.config.admin) {
-          const thread = res.data.users.map(user => {
+          let Users = res.data.users.filter(user => {
+            return user.email != global.config.admin;
+          });
+          const thread = Users.map(user => {
             return {
               _id: user.email,
               name: user.name,
