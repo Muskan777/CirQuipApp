@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieparser = require("cookie-parser");
 const connectDB = require("./config/config");
+const Message = require("./models/message");
 const users = {};
 
 const app = express();
@@ -31,18 +32,31 @@ io.on("connection", socket => {
   });
 
   socket.on("send message", msg => {
+    delete msg["_id"];
     if (users[msg.to]) {
       users[msg.to].emit("new message", msg);
     } else {
       console.log("user offline");
     }
     console.log("[send-message]", msg);
+
+    NewMessage = new Message({
+      ...msg,
+    });
+    try {
+      NewMessage.save()
+        .then(() => console.log("Successful"))
+        .catch(err => console.log("Error:", err));
+    } catch (e) {
+      console.log("Error", e);
+    }
   });
 
-  //   socket.on("disconnect", function (data) {
-  //     if (!socket.email) {
-  //       return;
-  //     }
+  socket.on("disconnect", () => {
+    console.log(Object.keys(users));
+    delete users[Object.keys(users).find(key => users[key] === socket)];
+    console.log(Object.keys(users));
+  });
 });
 
 const PORT = process.env.PORT || 3000;
