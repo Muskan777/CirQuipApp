@@ -1,11 +1,93 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { Alert } from "react-native";
-import { GiftedChat } from "react-native-gifted-chat";
+import { Alert, StyleSheet, View } from "react-native";
+import {
+  GiftedChat,
+  InputToolbar,
+  Bubble,
+  Send,
+} from "react-native-gifted-chat";
 import io from "socket.io-client";
 import Loader from "./Loader";
 import axios from "axios";
 import "../config";
-import * as Constants from "expo-constants";
+import { IconButton } from "react-native-paper";
+const customtInputToolbar = props => {
+  return (
+    <InputToolbar
+      {...props}
+      containerStyle={{
+        backgroundColor: "white",
+        borderTopColor: "#E8E8E8",
+        borderRadius: 30,
+        marginHorizontal: 10,
+        paddingVertical: 8,
+      }}
+      // accessoryStyle={{
+      //   shadowOpacity: 0.3,
+      //   shadowOffset: {
+      //     width: 0,
+      //     height: 3,
+      //   },
+      //   shadowRadius: 6,
+      //   shadowColor: "#4FB5A5",
+      //   elevation: 3,
+      // }}
+    ></InputToolbar>
+  );
+};
+const customSystemMessage = props => {
+  return (
+    <View style={styles.ChatMessageSytemMessageContainer}>
+      <Icon name="lock" color="#9d9d9d" size={16} />
+      <Text style={styles.ChatMessageSystemMessageText}>
+        Your chat is secured. Remember to be cautious about what you share with
+        others.
+      </Text>
+    </View>
+  );
+};
+
+function renderSend(props) {
+  return (
+    <Send {...props}>
+      <View style={styles.sendingContainer}>
+        <IconButton icon="send-circle" size={42} color="#4FB5A5" />
+      </View>
+    </Send>
+  );
+}
+function scrollToBottomComponent() {
+  return (
+    <View style={styles.bottomComponentContainer}>
+      <IconButton icon="chevron-double-down" size={36} color="#4FB5A5" />
+    </View>
+  );
+}
+function renderBubble(props) {
+  return (
+    <Bubble
+      {...props}
+      wrapperStyle={{
+        right: {
+          backgroundColor: "#707070",
+          borderRadius: 4,
+        },
+        left: {
+          backgroundColor: "#DEDEDE",
+          borderRadius: 4,
+        },
+      }}
+      textStyle={{
+        left: {
+          color: "#fff",
+        },
+        right: {
+          color: "#fff",
+        },
+      }}
+    />
+  );
+}
 export class ChatWithAdmin extends React.Component {
   constructor(props) {
     super(props);
@@ -95,6 +177,20 @@ export class ChatWithAdmin extends React.Component {
       <GiftedChat
         messages={this.state.messages}
         onSend={messages => this.onSend(messages)}
+        renderInputToolbar={props => customtInputToolbar(props)}
+        renderSystemMessage={props => customSystemMessage(props)}
+        renderBubble={renderBubble}
+        multiline
+        renderSend={renderSend}
+        minInputToolbarHeight={90}
+        textInputStyle={{
+          height: 100,
+          borderRadius: 10,
+        }}
+        placeholder="Type your message here..."
+        alwaysShowSend
+        scrollToBottomComponent={scrollToBottomComponent}
+        scrollToBottom
         user={{
           _id: this.props.route.params.admin
             ? "Admin"
@@ -106,3 +202,14 @@ export class ChatWithAdmin extends React.Component {
     );
   }
 }
+const styles = StyleSheet.create({
+  sendingContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 20,
+  },
+  bottomComponentContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
