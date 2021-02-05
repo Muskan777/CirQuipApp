@@ -171,7 +171,7 @@ export default function CreatePost(props) {
 
   return (
     // <View>
-    <View style={styles.mainContent}>
+    <SafeAreaView style={styles.mainContent}>
       <View style={styles.topContainer}>
         <MaterialIcons
           name="close"
@@ -523,7 +523,7 @@ export default function CreatePost(props) {
           />
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
     // </View>
   );
 }

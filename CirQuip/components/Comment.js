@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { StyleSheet, Text, Touchable, View, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const Comment = () => {
+const Comment = ({ comment, name, time, role }) => {
   return (
     <View style={styles.CommentContainer}>
       <View style={styles.CommentImageContainer}>
@@ -13,35 +13,31 @@ const Comment = () => {
       </View>
       <View style={styles.CommentContentContainer}>
         <View style={styles.CommentUserInfo}>
-          <Text style={styles.PrimaryText}>Kartik Mandhan</Text>
-          <Text style={styles.SecondaryText}>My role here</Text>
+          <Text style={styles.PrimaryText}>{name || "Anonymus"}</Text>
+          <Text style={styles.SecondaryText}>{role}</Text>
         </View>
-        <Text style={styles.Comment}>
-          jwt
-          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYwMWFjYzhkMWMxN2MzMWU1N2U2NjllNyIsIm5hbWUiOiJLYXJ0aWsgTWFuZGhhbiIsInJvbGUiOiJTdHVkZW50IiwiZW1haWwiOiJrYXJ0aWttYW5kaGFuMTRAZ21haWwuY29tIiwicGhvbmUiOiI5MDc1MzE0MTI0IiwibGlrZWRQb3N0cyI6W10sInNhdmVkUG9zdHMiOltdLCJpYXQiOjE2MTIzNjkxMDUsImV4cCI6MTY0MzkwNTEwNX0.ZercRzeG7OwpELPOl7IBll9_n7h3jb5xlBegm6azGYU
-          data 601acc8d1c17c31e57e669e7
-        </Text>
+        <Text style={styles.Comment}>{comment}</Text>
         <View style={styles.CommentBottomContainer}>
           <View style={styles.BottomContainerButtons}>
             <TouchableOpacity>
               <Text
                 style={{
                   ...styles.SecondaryText,
-                  borderRightWidth: 1,
-                  borderRightColor: "#777",
+                  // borderRightWidth: 1,
+                  // borderRightColor: "#777",
                   paddingHorizontal: 10,
                 }}
               >
                 Like
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity>
+            {/* <TouchableOpacity>
               <Text style={{ ...styles.SecondaryText, paddingHorizontal: 10 }}>
                 Reply
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
           </View>
-          <Text style={styles.SecondaryText}>1d</Text>
+          <Text style={styles.SecondaryText}>{time}</Text>
         </View>
       </View>
     </View>
@@ -69,7 +65,7 @@ const styles = StyleSheet.create({
   },
   CommentImageContainer: { flex: 0.2, marginLeft: 10 },
   CommentContentContainer: {
-    flex: 0.9,
+    flex: 0.8,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 20,
