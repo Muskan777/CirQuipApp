@@ -11,6 +11,7 @@ import {
 import { List, Divider } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
+import { NetInfoCellularGeneration } from "@react-native-community/netinfo";
 
 export function ChatWithUser(props) {
   const [threads, setThreads] = useState([]);
@@ -87,15 +88,24 @@ export function ChatWithUser(props) {
               setUnread(UnreadMessages);
             }}
           >
-            <List.Item
-              title={item.name}
-              description={item._id}
-              titleNumberOfLines={1}
-              titleStyle={styles.listTitle}
-              descriptionStyle={styles.listDescription}
-              descriptionNumberOfLines={1}
-            />
-            <Text> {Unread[item._id] ? Unread[item._id].length : ""}</Text>
+            <View style={styles.listItemContainer}>
+              <List.Item
+                style={styles.listItem}
+                title={item.name}
+                description={item._id}
+                titleNumberOfLines={1}
+                titleStyle={styles.listTitle}
+                descriptionStyle={styles.listDescription}
+                descriptionNumberOfLines={1}
+              />
+              <Text
+                style={
+                  Unread[item._id]?.length > 0 && { ...styles.unreadCount }
+                }
+              >
+                {Unread[item._id] ? Unread[item._id]?.length : ""}
+              </Text>
+            </View>
           </TouchableOpacity>
         )}
       />
@@ -109,9 +119,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listTitle: {
-    fontSize: 22,
+    fontSize: 18,
   },
   listDescription: {
-    fontSize: 16,
+    fontSize: 12,
+  },
+  listItem: {
+    // borderWidth: 1,
+    flex: 1,
+  },
+  listItemContainer: {
+    paddingHorizontal: 10,
+    display: "flex",
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderBottomColor: "#aaa",
+    alignItems: "center",
+  },
+
+  unreadCount: {
+    color: "#fff",
+    borderRadius: 100,
+    paddingVertical: 3,
+    paddingHorizontal: 6,
+    backgroundColor: "#4FB5A5",
   },
 });
