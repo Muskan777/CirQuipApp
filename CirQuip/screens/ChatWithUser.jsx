@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  Text,
 } from "react-native";
 import { List, Divider } from "react-native-paper";
 import Loader from "./Loader";
@@ -14,6 +15,8 @@ import "../config";
 export function ChatWithUser(props) {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [Unread, setUnread] = useState({});
+
   useEffect(() => {
     axios
       .get(`${global.config.host}/user/getUsers`)
@@ -38,7 +41,27 @@ export function ChatWithUser(props) {
         Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
         console.log(err);
       });
+    axios
+      .get(`${global.config.host}/message/getMessages`)
+      .then(res => {
+        let AdminMsg = res.data.messages.filter(message => {
+          return message.to === "Admin" && !message.recieverRead;
+        });
+        let UnreadMsgs = {};
+        for (let i = 0; i < AdminMsg.length; i++) {
+          if (UnreadMsgs[AdminMsg[i].user._id]) {
+            UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
+          } else {
+            UnreadMsgs[AdminMsg[i].user._id] = [];
+            UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
+          }
+        }
+        console.log(UnreadMsgs);
+        setUnread(UnreadMsgs);
+      })
+      .catch(e => console.log(e));
   }, []);
+
   if (loading) {
     return <Loader />;
   }
@@ -51,12 +74,18 @@ export function ChatWithUser(props) {
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
           <TouchableOpacity
-            onPress={() =>
+            onPress={() => {
               props.navigation.navigate("ChatWithAdmin", {
                 thread: item,
                 admin: true,
-              })
-            }
+              });
+              axios.patch(`${global.config.host}/message/updateMessages`, {
+                id: item._id,
+              });
+              let UnreadMessages = Unread;
+              UnreadMessages[item._id] = [];
+              setUnread(UnreadMessages);
+            }}
           >
             <List.Item
               title={item.name}
@@ -66,6 +95,7 @@ export function ChatWithUser(props) {
               descriptionStyle={styles.listDescription}
               descriptionNumberOfLines={1}
             />
+            <Text> {Unread[item._id] ? Unread[item._id].length : ""}</Text>
           </TouchableOpacity>
         )}
       />

@@ -33,4 +33,17 @@ router.route("/saveMessages").post((req, res) => {
   }
 });
 
+router.route("/updateMessages").patch(async (req, res) => {
+  let id = req.body.id;
+  Message.update(
+    { "user._id": id },
+    { $set: { recieverRead: true } },
+    { multi: true }
+  )
+    .then(() => {
+      console.log("Done!");
+    })
+    .catch(err => console.log("Error", err));
+});
+
 module.exports = router;

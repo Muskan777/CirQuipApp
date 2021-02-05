@@ -27,7 +27,6 @@ routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
 io.on("connection", socket => {
   socket.on("new user", function (data) {
-    console.log("data", data);
     users[data] = socket;
   });
 
@@ -35,11 +34,11 @@ io.on("connection", socket => {
     delete msg["_id"];
     if (users[msg.to]) {
       users[msg.to].emit("new message", msg);
+      msg.recieverRead = true;
     } else {
       console.log("user offline");
+      msg.recieverRead = false;
     }
-    console.log("[send-message]", msg);
-
     NewMessage = new Message({
       ...msg,
     });
@@ -53,9 +52,7 @@ io.on("connection", socket => {
   });
 
   socket.on("disconnect", () => {
-    console.log(Object.keys(users));
     delete users[Object.keys(users).find(key => users[key] === socket)];
-    console.log(Object.keys(users));
   });
 });
 
