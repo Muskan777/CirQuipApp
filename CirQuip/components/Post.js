@@ -181,7 +181,7 @@ export default function Post({
           <Text style={styles.TextStyle}>{currentLikes}</Text>
         </View>
         <View style={styles.IconContainer}>
-          <TouchableOpacity onPress={() => onCommentClick(postIndex)}>
+          <TouchableOpacity onPress={() => onCommentClick(postIndex, postId)}>
             <MaterialCommunityIcons
               name="comment-processing"
               size={30}

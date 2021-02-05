@@ -1,6 +1,7 @@
 const router = require("express").Router();
 let Post = require("../models/Post");
 let User = require("../models/user");
+let Comment = require("../models/Comments");
 const auth = require("../middlewares/auth");
 
 // @route GET /api/post/getPosts
@@ -195,6 +196,28 @@ router.route("/deletePost").delete(async (req, res) => {
     Post.findByIdAndDelete(req.body.id)
       .then(() => res.status(200).send("Post deleted"))
       .catch(err => res.status(400).send("Error:" + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route POST /api/post/getComments
+// @desc Get comments for post
+
+router.route("/getComments").post(async (req, res) => {
+  try {
+    let post = await Post.findById(req.body.id);
+    if (!post) {
+      res.status(400).send("Post with id not found");
+    }
+    let arr = [];
+    for (var i = 0; i < post.comments.length; i++) {
+      let tempComment = await Comment.findById(post.comments[i]);
+      if (tempComment) {
+        arr.push(tempComment);
+      }
+    }
+    res.status(200).send({ comments: arr });
   } catch (e) {
     console.log(e);
   }

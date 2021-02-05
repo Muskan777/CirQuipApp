@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import axios from "axios";
@@ -23,6 +24,7 @@ export default function Posts({ navigation }) {
   const [commentText, setCommentText] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -48,29 +50,43 @@ export default function Posts({ navigation }) {
       })
       .catch(e => console.log(e));
   };
-  const onCommentClick = index => {
-    setModalOpen(true);
+
+  const onCommentClick = (index, postId) => {
+    axios
+      .post(`${global.config.host}/post/getComments`, { id: postId })
+      .then(res => {
+        setComments(res.data.comments);
+        setCommentLoading(false);
+      })
+      .catch(e => console.log(e));
+    setModalOpen(!modalOpen);
     setCCPIndex(index);
   };
-  const handleComment = (name, role) => {
-    if (commentText) {
-      setComments(prev => {
-        return [
-          {
-            name: name,
-            role: role,
-            time: new Date().toDateString(),
-            comment: commentText,
+  const handleComment = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    console.log(data[CCPIndex]?._id);
+    axios
+      .post(
+        `${global.config.host}/comment/createComment`,
+        {
+          postId: data[CCPIndex]?._id,
+          comment: commentText,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
           },
-          ...prev,
-        ];
+        }
+      )
+      .then(res => {
+        Alert.alert("CirQuip", "New Comment Created");
+        setCommentText(null);
+        setComments([...comments, res.data.comment]);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
       });
-      setCommentText(null);
-      // console.log(comments);
-      // comments array will contain the freshly added comments
-      // prepend them in database array
-      // write sending comment to database logic here
-    }
   };
 
   return (
@@ -152,11 +168,7 @@ export default function Posts({ navigation }) {
             />
             <TouchableOpacity
               onPress={() => {
-                handleComment(
-                  data[CCPIndex]?.userName,
-                  data[CCPIndex]?.userRole
-                );
-                console.log("pressed");
+                handleComment();
               }}
             >
               <MaterialIcons
@@ -165,18 +177,22 @@ export default function Posts({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          {comments.map((item, i) => {
-            return (
-              <Comment
-                key={i}
-                name={item.name}
-                comment={item.comment}
-                role={item.role}
-                time={item.time}
-              />
-            );
-          })}
-          <Comment
+          {commentLoading ? (
+            <Loader />
+          ) : (
+            comments.map((item, i) => {
+              return (
+                <Comment
+                  key={i}
+                  name={item.userName}
+                  comment={item.comment}
+                  role={item.userRole}
+                  time={item.createdAt}
+                />
+              );
+            })
+          )}
+          {/* <Comment
             name="Kartik Mandhan"
             comment="Insightfull"
             role="Frontend Developer"
@@ -194,7 +210,7 @@ export default function Posts({ navigation }) {
             comment="]7c31e57e669e7"
             role="Software Developer"
             time="1d"
-          />
+          /> */}
         </ScrollView>
       </Modal>
     </SafeAreaView>
