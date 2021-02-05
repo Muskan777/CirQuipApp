@@ -28,6 +28,8 @@ export default function Post({
   role,
   navigation,
   postId,
+  postIndex,
+  onCommentClick,
   id,
 }) {
   var date =
@@ -179,7 +181,7 @@ export default function Post({
           <Text style={styles.TextStyle}>{currentLikes}</Text>
         </View>
         <View style={styles.IconContainer}>
-          <TouchableOpacity onPress={() => this.moveToAdd()}>
+          <TouchableOpacity onPress={() => onCommentClick(postIndex)}>
             <MaterialCommunityIcons
               name="comment-processing"
               size={30}
