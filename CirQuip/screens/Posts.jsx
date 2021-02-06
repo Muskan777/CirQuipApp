@@ -110,6 +110,7 @@ export default function Posts({ navigation }) {
               onCommentClick={onCommentClick}
               navigation={navigation}
               postId={item._id}
+              taggedUsers={item.taggedUsers}
               postIndex={index}
               id={item.userId}
             />
@@ -148,6 +149,7 @@ export default function Posts({ navigation }) {
               content={data[CCPIndex]?.content}
               onCommentClick={onCommentClick}
               navigation={navigation}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
               // postIndex={index}
               postId={data[CCPIndex]?._id}
               id={data[CCPIndex]?.userId}

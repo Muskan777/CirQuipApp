@@ -292,7 +292,7 @@ export default function CreatePost(props) {
                 Send post to
               </Dialog.Title>
               <Dialog.Content>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedA}
                     color={checkedA ? "#4FB5A5" : "gray"}
@@ -309,7 +309,7 @@ export default function CreatePost(props) {
                     Alumni
                   </Text>
                 </View>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedB}
                     color={checkedB ? "#4FB5A5" : "gray"}
@@ -326,7 +326,7 @@ export default function CreatePost(props) {
                     Faculty
                   </Text>
                 </View>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedC}
                     color={checkedC ? "#4FB5A5" : "gray"}
@@ -337,6 +337,7 @@ export default function CreatePost(props) {
                       ...styles.checkBoxTxt,
                       color: checkedC ? "#4FB5A5" : "gray",
                       fontWeight: "bold",
+                      flex: 1,
                       fontSize: 15,
                     }}
                   >
@@ -539,11 +540,12 @@ const styles = StyleSheet.create({
   },
   checkBoxTxt: {
     marginLeft: 20,
+    width: "100%",
   },
   dialog: {
     backgroundColor: "#f5f5f5",
   },
-  item: {
+  checkBoxContainer: {
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,
