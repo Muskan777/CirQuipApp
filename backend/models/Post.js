@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const PostSchema = mongoose.Schema(
   {
+    userName: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+    userRole: {
+      type: String,
+    },
     content: {
       type: String,
       required: true,
@@ -13,6 +22,9 @@ const PostSchema = mongoose.Schema(
       type: Number,
     },
     saves: {
+      type: Number,
+    },
+    shares: {
       type: Number,
     },
     createdAt: {

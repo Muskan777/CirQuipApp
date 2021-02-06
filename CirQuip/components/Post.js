@@ -24,6 +24,7 @@ export default function Post({
   content,
   likes,
   saves,
+  shares,
   name,
   role,
   navigation,
@@ -45,8 +46,10 @@ export default function Post({
   }
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentSaves, setCurrentSaves] = useState(saves);
+  const [currentShares, setCurrentShares] = useState(shares);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [shared, setShared] = useState(false);
 
   useEffect(() => {
     fetchLikedPosts();
@@ -62,21 +65,35 @@ export default function Post({
       })
       .then(res => {
         let tempLiked = false;
-        for (var i = 0; i < res.data.likedPosts.length; i++) {
-          if (res.data.likedPosts[i] === postId) {
-            tempLiked = true;
-            break;
+        if (res.data.likedPosts) {
+          for (var i = 0; i < res.data.likedPosts.length; i++) {
+            if (res.data.likedPosts[i] === postId) {
+              tempLiked = true;
+              break;
+            }
           }
         }
         let tempSaved = false;
-        for (var i = 0; i < res.data.savedPosts.length; i++) {
-          if (res.data.savedPosts[i] === postId) {
-            tempSaved = true;
-            break;
+        if (res.data.savedPosts) {
+          for (var i = 0; i < res.data.savedPosts.length; i++) {
+            if (res.data.savedPosts[i] === postId) {
+              tempSaved = true;
+              break;
+            }
+          }
+        }
+        let tempShared = false;
+        if (res.data.sharedPosts) {
+          for (var i = 0; i < res.data.sharedPosts.length; i++) {
+            if (res.data.sharedPosts[i] === postId) {
+              tempShared = true;
+              break;
+            }
           }
         }
         setLiked(tempLiked);
         setSaved(tempSaved);
+        setShared(tempShared);
       })
       .catch(e => console.log(e));
   };
@@ -123,6 +140,28 @@ export default function Post({
       .then(res => {
         setCurrentSaves(res.data.saves);
         setSaved(res.data.saved);
+      })
+      .catch(e => console.log(e));
+  };
+
+  const handleShare = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .patch(
+        `${global.config.host}/post/sharePost`,
+        {
+          id: postId,
+          shared: shared,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCurrentShares(res.data.shares);
+        setShared(res.data.shared);
       })
       .catch(e => console.log(e));
   };
@@ -181,7 +220,7 @@ export default function Post({
           <Text style={styles.TextStyle}>{currentLikes}</Text>
         </View>
         <View style={styles.IconContainer}>
-          <TouchableOpacity onPress={() => onCommentClick(postIndex)}>
+          <TouchableOpacity onPress={() => onCommentClick(postIndex, postId)}>
             <MaterialCommunityIcons
               name="comment-processing"
               size={30}
@@ -201,10 +240,18 @@ export default function Post({
           <Text style={styles.TextStyle}>{currentSaves}</Text>
         </View>
         <View style={styles.IconContainer}>
-          <TouchableOpacity onPress={() => this.moveToAdd()}>
-            <FontAwesome name="share-square-o" size={30} style={styles.Icons} />
+          <TouchableOpacity onPress={handleShare}>
+            {shared ? (
+              <FontAwesome name="share-square" size={30} style={styles.Icons} />
+            ) : (
+              <FontAwesome
+                name="share-square-o"
+                size={30}
+                style={styles.Icons}
+              />
+            )}
           </TouchableOpacity>
-          <Text style={styles.TextStyle}>2</Text>
+          <Text style={styles.TextStyle}>{currentShares}</Text>
         </View>
       </View>
     </Card>
