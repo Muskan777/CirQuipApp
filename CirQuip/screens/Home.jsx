@@ -28,6 +28,7 @@ export default function Home({ navigation }) {
   const [margin, setMargin] = useState(0);
   let [data, setData] = useState([1, 2, 3, 4]);
   let [email, setemail] = useState("");
+  const [verified, setVerified] = useState(false);
   const [assign, setassign] = React.useState(false);
 
   const findEmail = async () => {
@@ -37,6 +38,7 @@ export default function Home({ navigation }) {
         .get(`${global.config.host}/user/getUserWithId/${user}`)
         .then(res => {
           setemail(res.data.email);
+          setVerified(res.data.verified);
           setassign(true);
         })
         .catch(err => {
@@ -48,12 +50,8 @@ export default function Home({ navigation }) {
 
   useEffect(() => {
     findEmail();
-  });
-
-  useEffect(() => {
-    findEmail();
     setMargin(getStatusBarHeight());
-  }, []);
+  }, [verified]);
 
   return assign ? (
     <ScrollView>
@@ -199,28 +197,32 @@ export default function Home({ navigation }) {
               </Text>
             </Button>
           </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate({
-                name: "OTP",
-                params: { title: "Verify your email" },
-              });
-            }}
-          >
-            <Button
-              style={{ ...styles.shopButton }}
-              icon="account"
-              mode="contained"
+          {verified == false ? (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate({
+                  name: "OTP",
+                  params: { title: "Verify your email" },
+                });
+              }}
             >
-              <Text
-                style={{
-                  fontSize: 20,
-                }}
+              <Button
+                style={{ ...styles.shopButton }}
+                icon="account"
+                mode="contained"
               >
-                Verify Your Email
-              </Text>
-            </Button>
-          </TouchableOpacity>
+                <Text
+                  style={{
+                    fontSize: 20,
+                  }}
+                >
+                  Verify Your Email
+                </Text>
+              </Button>
+            </TouchableOpacity>
+          ) : (
+            <></>
+          )}
           {email == global.config.admin ? (
             <TouchableOpacity
               onPress={() => {

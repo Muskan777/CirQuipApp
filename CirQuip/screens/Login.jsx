@@ -13,7 +13,7 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "aniketj18.comp@coep.ac.in",
+      email: "aniketj18.instru@coep.ac.in",
       name: "Aniket",
       phone: "7620063711",
       college: "COEP",
@@ -61,7 +61,6 @@ export default class Login extends React.Component {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
-    console.log(collegeName);
     if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
       Alert.alert(
         "CirQuip",

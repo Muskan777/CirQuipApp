@@ -14,24 +14,25 @@ export default function OTP({ email, navigation }) {
   const [otp, setOTP] = useState("");
   const [id, setId] = useState("");
   const [mailId, setMailId] = useState(email);
+  const [validOTP, setValidOTP] = useState(email);
 
   useEffect(() => {
     if (mailId === undefined) {
       AsyncStorage.getItem("user").then(id => {
         setId(id);
-        getEmail(id);
+        getData(id);
       });
     }
   }, []);
 
-  function getEmail(id) {
+  function getData(id) {
     let user;
     axios
       .get(`${global.config.host}/user/getUserWithId/${id}`)
       .then(res => {
         user = res.data;
-        console.log(user.email);
         setMailId(user.email);
+        setValidOTP(user.otp);
       })
       .catch(err => {
         Alert.alert("Error", "Something Went Wrong In Fetching User Data");
@@ -40,13 +41,13 @@ export default function OTP({ email, navigation }) {
   }
 
   const verifyOtp = () => {
-    if (otp === "1234") {
-      console.log(mailId + " " + id);
+    if (otp === validOTP) {
       axios
         .patch(`${global.config.host}/user/verify/${mailId}`)
         .then(res => {
           if (res.status === 200) {
             Alert.alert("CirQuip", "Successfully Verified");
+            navigation.pop();
           } else {
             Alert.alert("Error", "Verification failed");
           }
@@ -62,11 +63,12 @@ export default function OTP({ email, navigation }) {
   return (
     <View style={styles.container}>
       <TextInput
-        style={styles.inputText}
+        style={styles.inputView}
         placeholder="Enter OTP"
-        placeholderTextColor="#003f5c"
+        placeholderTextColor="#fff"
         onChangeText={text => setOTP(text)}
         maxLength={4}
+        keyboardType="phone-pad"
       ></TextInput>
       <TouchableOpacity
         style={styles.loginBtn}
@@ -98,9 +100,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#465881",
     borderRadius: 25,
     height: 50,
+    textAlign: "center",
     marginBottom: 20,
     justifyContent: "center",
-    padding: 20,
+    padding: 10,
+    color: "#fff",
   },
   inputText: {
     height: 50,
