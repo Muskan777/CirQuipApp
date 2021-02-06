@@ -33,6 +33,7 @@ export default function PostCarousel({
   postId,
   postIndex,
   onCommentClick,
+  taggedUsers,
   id,
 }) {
   const date =
@@ -53,6 +54,10 @@ export default function PostCarousel({
   const [saved, setSaved] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [shared, setShared] = useState(false);
+  let usersTagged = [];
+  taggedUsers.map(user => {
+    usersTagged.push(user.name);
+  });
   useEffect(() => {
     fetchLikedPosts();
   }, []);
@@ -217,7 +222,20 @@ export default function PostCarousel({
               {name}
             </Text>
           </TouchableHighlight>
-          <Text>{role}</Text>
+          <Text style={styles.TextStyle}>{role}</Text>
+
+          {usersTagged.length > 0 && (
+            <Text style={{ fontWeight: "bold", width: "100%" }}>
+              {usersTagged?.length != 0 && <Text>with </Text>}
+              {usersTagged?.length != 0 && (
+                <Text style={{ color: "#4FB5A5" }}>
+                  {`${usersTagged[0]}, and ${
+                    usersTagged?.length - 1
+                  } others    `}
+                </Text>
+              )}
+            </Text>
+          )}
         </View>
       </View>
       <View style={styles.postCaption}>
