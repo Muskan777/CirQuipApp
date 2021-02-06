@@ -18,7 +18,7 @@ const email = (to_email, otp) => {
   let mail_html = "<html><body>" + otp + "</body></html>";
   // setup e-mail data
   const mailOptions = {
-    from: '"COEP " <xyz@gmail.com>', // sender address (who sends)
+    from: '"CirQuip" <testingotp712@gmail.com>', // sender address (who sends)
     to: to_email, // list of receivers (who receives)
     subject: "OTP for sign up confirmation", // Subject line
     text: "CirQuip Verification", // plaintext body
@@ -36,7 +36,7 @@ const email = (to_email, otp) => {
     if (error) {
       console.log(error);
     } else {
-      console.log("mail sent successfully");
+      console.log("Mail Sent Successfully!");
     }
   });
 };

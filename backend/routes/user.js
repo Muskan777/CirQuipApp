@@ -12,6 +12,8 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
   let { name, phone, college, email, password, role } = req.body;
   phone = parseInt(phone);
+  let num = Math.floor(Math.random() * 10000).toString();
+  console.log(num);
   try {
     User.findOne({ email }).then(user => {
       if (user) {
@@ -32,6 +34,7 @@ router.post("/register", (req, res) => {
           clubs: [],
           Post: [],
           verified: false,
+          otp: num,
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -43,7 +46,7 @@ router.post("/register", (req, res) => {
             )
             .catch(err => res.status(400).send("Error:" + err));
         });
-        emailHandler.email(newUser.email, 1234);
+        emailHandler.email(newUser.email, newUser.otp);
       }
     });
   } catch (e) {
