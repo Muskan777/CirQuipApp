@@ -34,6 +34,9 @@ const PostSchema = mongoose.Schema(
     group: {
       type: Array,
     },
+    taggedUsers: {
+      type: Array,
+    },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,

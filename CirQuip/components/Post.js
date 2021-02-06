@@ -31,6 +31,7 @@ export default function Post({
   postId,
   postIndex,
   onCommentClick,
+  taggedUsers,
   id,
 }) {
   var date =
@@ -50,6 +51,10 @@ export default function Post({
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
+  let usersTagged = [];
+  taggedUsers.map(user => {
+    usersTagged.push(user.name);
+  });
 
   useEffect(() => {
     fetchLikedPosts();

@@ -80,6 +80,7 @@ export default function CreatePost(props) {
         {
           content: photos[0],
           caption: postText,
+          taggedUsers: taggedList,
           group: group,
         },
         {
