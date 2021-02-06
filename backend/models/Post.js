@@ -2,6 +2,15 @@ const mongoose = require("mongoose");
 
 const PostSchema = mongoose.Schema(
   {
+    userName: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+    userRole: {
+      type: String,
+    },
     content: {
       type: String,
       required: true,

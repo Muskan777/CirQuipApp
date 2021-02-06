@@ -187,15 +187,21 @@ router.route("/savePost").patch(auth, async (req, res) => {
 // @route DELETE /api/post/deletePost
 // @desc Deletes existing post
 
-router.route("/deletePost").delete(async (req, res) => {
+router.route("/deletePost").delete(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
+    let admin = await User.find({ email: "admin@coep.ac.in" });
+    let adminId = admin[0]._id;
     if (!post) {
-      res.status(400).send("Post with id not found");
+      return res.status(400).send("Post with id not found");
     }
-    Post.findByIdAndDelete(req.body.id)
-      .then(() => res.status(200).send("Post deleted"))
-      .catch(err => res.status(400).send("Error:" + err));
+    if (req.payload.id === post.userId || req.payload.id === adminId) {
+      Post.findByIdAndDelete(req.body.id)
+        .then(() => res.status(200).send("Post deleted"))
+        .catch(err => res.status(400).send("Error:" + err));
+    } else {
+      return res.status(400).send("Unauthorized deletion requested");
+    }
   } catch (e) {
     console.log(e);
   }
