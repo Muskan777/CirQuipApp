@@ -90,7 +90,7 @@ router.route("/likePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     if (!post) {
-      res.status(400).send("Post with id not found");
+      return res.status(400).send("Post with id not found");
     }
     if (req.body.liked) {
       Post.findOneAndUpdate(

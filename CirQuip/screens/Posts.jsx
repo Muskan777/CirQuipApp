@@ -64,7 +64,6 @@ export default function Posts({ navigation }) {
   };
   const handleComment = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
-    console.log(data[CCPIndex]?._id);
     axios
       .post(
         `${global.config.host}/comment/createComment`,
@@ -190,10 +189,12 @@ export default function Posts({ navigation }) {
               return (
                 <Comment
                   key={i}
+                  id={item._id}
                   name={item.userName}
                   comment={item.comment}
                   role={item.userRole}
                   time={item.createdAt}
+                  likes={item.likes}
                 />
               );
             })

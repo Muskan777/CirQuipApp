@@ -16,7 +16,7 @@ router.route("/createComment").post(auth, async (req, res) => {
     userRole: req.payload.role,
     postId,
     comment,
-    likes: 0,
+    likes: [],
     createdAt,
   });
   try {
@@ -52,6 +52,45 @@ router.route("/updateComment").patch(async (req, res) => {
     Comment.findOneAndUpdate({ _id: req.body.id }, { $set: { comment, likes } })
       .then(() => res.status(200).send("Comment updated"))
       .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/comment/likeComment
+// @desc Likes existing comment
+
+router.route("/likeComment").patch(auth, async (req, res) => {
+  try {
+    let comment = await Comment.findById(req.body.id);
+    if (!comment) {
+      return res.status(400).send("Comment with id not found");
+    }
+    if (req.body.liked) {
+      Comment.findOneAndUpdate(
+        { _id: req.body.id },
+        { $pull: { likes: req.payload.id } }
+      )
+        .then(() => {
+          res.status(200).send({
+            msg: "Comment unliked",
+            liked: false,
+          });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      Comment.findOneAndUpdate(
+        { _id: req.body.id },
+        { $push: { likes: req.payload.id } }
+      )
+        .then(() => {
+          res.status(200).send({
+            msg: "Comment liked",
+            liked: true,
+          });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    }
   } catch (e) {
     console.log(e);
   }
