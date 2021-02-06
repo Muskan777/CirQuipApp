@@ -21,14 +21,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import {
-  IconButton,
-  Button,
-  Paragraph,
-  Dialog,
-  Portal,
-  Searchbar,
-} from "react-native-paper";
+import { IconButton, Button, Dialog, Portal } from "react-native-paper";
 import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
@@ -78,7 +71,7 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos[0],
+          content: photos,
           caption: postText,
           taggedUsers: taggedList,
           group: group,
@@ -96,6 +89,8 @@ export default function CreatePost(props) {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
       });
+    setVisible(false);
+    props.navigation.goBack();
   };
   useEffect(() => {
     props.navigation.setOptions({
