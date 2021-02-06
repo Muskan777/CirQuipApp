@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
+const emailHandler = require("./email");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -11,6 +12,8 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
   let { name, phone, college, email, password, role } = req.body;
   phone = parseInt(phone);
+  let num = Math.floor(Math.random() * 10000).toString();
+  console.log(num);
   try {
     User.findOne({ email }).then(user => {
       if (user) {
@@ -32,6 +35,8 @@ router.post("/register", (req, res) => {
           posts: [],
           likedPosts: [],
           savedPosts: [],
+          verified: false,
+          otp: num,
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -43,6 +48,7 @@ router.post("/register", (req, res) => {
             )
             .catch(err => res.status(400).send("Error:" + err));
         });
+        emailHandler.email(newUser.email, newUser.otp);
       }
     });
   } catch (e) {
@@ -169,6 +175,23 @@ router.route("/getLikedPosts").get(auth, async (req, res) => {
         }
       })
       .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+// @route PATCH /api/user/verify
+
+router.patch("/verify/:email", async (req, res) => {
+  let email = req.params.email;
+  console.log(email);
+  try {
+    if (email !== undefined) {
+      User.findOneAndUpdate({ email: email }, { $set: { verified: true } })
+        .then(() => res.status(200).send("Verified"))
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      res.status(400).send("Invalid email!");
+    }
   } catch (e) {
     console.log(e);
   }

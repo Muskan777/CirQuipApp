@@ -13,14 +13,14 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "vasusharma656@gmail.com",
-      password: "123",
-      name: "Vasu Sharma",
-      phone: "9906330301",
+      email: "aniketj18.instru@coep.ac.in",
+      name: "Aniket",
+      phone: "7620063711",
       college: "COEP",
       password2: "123",
       role: "Student",
       toggleSignUp: false,
+      otp: "0000",
     };
   }
   async handleLogin() {
@@ -52,16 +52,32 @@ export default class Login extends React.Component {
   toggleSignUp() {
     this.setState({ toggleSignUp: !this.state.toggleSignUp });
   }
+
   handleSignUp() {
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
+      return;
+    }
+    let collegeName = this.state.college;
+    let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
+    collegeName = collegeName.toLowerCase().replace(regex, "");
+    if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
+      Alert.alert(
+        "CirQuip",
+        "We are not in your college yet! Sit tight while we expand!"
+      );
+      return;
+    }
+    let emailId = this.state.email;
+    if (emailId.split("@")[1] !== "coep.ac.in") {
+      Alert.alert("CirQuip", "Please use valid college email address");
       return;
     }
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
         this.props.handleStatus(true);
-        Alert.alert("CirQuip", "Registeration Successful");
+        this.props.navigation.navigate("OTP", { email: this.state.email });
       })
       .catch(err => {
         console.log(err.response.data);
