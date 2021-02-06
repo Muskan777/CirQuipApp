@@ -1,6 +1,7 @@
 const router = require("express").Router();
 let Post = require("../models/Post");
 let User = require("../models/user");
+let Comment = require("../models/Comments");
 const auth = require("../middlewares/auth");
 
 // @route GET /api/post/getPosts
@@ -31,9 +32,8 @@ router.route("/getPosts").get(auth, (req, res) => {
 // @desc Creates new post
 
 router.route("/createPost").post(auth, (req, res) => {
-  let { content, caption, group } = req.body;
+  let { content, caption, group, taggedUsers } = req.body;
   const createdAt = Date.now();
-
   const newPost = new Post({
     userId: req.payload.id,
     userName: req.payload.name,
@@ -41,8 +41,10 @@ router.route("/createPost").post(auth, (req, res) => {
     group,
     content,
     caption,
+    taggedUsers,
     likes: 0,
     saves: 0,
+    shares: 0,
     createdAt,
     comments: [],
   });
@@ -88,7 +90,7 @@ router.route("/likePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     if (!post) {
-      res.status(400).send("Post with id not found");
+      return res.status(400).send("Post with id not found");
     }
     if (req.body.liked) {
       Post.findOneAndUpdate(
@@ -183,18 +185,97 @@ router.route("/savePost").patch(auth, async (req, res) => {
   }
 });
 
-// @route DELETE /api/post/deletePost
-// @desc Deletes existing post
+// @route PATCH /api/post/sharePost
+// @desc share funcionality for existing post
 
-router.route("/deletePost").delete(async (req, res) => {
+router.route("/sharePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     if (!post) {
       res.status(400).send("Post with id not found");
     }
-    Post.findByIdAndDelete(req.body.id)
-      .then(() => res.status(200).send("Post deleted"))
-      .catch(err => res.status(400).send("Error:" + err));
+    if (req.body.shared) {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares - 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $pull: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post unshared",
+              post: post,
+              shares: post.shares - 1,
+              shared: false,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares + 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $push: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post shared",
+              post: post,
+              shares: post.shares + 1,
+              shared: true,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route DELETE /api/post/deletePost
+// @desc Deletes existing post
+
+router.route("/deletePost").delete(auth, async (req, res) => {
+  try {
+    let post = await Post.findById(req.body.id);
+    let admin = await User.find({ email: "admin@coep.ac.in" });
+    let adminId = admin[0]._id;
+    if (!post) {
+      return res.status(400).send("Post with id not found");
+    }
+    if (req.payload.id === post.userId || req.payload.id === adminId) {
+      Post.findByIdAndDelete(req.body.id)
+        .then(() => res.status(200).send("Post deleted"))
+        .catch(err => res.status(400).send("Error:" + err));
+    } else {
+      return res.status(400).send("Unauthorized deletion requested");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route POST /api/post/getComments
+// @desc Get comments for post
+
+router.route("/getComments").post(async (req, res) => {
+  try {
+    let post = await Post.findById(req.body.id);
+    if (!post) {
+      res.status(400).send("Post with id not found");
+    }
+    let arr = [];
+    for (var i = 0; i < post.comments.length; i++) {
+      let tempComment = await Comment.findById(post.comments[i]);
+      if (tempComment) {
+        arr.push(tempComment);
+      }
+    }
+    res.status(200).send({ comments: arr });
   } catch (e) {
     console.log(e);
   }

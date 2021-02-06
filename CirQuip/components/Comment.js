@@ -1,8 +1,50 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, Touchable, View, Image } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
-const Comment = ({ comment, name, time, role }) => {
+const Comment = ({ id, comment, name, time, role, likes }) => {
+  const [commentLiked, setCommentLiked] = useState(false);
+  var date =
+    time.substr(8, 2) + "-" + time.substr(5, 2) + "-" + time.substr(0, 4);
+  if (time.substr(11, 2) > 12) {
+    var commentTime = date + " " + time.substr(11, 5) + " PM";
+  } else {
+    var commentTime = date + " " + time.substr(11, 5) + " AM";
+  }
+  useEffect(() => {
+    handleCommentLiked();
+  }, []);
+  const handleCommentLiked = async () => {
+    let userId = await AsyncStorage.getItem("user");
+    let temp = likes.findIndex(id => id === userId);
+    if (temp === -1) {
+      setCommentLiked(false);
+    } else {
+      setCommentLiked(true);
+    }
+  };
+  const handleCommentLikes = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .patch(
+        `${global.config.host}/comment/likeComment`,
+        {
+          id: id,
+          liked: commentLiked,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        setCommentLiked(res.data.liked);
+      });
+  };
   return (
     <View style={styles.CommentContainer}>
       <View style={styles.CommentImageContainer}>
@@ -20,24 +62,25 @@ const Comment = ({ comment, name, time, role }) => {
         <View style={styles.CommentBottomContainer}>
           <View style={styles.BottomContainerButtons}>
             <TouchableOpacity>
-              <Text
-                style={{
-                  ...styles.SecondaryText,
-                  // borderRightWidth: 1,
-                  // borderRightColor: "#777",
-                  paddingHorizontal: 10,
-                }}
-              >
-                Like
-              </Text>
+              {commentLiked ? (
+                <FontAwesome
+                  name="heart"
+                  size={20}
+                  style={styles.Icons}
+                  onPress={handleCommentLikes}
+                />
+              ) : (
+                <FontAwesome
+                  name="heart-o"
+                  size={20}
+                  style={styles.Icons}
+                  onPress={handleCommentLikes}
+                />
+              )}
             </TouchableOpacity>
-            {/* <TouchableOpacity>
-              <Text style={{ ...styles.SecondaryText, paddingHorizontal: 10 }}>
-                Reply
-              </Text>
-            </TouchableOpacity> */}
+            <Text style={styles.TextStyle}>{likes.length}</Text>
           </View>
-          <Text style={styles.SecondaryText}>{time}</Text>
+          <Text style={styles.SecondaryText}>{commentTime}</Text>
         </View>
       </View>
     </View>
@@ -98,5 +141,10 @@ const styles = StyleSheet.create({
   },
   BottomContainerButtons: {
     flexDirection: "row",
+  },
+  Icons: {
+    fontSize: 20,
+    color: "#4FB5A5",
+    paddingHorizontal: 10,
   },
 });

@@ -2,8 +2,17 @@ const mongoose = require("mongoose");
 
 const PostSchema = mongoose.Schema(
   {
-    content: {
+    userName: {
       type: String,
+    },
+    userId: {
+      type: String,
+    },
+    userRole: {
+      type: String,
+    },
+    content: {
+      type: Array,
       required: true,
     },
     caption: {
@@ -15,11 +24,17 @@ const PostSchema = mongoose.Schema(
     saves: {
       type: Number,
     },
+    shares: {
+      type: Number,
+    },
     createdAt: {
       type: Date,
       default: Date.now,
     },
     group: {
+      type: Array,
+    },
+    taggedUsers: {
       type: Array,
     },
     comments: [

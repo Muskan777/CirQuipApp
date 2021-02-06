@@ -21,14 +21,7 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import {
-  IconButton,
-  Button,
-  Paragraph,
-  Dialog,
-  Portal,
-  Searchbar,
-} from "react-native-paper";
+import { IconButton, Button, Dialog, Portal } from "react-native-paper";
 import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
@@ -78,8 +71,9 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos[0],
+          content: photos,
           caption: postText,
+          taggedUsers: taggedList,
           group: group,
         },
         {
@@ -95,6 +89,8 @@ export default function CreatePost(props) {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
       });
+    setVisible(false);
+    props.navigation.goBack();
   };
   useEffect(() => {
     props.navigation.setOptions({
@@ -296,7 +292,7 @@ export default function CreatePost(props) {
                 Send post to
               </Dialog.Title>
               <Dialog.Content>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedA}
                     color={checkedA ? "#4FB5A5" : "gray"}
@@ -313,7 +309,7 @@ export default function CreatePost(props) {
                     Alumni
                   </Text>
                 </View>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedB}
                     color={checkedB ? "#4FB5A5" : "gray"}
@@ -330,7 +326,7 @@ export default function CreatePost(props) {
                     Faculty
                   </Text>
                 </View>
-                <View style={styles.item}>
+                <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedC}
                     color={checkedC ? "#4FB5A5" : "gray"}
@@ -341,6 +337,7 @@ export default function CreatePost(props) {
                       ...styles.checkBoxTxt,
                       color: checkedC ? "#4FB5A5" : "gray",
                       fontWeight: "bold",
+                      flex: 1,
                       fontSize: 15,
                     }}
                   >
@@ -543,11 +540,12 @@ const styles = StyleSheet.create({
   },
   checkBoxTxt: {
     marginLeft: 20,
+    width: "100%",
   },
   dialog: {
     backgroundColor: "#f5f5f5",
   },
-  item: {
+  checkBoxContainer: {
     width: "100%",
     backgroundColor: "#fff",
     borderRadius: 20,

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
-  StatusBar,
   View,
   Text,
   Image,
@@ -17,7 +16,10 @@ import {
   MaterialCommunityIcons,
   Entypo,
 } from "@expo/vector-icons";
-export default function Post({
+import Carousel, { Pagination } from "react-native-snap-carousel"; // Version can be specified in package.json
+const SLIDER_WIDTH = (Dimensions.get("window").width * 9.2) / 10;
+const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
+export default function PostCarousel({
   createdAt,
   caption,
   comments,
@@ -34,7 +36,7 @@ export default function Post({
   taggedUsers,
   id,
 }) {
-  var date =
+  const date =
     createdAt.substr(8, 2) +
     "-" +
     createdAt.substr(5, 2) +
@@ -50,12 +52,12 @@ export default function Post({
   const [currentShares, setCurrentShares] = useState(shares);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [activeSlide, setActiveSlide] = useState(0);
   const [shared, setShared] = useState(false);
   let usersTagged = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
   });
-
   useEffect(() => {
     fetchLikedPosts();
   }, []);
@@ -102,7 +104,6 @@ export default function Post({
       })
       .catch(e => console.log(e));
   };
-
   const handleLikes = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
 
@@ -148,7 +149,6 @@ export default function Post({
       })
       .catch(e => console.log(e));
   };
-
   const handleShare = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
@@ -171,6 +171,35 @@ export default function Post({
       .catch(e => console.log(e));
   };
 
+  function renderImage({ item }) {
+    return (
+      <Image
+        style={styles.postImage}
+        source={{ uri: `data:image/jpg;base64,${item}` }}
+      ></Image>
+    );
+  }
+  function pagination() {
+    return (
+      <Pagination
+        dotsLength={content.length}
+        activeDotIndex={activeSlide}
+        containerStyle={{ marginTop: -20, paddingBottom: -20 }}
+        dotStyle={{
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          backgroundColor: "#4fba45",
+        }}
+        inactiveDotStyle={{
+          backgroundColor: "#888",
+          // Define styles for inactive dots here
+        }}
+        inactiveDotOpacity={0.4}
+        inactiveDotScale={0.6}
+      />
+    );
+  }
   return (
     <Card style={styles.PostContainer}>
       <View style={styles.topContainer}>
@@ -193,17 +222,36 @@ export default function Post({
               {name}
             </Text>
           </TouchableHighlight>
-          <Text>{role}</Text>
+          <Text style={styles.TextStyle}>{role}</Text>
+
+          {usersTagged.length > 0 && (
+            <Text style={{ fontWeight: "bold", width: "100%" }}>
+              {usersTagged?.length != 0 && <Text>with </Text>}
+              {usersTagged?.length != 0 && (
+                <Text style={{ color: "#4FB5A5" }}>
+                  {`${usersTagged[0]}, and ${
+                    usersTagged?.length - 1
+                  } others    `}
+                </Text>
+              )}
+            </Text>
+          )}
         </View>
       </View>
       <View style={styles.postCaption}>
         <Text> {caption}</Text>
       </View>
       <View style={styles.postImageContainer}>
-        <Image
-          style={styles.postImage}
-          source={{ uri: `data:image/jpg;base64,${content}` }}
-        ></Image>
+        <Carousel
+          data={content}
+          renderItem={renderImage}
+          sliderWidth={SLIDER_WIDTH}
+          itemWidth={ITEM_WIDTH}
+          inactiveSlideShift={0}
+          onSnapToItem={index => setActiveSlide(index)}
+          useScrollView={false}
+        />
+        {content.length > 0 && pagination()}
       </View>
       <View style={styles.datetime}>
         <Text style={styles.TextStyle}>{time}</Text>
@@ -295,15 +343,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   postImageContainer: {
-    justifyContent: "center",
-    marginTop: 10,
     width: "100%",
     borderRadius: 20,
   },
+
   postImage: {
     alignSelf: "center",
-    height: Dimensions.get("window").width,
-    width: Dimensions.get("window").width,
+    height: ITEM_WIDTH,
+    width: ITEM_WIDTH,
     borderRadius: 20,
   },
   contactimg: {

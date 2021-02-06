@@ -6,10 +6,11 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import axios from "axios";
-import Post from "../components/Post";
+import PostsCarousel from "../components/PostsCarousel";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,6 +24,7 @@ export default function Posts({ navigation }) {
   const [commentText, setCommentText] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -48,29 +50,42 @@ export default function Posts({ navigation }) {
       })
       .catch(e => console.log(e));
   };
-  const onCommentClick = index => {
-    setModalOpen(true);
+
+  const onCommentClick = (index, postId) => {
+    axios
+      .post(`${global.config.host}/post/getComments`, { id: postId })
+      .then(res => {
+        setComments(res.data.comments);
+        setCommentLoading(false);
+      })
+      .catch(e => console.log(e));
+    setModalOpen(!modalOpen);
     setCCPIndex(index);
   };
-  const handleComment = (name, role) => {
-    if (commentText) {
-      setComments(prev => {
-        return [
-          {
-            name: name,
-            role: role,
-            time: new Date().toDateString(),
-            comment: commentText,
+  const handleComment = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(
+        `${global.config.host}/comment/createComment`,
+        {
+          postId: data[CCPIndex]?._id,
+          comment: commentText,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
           },
-          ...prev,
-        ];
+        }
+      )
+      .then(res => {
+        Alert.alert("CirQuip", "New Comment Created");
+        setCommentText(null);
+        setComments([...comments, res.data.comment]);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
       });
-      setCommentText(null);
-      // console.log(comments);
-      // comments array will contain the freshly added comments
-      // prepend them in database array
-      // write sending comment to database logic here
-    }
   };
 
   return (
@@ -81,18 +96,21 @@ export default function Posts({ navigation }) {
         <FlatList
           data={data}
           renderItem={({ item, index }) => (
-            <Post
+            <PostsCarousel
               name={item.userName}
               role={item.userRole}
               createdAt={item.createdAt}
               caption={item.caption}
               comments={item.comments}
+              taggedUsers={item.taggedUsers}
               likes={item.likes}
               saves={item.saves}
+              shares={item.shares}
               content={item.content}
               onCommentClick={onCommentClick}
               navigation={navigation}
               postId={item._id}
+              taggedUsers={item.taggedUsers}
               postIndex={index}
               id={item.userId}
             />
@@ -115,21 +133,28 @@ export default function Posts({ navigation }) {
           />
         </View>
         <ScrollView>
-          <Post
-            name={data[CCPIndex]?.userName}
-            role={data[CCPIndex]?.userRole}
-            createdAt={data[CCPIndex]?.createdAt}
-            caption={data[CCPIndex]?.caption}
-            comments={data[CCPIndex]?.comments}
-            likes={data[CCPIndex]?.likes}
-            saves={data[CCPIndex]?.saves}
-            content={data[CCPIndex]?.content}
-            onCommentClick={onCommentClick}
-            navigation={navigation}
-            // postIndex={index}
-            postId={data[CCPIndex]?._id}
-            id={data[CCPIndex]?.userId}
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <PostsCarousel
+              name={data[CCPIndex]?.userName}
+              role={data[CCPIndex]?.userRole}
+              createdAt={data[CCPIndex]?.createdAt}
+              caption={data[CCPIndex]?.caption}
+              comments={data[CCPIndex]?.comments}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
+              likes={data[CCPIndex]?.likes}
+              saves={data[CCPIndex]?.saves}
+              shares={data[CCPIndex]?.shares}
+              content={data[CCPIndex]?.content}
+              onCommentClick={onCommentClick}
+              navigation={navigation}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
+              // postIndex={index}
+              postId={data[CCPIndex]?._id}
+              id={data[CCPIndex]?.userId}
+            />
+          )}
           <View style={styles.CommentInputContainer}>
             <Image
               style={{
@@ -152,11 +177,7 @@ export default function Posts({ navigation }) {
             />
             <TouchableOpacity
               onPress={() => {
-                handleComment(
-                  data[CCPIndex]?.userName,
-                  data[CCPIndex]?.userRole
-                );
-                console.log("pressed");
+                handleComment();
               }}
             >
               <MaterialIcons
@@ -165,36 +186,23 @@ export default function Posts({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          {comments.map((item, i) => {
-            return (
-              <Comment
-                key={i}
-                name={item.name}
-                comment={item.comment}
-                role={item.role}
-                time={item.time}
-              />
-            );
-          })}
-          <Comment
-            name="Kartik Mandhan"
-            comment="Insightfull"
-            role="Frontend Developer"
-            time="1d"
-          />
-          <Comment
-            name="Vasu Sharma"
-            comment="jI6IkpXVCJ9.eyJpZCI6IjYwMWFjYzhkMWMxN2MzMWU1N2U2NjllNyIsIm5hbWUiOiJLYXJ0aWsgTWFuZGhhbiIsInJvbGUiOiJTdHVkZW50IiwiZW1haWwiOiJrYXJ0aWttYW5kaGFuMTRAZ21haWwuY29tIiwicGhvbmUiOiI5MDc1MzE0MTI0IiwibGlrZWRQb3N0cyI6W10sInNhdmVkUG9zdHMiOltdLCJpYXQiOjE2MTIzNjkxMDUsImV4cCI6MTY0MzkwNTEwNX0.ZercRzeG7OwpELPOl7IBll9_n7h3jb5xlBegm6azGYU
-          data 601acc8d1c17c31e57e669e7"
-            role="Software Developer"
-            time="1d"
-          />
-          <Comment
-            name="Muskan Paryani"
-            comment="]7c31e57e669e7"
-            role="Software Developer"
-            time="1d"
-          />
+          {commentLoading ? (
+            <Loader />
+          ) : (
+            comments.map((item, i) => {
+              return (
+                <Comment
+                  key={i}
+                  id={item._id}
+                  name={item.userName}
+                  comment={item.comment}
+                  role={item.userRole}
+                  time={item.createdAt}
+                  likes={item.likes}
+                />
+              );
+            })
+          )}
         </ScrollView>
       </Modal>
     </SafeAreaView>
