@@ -32,9 +32,8 @@ router.route("/getPosts").get(auth, (req, res) => {
 // @desc Creates new post
 
 router.route("/createPost").post(auth, (req, res) => {
-  let { content, caption, group } = req.body;
+  let { content, caption, group, taggedUsers } = req.body;
   const createdAt = Date.now();
-
   const newPost = new Post({
     userId: req.payload.id,
     userName: req.payload.name,
@@ -42,6 +41,7 @@ router.route("/createPost").post(auth, (req, res) => {
     group,
     content,
     caption,
+    taggedUsers,
     likes: 0,
     saves: 0,
     shares: 0,

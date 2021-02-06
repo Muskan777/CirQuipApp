@@ -102,6 +102,7 @@ export default function Posts({ navigation }) {
               createdAt={item.createdAt}
               caption={item.caption}
               comments={item.comments}
+              taggedUsers={item.taggedUsers}
               likes={item.likes}
               saves={item.saves}
               shares={item.shares}
@@ -140,6 +141,7 @@ export default function Posts({ navigation }) {
               createdAt={data[CCPIndex]?.createdAt}
               caption={data[CCPIndex]?.caption}
               comments={data[CCPIndex]?.comments}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
               likes={data[CCPIndex]?.likes}
               saves={data[CCPIndex]?.saves}
               shares={data[CCPIndex]?.shares}
