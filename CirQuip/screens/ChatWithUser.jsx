@@ -83,8 +83,9 @@ export function ChatWithUser(props) {
               axios.patch(`${global.config.host}/message/updateMessages`, {
                 id: item._id,
               });
+              let UnreadMessageId = item._id;
               let UnreadMessages = Unread;
-              UnreadMessages[item._id] = [];
+              UnreadMessages[UnreadMessageId] = [];
               setUnread(UnreadMessages);
             }}
           >
