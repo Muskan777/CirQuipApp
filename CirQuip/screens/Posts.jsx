@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import axios from "axios";
-import Post from "../components/Post";
+import PostsCarousel from "../components/PostsCarousel";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -96,7 +96,7 @@ export default function Posts({ navigation }) {
         <FlatList
           data={data}
           renderItem={({ item, index }) => (
-            <Post
+            <PostsCarousel
               name={item.userName}
               role={item.userRole}
               createdAt={item.createdAt}
@@ -134,7 +134,7 @@ export default function Posts({ navigation }) {
           {isLoading ? (
             <Loader />
           ) : (
-            <Post
+            <PostsCarousel
               name={data[CCPIndex]?.userName}
               role={data[CCPIndex]?.userRole}
               createdAt={data[CCPIndex]?.createdAt}
@@ -199,25 +199,6 @@ export default function Posts({ navigation }) {
               );
             })
           )}
-          {/* <Comment
-            name="Kartik Mandhan"
-            comment="Insightfull"
-            role="Frontend Developer"
-            time="1d"
-          />
-          <Comment
-            name="Vasu Sharma"
-            comment="jI6IkpXVCJ9.eyJpZCI6IjYwMWFjYzhkMWMxN2MzMWU1N2U2NjllNyIsIm5hbWUiOiJLYXJ0aWsgTWFuZGhhbiIsInJvbGUiOiJTdHVkZW50IiwiZW1haWwiOiJrYXJ0aWttYW5kaGFuMTRAZ21haWwuY29tIiwicGhvbmUiOiI5MDc1MzE0MTI0IiwibGlrZWRQb3N0cyI6W10sInNhdmVkUG9zdHMiOltdLCJpYXQiOjE2MTIzNjkxMDUsImV4cCI6MTY0MzkwNTEwNX0.ZercRzeG7OwpELPOl7IBll9_n7h3jb5xlBegm6azGYU
-          data 601acc8d1c17c31e57e669e7"
-            role="Software Developer"
-            time="1d"
-          />
-          <Comment
-            name="Muskan Paryani"
-            comment="]7c31e57e669e7"
-            role="Software Developer"
-            time="1d"
-          /> */}
         </ScrollView>
       </Modal>
     </SafeAreaView>
