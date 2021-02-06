@@ -105,6 +105,7 @@ export default function Posts({ navigation }) {
               comments={item.comments}
               likes={item.likes}
               saves={item.saves}
+              shares={item.shares}
               content={item.content}
               onCommentClick={onCommentClick}
               navigation={navigation}
@@ -131,21 +132,26 @@ export default function Posts({ navigation }) {
           />
         </View>
         <ScrollView>
-          <Post
-            name={data[CCPIndex]?.userName}
-            role={data[CCPIndex]?.userRole}
-            createdAt={data[CCPIndex]?.createdAt}
-            caption={data[CCPIndex]?.caption}
-            comments={data[CCPIndex]?.comments}
-            likes={data[CCPIndex]?.likes}
-            saves={data[CCPIndex]?.saves}
-            content={data[CCPIndex]?.content}
-            onCommentClick={onCommentClick}
-            navigation={navigation}
-            // postIndex={index}
-            postId={data[CCPIndex]?._id}
-            id={data[CCPIndex]?.userId}
-          />
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <Post
+              name={data[CCPIndex]?.userName}
+              role={data[CCPIndex]?.userRole}
+              createdAt={data[CCPIndex]?.createdAt}
+              caption={data[CCPIndex]?.caption}
+              comments={data[CCPIndex]?.comments}
+              likes={data[CCPIndex]?.likes}
+              saves={data[CCPIndex]?.saves}
+              shares={data[CCPIndex]?.shares}
+              content={data[CCPIndex]?.content}
+              onCommentClick={onCommentClick}
+              navigation={navigation}
+              // postIndex={index}
+              postId={data[CCPIndex]?._id}
+              id={data[CCPIndex]?.userId}
+            />
+          )}
           <View style={styles.CommentInputContainer}>
             <Image
               style={{

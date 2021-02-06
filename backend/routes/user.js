@@ -32,6 +32,7 @@ router.post("/register", (req, res) => {
           posts: [],
           likedPosts: [],
           savedPosts: [],
+          sharedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -72,6 +73,7 @@ router.post("/login", (req, res) => {
             phone: user.phone,
             likedPosts: user.likedPosts,
             savedPosts: user.savedPosts,
+            sharedPosts: user.sharedPosts,
           };
           jwt.sign(
             payload,
@@ -163,7 +165,11 @@ router.route("/getLikedPosts").get(auth, async (req, res) => {
         if (user) {
           return res
             .status(200)
-            .send({ likedPosts: user.likedPosts, savedPosts: user.savedPosts });
+            .send({
+              likedPosts: user.likedPosts,
+              savedPosts: user.savedPosts,
+              sharedPosts: user.sharedPosts,
+            });
         } else {
           return res.status(400).send("User not found");
         }

@@ -44,6 +44,7 @@ router.route("/createPost").post(auth, (req, res) => {
     caption,
     likes: 0,
     saves: 0,
+    shares: 0,
     createdAt,
     comments: [],
   });
@@ -175,6 +176,57 @@ router.route("/savePost").patch(auth, async (req, res) => {
               post: post,
               saves: post.saves + 1,
               saved: true,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route PATCH /api/post/sharePost
+// @desc share funcionality for existing post
+
+router.route("/sharePost").patch(auth, async (req, res) => {
+  try {
+    let post = await Post.findById(req.body.id);
+    if (!post) {
+      res.status(400).send("Post with id not found");
+    }
+    if (req.body.shared) {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares - 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $pull: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post unshared",
+              post: post,
+              shares: post.shares - 1,
+              shared: false,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares + 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $push: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post shared",
+              post: post,
+              shares: post.shares + 1,
+              shared: true,
             });
         })
         .catch(err => res.status(400).send("Error: " + err));

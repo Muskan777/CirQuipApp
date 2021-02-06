@@ -24,6 +24,9 @@ const PostSchema = mongoose.Schema(
     saves: {
       type: Number,
     },
+    shares: {
+      type: Number,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

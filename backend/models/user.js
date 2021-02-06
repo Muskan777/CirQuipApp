@@ -65,6 +65,12 @@ const UserSchema = mongoose.Schema(
         ref: "post",
       },
     ],
+    sharedPosts: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "post",
+      },
+    ],
   },
   { strict: false }
 );
