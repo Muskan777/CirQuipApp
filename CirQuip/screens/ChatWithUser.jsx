@@ -84,10 +84,8 @@ export function ChatWithUser(props) {
                 id: item._id,
               });
               let UnreadMessageId = item._id;
-              UnreadMessages[UnreadMessageId] = [];
-
               setUnread(() => {
-                return Unread[UnreadMessageId].filter(() => {
+                return Unread[UnreadMessageId]?.filter(() => {
                   return false;
                 });
               });
