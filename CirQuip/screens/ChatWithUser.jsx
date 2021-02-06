@@ -84,9 +84,13 @@ export function ChatWithUser(props) {
                 id: item._id,
               });
               let UnreadMessageId = item._id;
-              let UnreadMessages = Unread;
               UnreadMessages[UnreadMessageId] = [];
-              setUnread(UnreadMessages);
+
+              setUnread(() => {
+                return Unread[UnreadMessageId].filter(() => {
+                  return false;
+                });
+              });
             }}
           >
             <View style={styles.listItemContainer}>
