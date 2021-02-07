@@ -29,174 +29,14 @@ import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import CreatePostCamera from "./screens/CreatePostCamera";
-import Sell from "./screens/Sell";
 import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 
+const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const SavedStack = createStackNavigator();
 const SellProductsStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
-
-const SavedStackScreen = ({ navigation }) => (
-  <SavedStack.Navigator
-    screenOptions={{
-      headerTitleStyle: {
-        fontSize: 20,
-      },
-      headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
-      },
-    }}
-  >
-    <SavedStack.Screen
-      name="SavedPosts"
-      component={SavedPosts}
-      options={{
-        title: "Saved Posts",
-        headerRight: () => (
-          <IconButton
-            icon="logout"
-            color="#000"
-            size={30}
-            onPress={() => {
-              handleLogout();
-            }}
-          />
-        ),
-        headerLeft: () => (
-          <MaterialCommunityIcons
-            name="menu"
-            size={26}
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-          />
-        ),
-      }}
-    />
-  </SavedStack.Navigator>
-);
-
-const SellProductsStackScreen = ({ navigation }) => (
-  <SellProductsStack.Navigator
-    screenOptions={{
-      headerTitleStyle: {
-        fontSize: 20,
-      },
-      headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
-      },
-    }}
-  >
-    <SellProductsStack.Screen
-      name="SellProducts"
-      component={Sell}
-      options={{
-        title: "Saved Posts",
-        headerRight: () => (
-          <IconButton
-            icon="logout"
-            color="#000"
-            size={30}
-            onPress={() => {
-              handleLogout();
-            }}
-          />
-        ),
-        headerLeft: () => (
-          <MaterialCommunityIcons
-            name="menu"
-            size={26}
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-          />
-        ),
-      }}
-    />
-  </SellProductsStack.Navigator>
-);
-
-const MyProductsStackScreen = ({ navigation }) => (
-  <MyProductsStack.Navigator
-    screenOptions={{
-      headerTitleStyle: {
-        fontSize: 20,
-      },
-      headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
-      },
-    }}
-  >
-    <MyProductsStack.Screen
-      name="MyProducts"
-      component={Shop}
-      options={{
-        title: "My Products",
-        headerRight: () => (
-          <IconButton
-            icon="logout"
-            color="#000"
-            size={30}
-            onPress={() => {
-              handleLogout();
-            }}
-          />
-        ),
-        headerLeft: () => (
-          <MaterialCommunityIcons
-            name="menu"
-            size={26}
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-          />
-        ),
-      }}
-    />
-  </MyProductsStack.Navigator>
-);
-
-const BuyRequestsScreen = ({ navigation }) => (
-  <BuyRequests.Navigator
-    screenOptions={{
-      headerTitleStyle: {
-        fontSize: 20,
-      },
-      headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
-      },
-    }}
-  >
-    <BuyRequests.Screen
-      name="BuyRequests"
-      component={Shop}
-      options={{
-        title: "Buy Requests",
-        headerRight: () => (
-          <IconButton
-            icon="logout"
-            color="#000"
-            size={30}
-            onPress={() => {
-              handleLogout();
-            }}
-          />
-        ),
-        headerLeft: () => (
-          <MaterialCommunityIcons
-            name="menu"
-            size={26}
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-          />
-        ),
-      }}
-    />
-  </BuyRequests.Navigator>
-);
 
 const theme = {
   ...DefaultTheme,
@@ -210,29 +50,18 @@ const theme = {
   },
 };
 export default function App() {
+  const [status, setStatus] = React.useState(false);
+
+  React.useEffect(() => {
+    checkJWT();
+  }, []);
+
   const handleLogout = async () => {
     await AsyncStorage.clear();
     //await AsyncStorage.removeItem("user");
     //await AsyncStorage.removeItem("cirquip-auth-token");
     setStatus(false);
   };
-
-  const stackOptions = {
-    headerTitleStyle: {
-      fontSize: 20,
-    },
-    headerStyle: {
-      backgroundColor: "rgba(54, 181, 165, 1)",
-      //backgroundColor: "#fb5b5a",
-    },
-    headerRight: () => (
-      <IconButton icon="logout" color="#000" size={30} onPress={handleLogout} />
-    ),
-  };
-  const handleStatus = param => setStatus(param);
-
-  const [status, setStatus] = React.useState(false);
-
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
       if (global.config.debug) console.log("jwt", jwt);
@@ -277,14 +106,210 @@ export default function App() {
     });
   };
 
-  React.useEffect(() => {
-    checkJWT();
-  }, []);
+  const SavedStackScreen = ({ navigation }) => (
+    <SavedStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <SavedStack.Screen
+        name="SavedPosts"
+        component={SavedPosts}
+        options={{
+          title: "Saved Posts",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </SavedStack.Navigator>
+  );
+
+  const SellProductsStackScreen = ({ navigation }) => (
+    <SellProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <SellProductsStack.Screen
+        name="SellProducts"
+        component={Sell}
+        options={{
+          title: "Saved Posts",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </SellProductsStack.Navigator>
+  );
+
+  const MyProductsStackScreen = ({ navigation }) => (
+    <MyProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <MyProductsStack.Screen
+        name="MyProducts"
+        component={Shop}
+        options={{
+          title: "My Products",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </MyProductsStack.Navigator>
+  );
+
+  const BuyRequestsScreen = ({ navigation }) => (
+    <BuyRequests.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <BuyRequests.Screen
+        name="BuyRequests"
+        component={Shop}
+        options={{
+          title: "Buy Requests",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </BuyRequests.Navigator>
+  );
+
+  const stackOptions = {
+    headerTitleStyle: {
+      fontSize: 20,
+    },
+    headerStyle: {
+      backgroundColor: "rgba(54, 181, 165, 1)",
+      //backgroundColor: "#fb5b5a",
+    },
+    headerRight: () => (
+      <IconButton icon="logout" color="#000" size={30} onPress={handleLogout} />
+    ),
+  };
+  const handleStatus = param => setStatus(param);
 
   return status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
+        <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
+          <Drawer.Screen name="HomeDrawer" component={AppNavigator} />
+          <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
+          <Drawer.Screen
+            name="SellProducts"
+            component={SellProductsStackScreen}
+          />
+          <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
+          <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
+        </Drawer.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  ) : (
+    <PaperProvider>
+      <NavigationContainer>
         <Stack.Navigator>
+          <Stack.Screen name="Login">
+            {props => <Login {...props} handleStatus={handleStatus} />}
+          </Stack.Screen>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
+  );
+}
+
+{
+  /* <Stack.Navigator>
           <Stack.Screen
             name="Home"
             component={Home}
@@ -384,28 +409,5 @@ export default function App() {
             }}
           />
           <Stack.Screen name="OTP" component={OTP} />
-        </Stack.Navigator>
-        <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
-          <Drawer.Screen name="HomeDrawer" component={AppNavigator} />
-          <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
-          <Drawer.Screen
-            name="SellProducts"
-            component={SellProductsStackScreen}
-          />
-          <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
-          <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
-  ) : (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen name="Login">
-            {props => <Login {...props} handleStatus={handleStatus} />}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
-  );
+        </Stack.Navigator> */
 }
