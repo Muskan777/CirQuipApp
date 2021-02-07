@@ -11,7 +11,7 @@ import {
   Modal,
 } from "react-native";
 import { CheckBox } from "native-base";
-
+import io from "socket.io-client";
 import { List, Divider, Button } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
@@ -27,11 +27,59 @@ export function ChatWithUser(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [messageText, setMessageText] = useState(null);
   const [visible, setVisible] = React.useState(false);
-  const [checkedA, setCheckedA] = React.useState(false);
-  const [checkedB, setCheckedB] = React.useState(false);
-  const [checkedC, setCheckedC] = React.useState(false);
-  const [checkedD, setCheckedD] = React.useState(false);
-  const handleDialog = () => setVisible(!visible);
+  const [Everyone, setEveryone] = React.useState(false);
+  const [Student, setStudent] = React.useState(false);
+  const [Alumni, setAlumni] = React.useState(false);
+  const [Faculty, setFaculty] = React.useState(false);
+  const [socket, setSocket] = React.useState(() => {
+    return io(`http://192.168.43.192:3000`);
+  });
+  let message = {};
+
+  const handleDialog = () => {
+    setVisible(!visible);
+  };
+
+  console.log(threads);
+
+  const sendmessage = thread => {
+    message.to = thread._id;
+    socket.emit("send message", message);
+  };
+
+  const handleSend = () => {
+    message.user = {};
+    let i;
+    message.text = messageText;
+    message.createdAt = new Date();
+    message.user._id = "Admin";
+    if (Everyone) {
+      threads.forEach(sendmessage);
+      console.log(threads);
+    } else {
+      if (Student) {
+        let Students = threads.filter(thread => {
+          return thread.role === "Student";
+        });
+        console.log(Students);
+        Students.forEach(sendmessage);
+      }
+      if (Faculty) {
+        let Faculties = threads.filter(thread => {
+          return thread.role === "Faculty";
+        });
+        console.log(Faculties);
+        Faculties.forEach(sendmessage);
+      }
+      if (Alumni) {
+        let Alumnis = threads.filter(thread => {
+          return thread.role === "Alumni";
+        });
+        console.log(Alumnis);
+        Alumnis.forEach(sendmessage);
+      }
+    }
+  };
 
   const searchFunction = () => {
     // console.log(searchQuery);
@@ -60,6 +108,7 @@ export function ChatWithUser(props) {
             return {
               _id: user.email,
               name: user.name,
+              role: user.role,
             };
           });
           setThreads(thread);
@@ -253,14 +302,14 @@ export function ChatWithUser(props) {
             </Text>
             <View style={styles.checkBoxContainer}>
               <CheckBox
-                checked={checkedA}
-                color={checkedA ? "#2EA5DD" : "gray"}
-                onPress={() => setCheckedA(!checkedA)}
+                checked={Everyone}
+                color={Everyone ? "#2EA5DD" : "gray"}
+                onPress={() => setEveryone(!Everyone)}
               />
               <Text
                 style={{
                   ...styles.checkBoxTxt,
-                  color: checkedA ? "#2EA5DD" : "gray",
+                  color: Everyone ? "#2EA5DD" : "gray",
                   fontWeight: "bold",
                   fontSize: 15,
                 }}
@@ -270,14 +319,14 @@ export function ChatWithUser(props) {
             </View>
             <View style={styles.checkBoxContainer}>
               <CheckBox
-                checked={checkedB}
-                color={checkedB ? "#2EA5DD" : "gray"}
-                onPress={() => setCheckedB(!checkedB)}
+                checked={Student}
+                color={Student ? "#2EA5DD" : "gray"}
+                onPress={() => setStudent(!Student)}
               />
               <Text
                 style={{
                   ...styles.checkBoxTxt,
-                  color: checkedB ? "#2EA5DD" : "gray",
+                  color: Student ? "#2EA5DD" : "gray",
                   fontWeight: "bold",
                   fontSize: 15,
                 }}
@@ -287,14 +336,14 @@ export function ChatWithUser(props) {
             </View>
             <View style={styles.checkBoxContainer}>
               <CheckBox
-                checked={checkedC}
-                color={checkedC ? "#2EA5DD" : "gray"}
-                onPress={() => setCheckedC(!checkedC)}
+                checked={Alumni}
+                color={Alumni ? "#2EA5DD" : "gray"}
+                onPress={() => setAlumni(!Alumni)}
               />
               <Text
                 style={{
                   ...styles.checkBoxTxt,
-                  color: checkedC ? "#2EA5DD" : "gray",
+                  color: Alumni ? "#2EA5DD" : "gray",
                   fontWeight: "bold",
                   flex: 1,
                   fontSize: 15,
@@ -305,14 +354,14 @@ export function ChatWithUser(props) {
             </View>
             <View style={styles.checkBoxContainer}>
               <CheckBox
-                checked={checkedD}
-                color={checkedD ? "#2EA5DD" : "gray"}
-                onPress={() => setCheckedD(!checkedD)}
+                checked={Faculty}
+                color={Faculty ? "#2EA5DD" : "gray"}
+                onPress={() => setFaculty(!Faculty)}
               />
               <Text
                 style={{
                   ...styles.checkBoxTxt,
-                  color: checkedD ? "#2EA5DD" : "gray",
+                  color: Faculty ? "#2EA5DD" : "gray",
                   fontWeight: "bold",
                   flex: 1,
                   fontSize: 15,
@@ -332,7 +381,10 @@ export function ChatWithUser(props) {
                 Back
               </Button>
               <Button
-                onPress={() => Alert.alert("send")}
+                onPress={() => {
+                  handleSend();
+                  Alert.alert("Send Successful");
+                }}
                 color="#2EA5DD"
                 fontSize="15"
               >

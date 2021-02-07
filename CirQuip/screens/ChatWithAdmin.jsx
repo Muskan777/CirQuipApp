@@ -93,7 +93,7 @@ export class ChatWithAdmin extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      socket: io(`http://192.168.43.110:3000`),
+      socket: io(`http://192.168.43.192:3000`),
     };
   }
   componentDidMount() {
