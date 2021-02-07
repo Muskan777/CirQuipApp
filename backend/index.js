@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieparser = require("cookie-parser");
-const connectDB = require("./config/config");
+const { connectDB } = require("./config/config");
 const users = {};
 
 const app = express();

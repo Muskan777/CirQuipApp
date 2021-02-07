@@ -293,7 +293,7 @@ export default class Product extends React.Component {
           </Card>
           <Card>
             <Card.Cover
-              source={{ uri: `data:image/jpg;base64,${this.state.image}` }}
+              source={{ uri: `${this.state.image}` }}
               style={{ height: 450, padding: 5 }}
             />
             {this.props.route.params.type === "my" ? (

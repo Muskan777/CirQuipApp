@@ -43,11 +43,11 @@ export default class Login extends React.Component {
       })
       .catch(err => {
         console.log(
-          err?.response?.data ? error.response.data : "Something went wrong"
+          err?.response?.data ? error?.response?.data : "Something went wrong"
         );
         Alert.alert(
           "Error",
-          err?.response?.data ? err.response.data : "Something went wrong"
+          err?.response?.data ? err?.response?.data : "Something went wrong"
         );
       });
   }

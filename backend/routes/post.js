@@ -3,7 +3,7 @@ let Post = require("../models/Post");
 let User = require("../models/user");
 let Comment = require("../models/Comments");
 const auth = require("../middlewares/auth");
-
+const { s3 } = require("../config/config");
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
 
@@ -28,37 +28,83 @@ router.route("/getPosts").get(auth, (req, res) => {
   }
 });
 
+//uploads images to S3 and returns the array of URLs
+
+const uploadImages = async (content, id) => {
+  let promises = [];
+  content.forEach((image, index) => {
+    promises.push(
+      new Promise((resolve, reject) => {
+        const buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        );
+
+        var params = {
+          Bucket: "cirquip",
+          Body: buf,
+          ContentEncoding: "base64",
+          ContentType: "image/jpeg",
+          Key: `posts/${id}/${Date.now()}_${index}.jpeg`,
+          ACL: "public-read",
+        };
+
+        s3.upload(params, async function (err, data) {
+          //handle error
+          if (err) {
+            console.log("Error", err);
+            reject(err);
+          }
+          //success
+          if (data) {
+            console.log("Uploaded in:", data.Location);
+            resolve(data.Location);
+          }
+        });
+      })
+    );
+  });
+  return Promise.all(promises);
+};
+
 // @route POST /api/post/createPost
 // @desc Creates new post
 
-router.route("/createPost").post(auth, (req, res) => {
+router.route("/createPost").post(auth, async (req, res) => {
   let { content, caption, group, taggedUsers } = req.body;
-  const createdAt = Date.now();
-  const newPost = new Post({
-    userId: req.payload.id,
-    userName: req.payload.name,
-    userRole: req.payload.role,
-    group,
-    content,
-    caption,
-    taggedUsers,
-    likes: 0,
-    saves: 0,
-    shares: 0,
-    createdAt,
-    comments: [],
-  });
+  await uploadImages(content, req.payload.id)
+    .then(images => {
+      const createdAt = Date.now();
+      const newPost = new Post({
+        userId: req.payload.id,
+        userName: req.payload.name,
+        userRole: req.payload.role,
+        group,
+        content: images,
+        caption,
+        taggedUsers,
+        likes: 0,
+        saves: 0,
+        shares: 0,
+        createdAt,
+        comments: [],
+      });
 
-  try {
-    newPost
-      .save()
-      .then(() =>
-        res.status(200).send({ msg: "New post created", post: newPost })
-      )
-      .catch(err => res.status(400).send("Error:" + err));
-  } catch (e) {
-    console.log(e);
-  }
+      try {
+        newPost
+          .save()
+          .then(() =>
+            res.status(200).send({ msg: "New post created", post: newPost })
+          )
+          .catch(err => res.status(400).send("Error:" + err));
+      } catch (e) {
+        console.log(e);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      return resp.status(400).json("Error in uploading images");
+    });
 });
 
 // @route PATCH /api/post/updatePost

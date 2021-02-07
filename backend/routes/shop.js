@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
+const { s3 } = require("../config/config");
 //const ObjectId = require("mongodb").ObjectID;
 
 /*
@@ -104,21 +105,48 @@ router.post("/products/:type/:query", async (req, resp) => {
 // @desc add a new prodcut for sale
 
 router.post("/addProduct", async (req, resp) => {
-  const { pName, pPrice, image, pDetails, id } = req.body;
-  const prodcut = new Shop({
-    seller: id,
-    name: pName,
-    info: pDetails,
-    price: pPrice,
-    image: image,
+  let { pName, pPrice, image, pDetails, id } = req.body;
+  const buf = Buffer.from(
+    image.replace(/^data:image\/\w+;base64,/, ""),
+    "base64"
+  );
+  //configuring parameters
+
+  var params = {
+    Bucket: "cirquip",
+    Body: buf,
+    ContentEncoding: "base64",
+    ContentType: "image/jpeg",
+    Key: `products/${id}/${Date.now()}.jpeg`,
+    ACL: "public-read",
+  };
+
+  s3.upload(params, async function (err, data) {
+    //handle error
+    if (err) {
+      console.log("Error", err);
+      return resp.status(400).json("error in uploading image");
+    }
+    //success
+    if (data) {
+      console.log("Uploaded in:", data.Location);
+      image = data.Location;
+      const product = new Shop({
+        seller: id,
+        name: pName,
+        info: pDetails,
+        price: pPrice,
+        image: image,
+      });
+      try {
+        await product.save();
+        return resp.status(200).json("Success");
+      } catch (err) {
+        console.log(err);
+        return resp.status(400).json("Error Saving data");
+      }
+    }
   });
-  try {
-    await prodcut.save();
-    return resp.status(200).json("Success");
-  } catch (err) {
-    console.log(err);
-    return resp.status(400).json("Error Saving data");
-  }
 });
 
 // @route PUT api/shop/like

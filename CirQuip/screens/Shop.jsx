@@ -291,7 +291,7 @@ export default class Shop extends React.Component {
             >
               <Card.Cover
                 source={{
-                  uri: `data:image/jpg;base64,${data.image}`,
+                  uri: `${data.image}`,
                 }}
                 style={{
                   minHeight: 220,
