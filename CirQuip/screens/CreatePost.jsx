@@ -42,10 +42,26 @@ export default function CreatePost(props) {
   const [checkedA, setCheckedA] = React.useState(false);
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
+  const [user, setuser] = React.useState("");
 
   const handleDialog = () => setVisible(!visible);
 
   useEffect(() => {
+    const user = async () => {
+      let user = await AsyncStorage.getItem("user");
+      if (user) {
+        axios
+          .get(`${global.config.host}/user/getUserWithId/${user}`)
+          .then(res => {
+            setuser(res.data.name);
+          })
+          .catch(err => {
+            Alert.alert("Error", "Something Went Wrong");
+            console.log(err);
+          });
+      }
+    };
+    user();
     axios
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
@@ -203,9 +219,7 @@ export default function CreatePost(props) {
                 display: "flex",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Kartik Mandhan
-              </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>{user}</Text>
               <Text
                 onPress={() => setModalOpen(true)}
                 style={{ fontWeight: "bold" }}
