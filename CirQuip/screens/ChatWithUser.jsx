@@ -84,11 +84,12 @@ export function ChatWithUser(props) {
                 id: item._id,
               });
               let UnreadMessageId = item._id;
-              setUnread(() => {
-                return Unread[UnreadMessageId]?.filter(() => {
-                  return false;
+              Unread &&
+                setUnread(() => {
+                  return Unread[UnreadMessageId]?.filter(() => {
+                    return false;
+                  });
                 });
-              });
             }}
           >
             <View style={styles.listItemContainer}>
@@ -101,13 +102,15 @@ export function ChatWithUser(props) {
                 descriptionStyle={styles.listDescription}
                 descriptionNumberOfLines={1}
               />
-              <Text
-                style={
-                  Unread[item._id]?.length > 0 && { ...styles.unreadCount }
-                }
-              >
-                {Unread[item._id] ? Unread[item._id]?.length : ""}
-              </Text>
+              {Unread && Unread[item._id] && (
+                <Text
+                  style={
+                    Unread[item._id]?.length > 0 && { ...styles.unreadCount }
+                  }
+                >
+                  {Unread[item._id] ? Unread[item._id]?.length : ""}
+                </Text>
+              )}
             </View>
           </TouchableOpacity>
         )}
