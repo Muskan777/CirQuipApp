@@ -7,6 +7,7 @@ import axios from "axios";
 
 const Comment = ({ id, comment, name, time, role, likes }) => {
   const [commentLiked, setCommentLiked] = useState(false);
+  const [currlikes, setcurrlikes] = useState(likes.length);
   var date =
     time.substr(8, 2) + "-" + time.substr(5, 2) + "-" + time.substr(0, 4);
   if (time.substr(11, 2) > 12) {
@@ -27,6 +28,14 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
     }
   };
   const handleCommentLikes = async () => {
+    let nlikes;
+    if (commentLiked) {
+      nlikes = currlikes - 1;
+      setcurrlikes(nlikes);
+    } else {
+      nlikes = currlikes + 1;
+      setcurrlikes(nlikes);
+    }
     let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
       .patch(
@@ -78,7 +87,7 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
                 />
               )}
             </TouchableOpacity>
-            <Text style={styles.TextStyle}>{likes.length}</Text>
+            <Text style={styles.TextStyle}>{currlikes}</Text>
           </View>
           <Text style={styles.SecondaryText}>{commentTime}</Text>
         </View>
