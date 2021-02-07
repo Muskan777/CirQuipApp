@@ -10,6 +10,8 @@ import {
   TextInput,
   Modal,
 } from "react-native";
+import { CheckBox } from "native-base";
+
 import { List, Divider, Button } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
@@ -24,6 +26,12 @@ export function ChatWithUser(props) {
   const [requiredusers, setRequiredUsers] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [messageText, setMessageText] = useState(null);
+  const [visible, setVisible] = React.useState(false);
+  const [checkedA, setCheckedA] = React.useState(false);
+  const [checkedB, setCheckedB] = React.useState(false);
+  const [checkedC, setCheckedC] = React.useState(false);
+  const [checkedD, setCheckedD] = React.useState(false);
+  const handleDialog = () => setVisible(!visible);
 
   const searchFunction = () => {
     // console.log(searchQuery);
@@ -159,7 +167,11 @@ export function ChatWithUser(props) {
         )}
       />
       <Modal visible={modalOpen} animationType="slide">
-        <View style={{ backgroundColor: "white" }}>
+        <View
+          style={
+            visible ? { backgroundColor: "#bbb" } : { backgroundColor: "#fff" }
+          }
+        >
           <View style={styles.modalTopContainer}>
             <MaterialIcons
               name="arrow-back"
@@ -204,10 +216,130 @@ export function ChatWithUser(props) {
               marginHorizontal: 30,
               backgroundColor: "#287ec1",
             }}
-            onPress={() => Alert.alert("Send")}
+            onPress={() => handleDialog()}
           >
             Send
           </Button>
+        </View>
+      </Modal>
+
+      <Modal animationType="slide" transparent={true} visible={visible}>
+        <View
+          style={{
+            height: "50%",
+            marginTop: "auto",
+            backgroundColor: "white",
+            borderRadius: 80,
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              // marginTop: 30,
+              padding: 20,
+              flex: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 30,
+                marginVertical: 20,
+                color: "#888",
+                textAlign: "center",
+              }}
+            >
+              Select Your Group
+            </Text>
+            <View style={styles.checkBoxContainer}>
+              <CheckBox
+                checked={checkedA}
+                color={checkedA ? "#2EA5DD" : "gray"}
+                onPress={() => setCheckedA(!checkedA)}
+              />
+              <Text
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: checkedA ? "#2EA5DD" : "gray",
+                  fontWeight: "bold",
+                  fontSize: 15,
+                }}
+              >
+                Everyone
+              </Text>
+            </View>
+            <View style={styles.checkBoxContainer}>
+              <CheckBox
+                checked={checkedB}
+                color={checkedB ? "#2EA5DD" : "gray"}
+                onPress={() => setCheckedB(!checkedB)}
+              />
+              <Text
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: checkedB ? "#2EA5DD" : "gray",
+                  fontWeight: "bold",
+                  fontSize: 15,
+                }}
+              >
+                Only Students
+              </Text>
+            </View>
+            <View style={styles.checkBoxContainer}>
+              <CheckBox
+                checked={checkedC}
+                color={checkedC ? "#2EA5DD" : "gray"}
+                onPress={() => setCheckedC(!checkedC)}
+              />
+              <Text
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: checkedC ? "#2EA5DD" : "gray",
+                  fontWeight: "bold",
+                  flex: 1,
+                  fontSize: 15,
+                }}
+              >
+                Only Alumni
+              </Text>
+            </View>
+            <View style={styles.checkBoxContainer}>
+              <CheckBox
+                checked={checkedD}
+                color={checkedD ? "#2EA5DD" : "gray"}
+                onPress={() => setCheckedD(!checkedD)}
+              />
+              <Text
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: checkedD ? "#2EA5DD" : "gray",
+                  fontWeight: "bold",
+                  flex: 1,
+                  fontSize: 15,
+                }}
+              >
+                Only Faculties
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 10,
+              }}
+            >
+              <Button onPress={handleDialog} color="gray" fontSize="15">
+                Back
+              </Button>
+              <Button
+                onPress={() => Alert.alert("send")}
+                color="#2EA5DD"
+                fontSize="15"
+              >
+                Send
+              </Button>
+            </View>
+          </View>
         </View>
       </Modal>
     </View>
@@ -229,7 +361,7 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 6,
-    shadowColor: "#4FB5A5",
+    shadowColor: "#2EA5DD",
     elevation: 3,
   },
   container: {
@@ -274,5 +406,18 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     paddingHorizontal: 6,
     backgroundColor: "#287ec1",
+  },
+  checkBoxTxt: {
+    marginLeft: 20,
+    width: "100%",
+  },
+
+  checkBoxContainer: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: "row",
   },
 });
