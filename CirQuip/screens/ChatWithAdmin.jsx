@@ -1,10 +1,11 @@
 import React, { useState, useCallback, useEffect } from "react";
 import { GiftedChat } from "react-native-gifted-chat";
 import io from "socket.io-client";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export function ChatWithAdmin(props) {
+export function ChatWithAdmin({ route, navigation }) {
   const [messages, setMessages] = useState([]);
-  const [socket, setSocket] = useState(io("http://192.168.43.192:3000"));
+  const [socket, setSocket] = useState(io("http://192.168.0.106:3000"));
 
   useEffect(() => {
     setMessages([
@@ -44,7 +45,7 @@ export function ChatWithAdmin(props) {
       messages={messages}
       onSend={messages => onSend(messages)}
       user={{
-        _id: props.route.params.admin ? "Admin" : props.route.params.email,
+        _id: route.params.admin ? "Admin" : route.params.email,
       }}
     />
   );

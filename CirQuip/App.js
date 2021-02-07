@@ -36,6 +36,7 @@ const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const SavedStack = createStackNavigator();
 const SellProductsStack = createStackNavigator();
+const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
 
 const theme = {
@@ -51,6 +52,7 @@ const theme = {
 };
 export default function App() {
   const [status, setStatus] = React.useState(false);
+  const [user, setUser] = React.useState({});
 
   React.useEffect(() => {
     checkJWT();
@@ -83,6 +85,7 @@ export default function App() {
               axios
                 .get(`${global.config.host}/user/getUserWithId/${res.data}`)
                 .then(res => {
+                  setUser(res.data);
                   console.log(res.data.email);
                 })
                 .catch(err => {
@@ -266,6 +269,47 @@ export default function App() {
     </BuyRequests.Navigator>
   );
 
+  const ChatScreen = ({ navigation }) => (
+    <ChatStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <ChatStack.Screen
+        name="Chat with Admin"
+        component={ChatWithAdmin}
+        initialParams={{ _id: user.admin, email: user.email }}
+        options={{
+          title: "Chat",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ChatStack.Navigator>
+  );
+
   const stackOptions = {
     headerTitleStyle: {
       fontSize: 20,
@@ -292,6 +336,7 @@ export default function App() {
           />
           <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
+          <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>

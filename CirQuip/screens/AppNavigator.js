@@ -13,6 +13,9 @@ import Shop from "./Shop";
 import Profile from "./Profile";
 import CreatePost from "./CreatePost";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CreatePostImageBrowser from "./CreatePostImageBrowser";
+import CreatePostCamera from "./CreatePostCamera";
+import Profile2 from "./Profile2";
 
 const Tab = createMaterialBottomTabNavigator();
 
@@ -105,6 +108,23 @@ const HomeStackScreen = ({ navigation }) => (
         ),
       }}
     />
+    <HomeStack.Screen
+      name="Profile"
+      component={Profile2}
+      options={{
+        title: "Posts",
+        headerRight: () => (
+          <IconButton
+            icon="logout"
+            color="#000"
+            size={30}
+            onPress={() => {
+              handleLogout();
+            }}
+          />
+        ),
+      }}
+    />
   </HomeStack.Navigator>
 );
 
@@ -140,6 +160,40 @@ const CreatePostStackScreen = ({ navigation }) => (
             size={26}
             onPress={() => {
               navigation.openDrawer();
+            }}
+          />
+        ),
+      }}
+    />
+    <CreatePostStack.Screen
+      name="CreatePostImageBrowser"
+      component={CreatePostImageBrowser}
+      options={{
+        title: "Select Items",
+        headerRight: () => (
+          <IconButton
+            icon="logout"
+            color="#000"
+            size={30}
+            onPress={() => {
+              handleLogout();
+            }}
+          />
+        ),
+      }}
+    />
+    <CreatePostStack.Screen
+      name="Camera"
+      component={CreatePostCamera}
+      options={{
+        title: "Create Post",
+        headerRight: () => (
+          <IconButton
+            icon="logout"
+            color="#000"
+            size={30}
+            onPress={() => {
+              handleLogout();
             }}
           />
         ),
