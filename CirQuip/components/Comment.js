@@ -10,10 +10,22 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
   const [currlikes, setcurrlikes] = useState(likes.length);
   var date =
     time.substr(8, 2) + "-" + time.substr(5, 2) + "-" + time.substr(0, 4);
-  if (time.substr(11, 2) > 12) {
-    var commentTime = date + " " + time.substr(11, 5) + " PM";
+  var localhour = parseInt(time.substr(11, 2));
+  var localmin = parseInt(time.substr(14, 2));
+  localmin = localmin + 30;
+  if (localmin >= 60) {
+    localmin = localmin - 60;
+    localhour = localhour + 6;
   } else {
-    var commentTime = date + " " + time.substr(11, 5) + " AM";
+    localhour = localhour + 5;
+  }
+  if (localmin >= 0 && localmin <= 9) {
+    localmin = "0" + localmin;
+  }
+  if (localhour > 12) {
+    var commentTime = localhour + ":" + localmin + " PM";
+  } else {
+    var commentTime = localhour + ":" + localmin + " AM";
   }
   useEffect(() => {
     handleCommentLiked();
