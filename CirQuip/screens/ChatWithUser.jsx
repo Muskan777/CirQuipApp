@@ -7,16 +7,38 @@ import {
   TouchableOpacity,
   Alert,
   Text,
+  TextInput,
+  Modal,
 } from "react-native";
-import { List, Divider } from "react-native-paper";
+import { List, Divider, Button } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
-import { NetInfoCellularGeneration } from "@react-native-community/netinfo";
 
+import { NetInfoCellularGeneration } from "@react-native-community/netinfo";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 export function ChatWithUser(props) {
   const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [Unread, setUnread] = useState({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [requiredusers, setRequiredUsers] = useState([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [messageText, setMessageText] = useState(null);
+
+  const searchFunction = () => {
+    // console.log(searchQuery);
+    if (searchQuery == "") {
+      setRequiredUsers(threads);
+    }
+    setRequiredUsers(
+      threads?.filter(user => {
+        return (
+          user.name.includes(searchQuery) || user._id.includes(searchQuery)
+        );
+      })
+    );
+  };
+  useEffect(searchFunction, [searchQuery]);
 
   useEffect(() => {
     axios
@@ -33,6 +55,7 @@ export function ChatWithUser(props) {
             };
           });
           setThreads(thread);
+          setRequiredUsers(thread);
         }
         if (loading) {
           setLoading(false);
@@ -69,8 +92,28 @@ export function ChatWithUser(props) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <FontAwesome
+          name="edit"
+          style={{ color: "#888", marginTop: 5 }}
+          size={28}
+          onPress={() => {
+            setModalOpen(true);
+          }}
+        />
+        <TextInput
+          style={{ flex: 1, marginLeft: 15, fontSize: 18, maxHeight: "100%" }}
+          // onSubmitEditing={() => performSearch()}
+          placeholder="Search"
+          onChangeText={query => {
+            // console.log(users);
+            setSearchQuery(query);
+          }}
+          value={searchQuery}
+        />
+      </View>
       <FlatList
-        data={threads}
+        data={requiredusers}
         keyExtractor={item => item._id}
         ItemSeparatorComponent={() => <Divider />}
         renderItem={({ item }) => (
@@ -115,11 +158,80 @@ export function ChatWithUser(props) {
           </TouchableOpacity>
         )}
       />
+      <Modal visible={modalOpen} animationType="slide">
+        <View style={{ backgroundColor: "white" }}>
+          <View style={styles.modalTopContainer}>
+            <MaterialIcons
+              name="arrow-back"
+              style={{ ...styles.Icons, marginTop: 20 }}
+              size={28}
+              onPress={() => {
+                setModalOpen(false);
+              }}
+            />
+          </View>
+          <Text
+            style={{
+              fontSize: 30,
+              marginVertical: 20,
+              color: "#2EA5DD",
+              textAlign: "center",
+            }}
+          >
+            Group Text
+          </Text>
+          <TextInput
+            style={{
+              fontSize: 20,
+              borderWidth: 2,
+              borderColor: "#2EA5DD",
+              marginHorizontal: 30,
+              height: "30%",
+              padding: 10,
+            }}
+            textAlignVertical={"top"}
+            onChangeText={text => setMessageText(text)}
+            value={messageText}
+            placeholder="Type Your message here..."
+            multiline
+          ></TextInput>
+          <Button
+            icon="send"
+            mode="contained"
+            style={{
+              width: "30%",
+              margin: 20,
+              marginHorizontal: 30,
+              backgroundColor: "#287ec1",
+            }}
+            onPress={() => Alert.alert("Send")}
+          >
+            Send
+          </Button>
+        </View>
+      </Modal>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderBottomEndRadius: 10,
+    borderBottomStartRadius: 10,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#4FB5A5",
+    elevation: 3,
+  },
   container: {
     backgroundColor: "#f5f5f5",
     flex: 1,
@@ -138,16 +250,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     display: "flex",
     flexDirection: "row",
-    borderBottomWidth: 1,
-    borderBottomColor: "#aaa",
     alignItems: "center",
   },
-
+  modalTopContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    minHeight: 70,
+    justifyContent: "space-between",
+    borderBottomLeftRadius: 9,
+    borderBottomRightRadius: 9,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#287ec1",
+    elevation: 3,
+  },
   unreadCount: {
     color: "#fff",
     borderRadius: 100,
     paddingVertical: 3,
     paddingHorizontal: 6,
-    backgroundColor: "#4FB5A5",
+    backgroundColor: "#287ec1",
   },
 });

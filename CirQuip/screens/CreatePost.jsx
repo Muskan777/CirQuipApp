@@ -187,7 +187,7 @@ export default function CreatePost(props) {
               >
                 {taggedList.length != 0 && <Text>with </Text>}
                 {taggedList.length != 0 && (
-                  <Text style={{ color: "#4FB5A5" }}>
+                  <Text style={{ color: "#2EA5DD" }}>
                     {taggedList[0]?.name}, and {taggedList?.length - 1} others
                   </Text>
                 )}
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     paddingVertical: 7,
     borderRadius: 7,
-    backgroundColor: "#4FB5A5",
+    backgroundColor: "#2EA5DD",
     color: "white",
   },
   tagImage: {
@@ -455,7 +455,7 @@ const styles = StyleSheet.create({
   },
   Icons: {
     fontSize: 30,
-    color: "#4FB5A5",
+    color: "#2EA5DD",
     marginBottom: 10,
   },
   PostArea: {
@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 6,
-    shadowColor: "#4FB5A5",
+    shadowColor: "#2EA5DD",
     elevation: 3,
   },
   topContainer: {
@@ -511,7 +511,7 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 6,
-    shadowColor: "#4FB5A5",
+    shadowColor: "#2EA5DD",
     elevation: 3,
   },
   bottomContainer: {
