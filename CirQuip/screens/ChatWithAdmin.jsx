@@ -51,7 +51,7 @@ function renderSend(props) {
   return (
     <Send {...props}>
       <View style={styles.sendingContainer}>
-        <IconButton icon="send-circle" size={42} color="#4FB5A5" />
+        <IconButton icon="send-circle" size={42} color="#2EA5DD" />
       </View>
     </Send>
   );
@@ -59,7 +59,7 @@ function renderSend(props) {
 function scrollToBottomComponent() {
   return (
     <View style={styles.bottomComponentContainer}>
-      <IconButton icon="chevron-double-down" size={36} color="#4FB5A5" />
+      <IconButton icon="chevron-double-down" size={36} color="#2EA5DD" />
     </View>
   );
 }
@@ -69,11 +69,11 @@ function renderBubble(props) {
       {...props}
       wrapperStyle={{
         right: {
-          backgroundColor: "#707070",
+          backgroundColor: "#287EC1",
           borderRadius: 4,
         },
         left: {
-          backgroundColor: "#DEDEDE",
+          backgroundColor: "#2EA5DD",
           borderRadius: 4,
         },
       }}
