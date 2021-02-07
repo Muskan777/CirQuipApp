@@ -37,6 +37,7 @@ router.post("/register", (req, res) => {
           savedPosts: [],
           verified: false,
           otp: num,
+          sharedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -78,6 +79,7 @@ router.post("/login", (req, res) => {
             phone: user.phone,
             likedPosts: user.likedPosts,
             savedPosts: user.savedPosts,
+            sharedPosts: user.sharedPosts,
           };
           jwt.sign(
             payload,
@@ -167,9 +169,11 @@ router.route("/getLikedPosts").get(auth, async (req, res) => {
     User.findOne({ _id: req.payload.id })
       .then(user => {
         if (user) {
-          return res
-            .status(200)
-            .send({ likedPosts: user.likedPosts, savedPosts: user.savedPosts });
+          return res.status(200).send({
+            likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
+            sharedPosts: user.sharedPosts,
+          });
         } else {
           return res.status(400).send("User not found");
         }
@@ -191,6 +195,29 @@ router.patch("/verify/:email", async (req, res) => {
         .catch(err => res.status(400).send("Error: " + err));
     } else {
       res.status(400).send("Invalid email!");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route DELETE /api/user/deleteUser
+// @desc Deletes existing user
+
+router.route("/deleteUser").delete(auth, async (req, res) => {
+  try {
+    let user = await User.findById(req.body.id);
+    let admin = await User.find({ email: "admin@coep.ac.in" });
+    let adminId = admin[0]._id;
+    if (!user) {
+      return res.status(400).send("User with id not found");
+    }
+    if (req.payload.id === `${user._id}` || req.payload.id === adminId) {
+      User.findByIdAndDelete(req.body.id)
+        .then(() => res.status(200).send("User deleted"))
+        .catch(err => res.status(400).send("Error:" + err));
+    } else {
+      return res.status(400).send("Unauthorized deletion requested");
     }
   } catch (e) {
     console.log(e);
