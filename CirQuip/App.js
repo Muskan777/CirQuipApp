@@ -17,7 +17,7 @@ import Shop from "./screens/Shop.jsx";
 import Product from "./screens/Product.jsx";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
-import Profile from "./screens/Profile.jsx";
+import Profile2 from "./screens/Profile2.jsx";
 import Published from "./screens/Published";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -197,7 +197,7 @@ export default function App() {
           />
           <Stack.Screen
             name="Profile"
-            component={Profile}
+            component={Profile2}
             options={{ ...stackOptions, title: "Profile" }}
           />
           <Stack.Screen

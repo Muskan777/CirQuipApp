@@ -135,10 +135,11 @@ export default function Post({
           source={require("../assets/ellipse1adfd341c.png")}
         />
         <View>
-          <TouchableHighlight
+          <TouchableOpacity
             onPress={() => {
               navigation.navigate("Profile", { _id: id });
             }}
+            style={{ backgroundColor: "transparent" }}
           >
             <Text
               style={{
@@ -148,7 +149,7 @@ export default function Post({
             >
               {name}
             </Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
           <Text>{role}</Text>
         </View>
       </View>
