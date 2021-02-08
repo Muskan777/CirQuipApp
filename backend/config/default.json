@@ -4,5 +4,6 @@
   "localMongoURI": "mongodb://localhost:27017",
   "jwtSecretKey": "tRUmPIsfOOlisH",
   "awsAcccessKey": "AKIAY3PMMCO5VJ37HNNY",
-  "awsSecretAccessKey": "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"
+  "awsSecretAccessKey": "6YdaquYHQCXIW14vucQdkm/zx2IJB9og5cqRXY9n",
+  "region": "ap-south-1"
 }

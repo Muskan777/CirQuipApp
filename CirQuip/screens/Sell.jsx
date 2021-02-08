@@ -23,6 +23,7 @@ import StepIndicator from "expo-step-indicator";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { clockRunning } from "react-native-reanimated";
 const { width, height } = Dimensions.get("window");
 // #003f5c
 export default class Sell extends React.Component {
@@ -112,21 +113,31 @@ export default class Sell extends React.Component {
     }
   };
 
-  pushToSale = () => {
-    axios
-      .post(`${global.config.host}/shop/addProduct`, this.state)
-      .then(res => {
-        this.setState({ published: true });
-        //Alert.alert("Success", "Your Product Is Live");
-        this.props.navigation.navigate({
-          name: "Published",
-          params: { type: "sell" },
-        });
+  pushToSale = async () => {
+    await AsyncStorage.getItem("cirquip-auth-token")
+      .then(async token => {
+        axios
+          .post(`${global.config.host}/shop/addProduct`, this.state, {
+            headers: {
+              "cirquip-auth-token": token,
+            },
+          })
+          .then(res => {
+            this.setState({ published: true });
+            //Alert.alert("Success", "Your Product Is Live");
+            this.props.navigation.navigate({
+              name: "Published",
+              params: { type: "sell" },
+            });
+          })
+          .catch(e => {
+            Alert.alert("Error", "Something went wrong");
+            console.log(e);
+          });
       })
-      .catch(e => {
-        Alert.alert("Error", "Something went wrong");
-        console.log(e);
-      });
+      .catch(err =>
+        Alert.alert("Error", "Something went wrong in authentication !")
+      );
   };
   render() {
     return (

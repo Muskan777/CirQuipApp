@@ -222,19 +222,33 @@ export default class Product extends React.Component {
     }
   };
   handleSell = async () => {
-    await axios
-      .delete(`${global.config.host}/shop/sell/${this.state?._id}`)
-      .then(res => {
-        Alert.alert("Congratulations", "Your product has been removed !");
-        this.props.navigation.dispatch(
-          CommonActions.reset({
-            index: 1,
-            routes: [{ name: "Home" }],
+    await AsyncStorage.getItem("cirquip-auth-token")
+      .then(async token => {
+        await axios
+          .post(
+            `${global.config.host}/shop/sell/${this.state?._id}`,
+            {},
+            {
+              headers: {
+                "cirquip-auth-token": token,
+              },
+            }
+          )
+          .then(res => {
+            Alert.alert("Congratulations", "Your product has been removed !");
+            this.props.navigation.dispatch(
+              CommonActions.reset({
+                index: 1,
+                routes: [{ name: "Home" }],
+              })
+            );
           })
-        );
+          .catch(err => {
+            if (global.config.debug) console.log(err);
+            Alert.alert("Error", "Something went wrong");
+          });
       })
       .catch(err => {
-        if (global.config.debug) console.log(err);
         Alert.alert("Error", "Something went wrong");
       });
   };

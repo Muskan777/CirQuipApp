@@ -8,6 +8,7 @@ const AWS = require("aws-sdk");
 AWS.config.update({
   accessKeyId: config.get("awsAcccessKey"),
   secretAccessKey: config.get("awsSecretAccessKey"),
+  region: config.get("region"),
 });
 const s3 = new AWS.S3();
 const connectDB = async () => {
