@@ -42,10 +42,22 @@ export default function PostCarousel({
     createdAt.substr(5, 2) +
     "-" +
     createdAt.substr(0, 4);
-  if (createdAt.substr(11, 2) > 12) {
-    var time = createdAt.substr(11, 5) + " PM";
+  var localhour = parseInt(createdAt.substr(11, 2));
+  var localmin = parseInt(createdAt.substr(14, 2));
+  localmin = localmin + 30;
+  if (localmin >= 60) {
+    localmin = localmin - 60;
+    localhour = localhour + 6;
   } else {
-    var time = createdAt.substr(11, 5) + " AM";
+    localhour = localhour + 5;
+  }
+  if (localmin >= 0 && localmin <= 9) {
+    localmin = "0" + localmin;
+  }
+  if (localhour > 12) {
+    var time = localhour + ":" + localmin + " PM";
+  } else {
+    var time = localhour + ":" + localmin + " AM";
   }
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentSaves, setCurrentSaves] = useState(saves);
