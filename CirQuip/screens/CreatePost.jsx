@@ -13,13 +13,16 @@ import {
   FlatList,
   SafeAreaView,
 } from "react-native";
+// import { Button, Paragraph, Dialog, Portal } from "react-native-paper";
 import {
   MaterialIcons,
   Entypo,
   FontAwesome,
   AntDesign,
 } from "@expo/vector-icons";
-import { IconButton, Searchbar } from "react-native-paper";
+import { Video } from "expo-av";
+import { IconButton, Button, Dialog, Portal } from "react-native-paper";
+import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,15 +30,38 @@ import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
+  const [postHasImage, setPostHasImage] = useState(false);
   const [postText, setPostText] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [users, setUsers] = useState([]);
   const [requiredusers, setRequiredUsers] = useState([]);
-  const [documentSource, setDocumentSource] = useState(null);
+  const [videoSource, setVideoSource] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [isTagged, setIsTagged] = useState(false);
   const [taggedList, setTaggedList] = useState([]);
+  const [visible, setVisible] = React.useState(false);
+  const [checkedA, setCheckedA] = React.useState(false);
+  const [checkedB, setCheckedB] = React.useState(false);
+  const [checkedC, setCheckedC] = React.useState(false);
+  const [user, setuser] = React.useState("");
+
+  const handleDialog = () => setVisible(!visible);
+
   useEffect(() => {
+    const user = async () => {
+      let user = await AsyncStorage.getItem("user");
+      if (user) {
+        axios
+          .get(`${global.config.host}/user/getUserWithId/${user}`)
+          .then(res => {
+            setuser(res.data.name);
+          })
+          .catch(err => {
+            Alert.alert("Error", "Something Went Wrong");
+            console.log(err);
+          });
+      }
+    };
+    user();
     axios
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
@@ -47,12 +73,24 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    let group = [];
+    if (checkedA) {
+      group.push("Alumni");
+    }
+    if (checkedB) {
+      group.push("Faculty");
+    }
+    if (checkedC) {
+      group.push("Student");
+    }
     axios
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: postText,
+          content: photos,
           caption: postText,
+          taggedUsers: taggedList,
+          group: group,
         },
         {
           headers: {
@@ -67,6 +105,8 @@ export default function CreatePost(props) {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
       });
+    setVisible(false);
+    props.navigation.goBack();
   };
   useEffect(() => {
     props.navigation.setOptions({
@@ -82,17 +122,15 @@ export default function CreatePost(props) {
   });
   useEffect(() => {
     const { params } = props.route;
-    // console.log(images);
     if (params) {
       const { images } = params;
       if (images) setPhotos(images);
     }
   });
   function renderImage(item, i) {
-    let dimensions = Dimensions.get("window");
     let imageHeight = Math.round((dimensions.width * 6) / 16);
     let imageWidth = imageHeight;
-    console.log(item);
+    // console.log(item.length);
     return (
       <Image
         style={{
@@ -109,20 +147,20 @@ export default function CreatePost(props) {
     );
   }
   async function pickDocument() {
-    const doc = await DocumentPicker.getDocumentAsync();
+    const doc = await DocumentPicker.getDocumentAsync({ type: "video/*" });
     if (doc.type === "success") {
       const docBase64 = await FileSystem.readAsStringAsync(doc.uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
       doc["base64"] = docBase64;
-      setDocumentSource(doc);
-      // console.log("loged", documentSource["base64"]);
+      setVideoSource(doc);
+      // console.log("loged", videoSource["base64"]);
     } else {
-      Alert.alert("Something went wrong in Picking Document");
+      Alert.alert("Something went wrong in Picking Video");
     }
   }
   const searchFunction = () => {
-    console.log(searchQuery);
+    // console.log(searchQuery);
     if (searchQuery == "") {
       setRequiredUsers(users);
     }
@@ -141,10 +179,11 @@ export default function CreatePost(props) {
       ...taggedList.filter((_, index) => index !== indexToRemove),
     ]);
   };
+  const dimensions = Dimensions.get("window");
 
   return (
     // <View>
-    <View style={styles.mainContent}>
+    <SafeAreaView style={styles.mainContent}>
       <View style={styles.topContainer}>
         <MaterialIcons
           name="close"
@@ -160,7 +199,8 @@ export default function CreatePost(props) {
           style={{ ...styles.Icons, marginTop: 20 }}
           size={24}
           onPress={() => {
-            handleSubmit();
+            // handleSubmit();
+            handleDialog();
           }}
         />
       </View>
@@ -175,12 +215,11 @@ export default function CreatePost(props) {
               style={{
                 marginHorizontal: 10,
                 maxWidth: "84%",
+
                 display: "flex",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Kartik Mandhan
-              </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>{user}</Text>
               <Text
                 onPress={() => setModalOpen(true)}
                 style={{ fontWeight: "bold" }}
@@ -194,59 +233,150 @@ export default function CreatePost(props) {
               </Text>
             </ScrollView>
           </View>
-          <TextInput
+          <View style={{ alignItems: "flex-start", flex: 1 }}>
+            <TextInput
+              style={{
+                ...styles.PrimaryTextInput,
+              }}
+              editable
+              multiline
+              onChangeText={text => setPostText(text)}
+              placeholder=" What do you want to CirQuip ?"
+              value={postText}
+            />
+          </View>
+        </View>
+        <View style={styles.MediaArea}>
+          <View
             style={{
-              // borderWidth: 1,
-              // borderColor: "gray",
-              ...styles.PrimaryTextInput,
+              display: "flex",
+              justifyContent: "center",
             }}
-            editable
-            multiline
-            onChangeText={text => setPostText(text)}
-            placeholder=" What do you want to CirQuip ?"
-            value={postText}
-            numberOfLines={30}
-          />
+          >
+            {videoSource && (
+              <View>
+                <Video
+                  source={{
+                    uri: videoSource.uri,
+                  }}
+                  rate={1.0}
+                  volume={1.0}
+                  isMuted={true}
+                  resizeMode="cover"
+                  // shouldPlay
+                  // isLooping
+                  style={{
+                    ...styles.video,
+                    width: (dimensions.width * 8) / 10,
+                    height: (dimensions.width * 8) / 10,
+                    display: "flex",
+                    alignSelf: "center",
+                  }}
+                />
+              </View>
+            )}
+          </View>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              flexWrap: "wrap",
+              // justifyContent: "flex-start",
+              alignItems: "center",
+              margin: 10,
+            }}
+          >
+            {photos?.map((item, i) => renderImage(item, i))}
+          </View>
         </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "flex-start",
-            marginLeft: 10,
-            alignSelf: "flex-start",
-          }}
-        >
-          {documentSource && (
-            <View style={styles.fileContainer}>
-              <AntDesign
-                name="file1"
-                style={{ ...styles.Icons, marginRight: 8 }}
-                size={24}
-                color="black"
-              />
-              <Text>{documentSource?.name}</Text>
-            </View>
-          )}
-        </View>
-        <View
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            justifyContent: "flex-start",
-            marginLeft: 10,
-            alignSelf: "flex-start",
-          }}
-        >
-          {photos?.map((item, i) => renderImage(item, i))}
+        <View>
+          <Portal>
+            <Dialog
+              visible={visible}
+              onDismiss={handleDialog}
+              style={styles.dialog}
+            >
+              <Dialog.Title
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: "#4FB5A5",
+                  fontWeight: "bold",
+                }}
+              >
+                Send post to
+              </Dialog.Title>
+              <Dialog.Content>
+                <View style={styles.checkBoxContainer}>
+                  <CheckBox
+                    checked={checkedA}
+                    color={checkedA ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedA(!checkedA)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedA ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Alumni
+                  </Text>
+                </View>
+                <View style={styles.checkBoxContainer}>
+                  <CheckBox
+                    checked={checkedB}
+                    color={checkedB ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedB(!checkedB)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedB ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Faculty
+                  </Text>
+                </View>
+                <View style={styles.checkBoxContainer}>
+                  <CheckBox
+                    checked={checkedC}
+                    color={checkedC ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedC(!checkedC)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedC ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      flex: 1,
+                      fontSize: 15,
+                    }}
+                  >
+                    Students
+                  </Text>
+                </View>
+              </Dialog.Content>
+              <Dialog.Actions>
+                <Button onPress={handleDialog} color="gray" fontSize="15">
+                  Back
+                </Button>
+                <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
+                  Send
+                </Button>
+              </Dialog.Actions>
+            </Dialog>
+          </Portal>
         </View>
       </KeyboardAvoidingView>
       <View style={styles.bottomContainer}>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             onPress={() => {
+              setVideoSource(null);
+              setPostHasImage(true);
               props.navigation.navigate({
                 name: "Camera",
                 params: { from: "CreatePost" },
@@ -262,6 +392,9 @@ export default function CreatePost(props) {
 
           <TouchableOpacity
             onPress={() => {
+              setVideoSource(null);
+              setPostHasImage(true);
+
               props.navigation.navigate("CreatePostImageBrowser");
             }}
           >
@@ -271,10 +404,19 @@ export default function CreatePost(props) {
               size={24}
             />
           </TouchableOpacity>
-          <TouchableOpacity onPress={pickDocument}>
-            <Entypo
-              name="attachment"
-              style={{ ...styles.Icons, marginHorizontal: 5 }}
+          <TouchableOpacity
+            onPress={() => {
+              pickDocument();
+            }}
+            disabled={postHasImage}
+          >
+            <FontAwesome
+              name="video-camera"
+              style={
+                postHasImage
+                  ? { ...styles.IconsDisabled, marginHorizontal: 5 }
+                  : { ...styles.Icons, marginHorizontal: 5 }
+              }
               size={24}
             />
           </TouchableOpacity>
@@ -392,18 +534,12 @@ export default function CreatePost(props) {
           />
         </View>
       </Modal>
-    </View>
+    </SafeAreaView>
     // </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: Dimensions.get("window").height,
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   tagContainer: {
     display: "flex",
     // flexDirection: "row",
@@ -415,6 +551,21 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     paddingHorizontal: 8,
     borderBottomWidth: 0.5,
+  },
+  checkBoxTxt: {
+    marginLeft: 20,
+    width: "100%",
+  },
+  dialog: {
+    backgroundColor: "#f5f5f5",
+  },
+  checkBoxContainer: {
+    width: "100%",
+    backgroundColor: "#fff",
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
+    flexDirection: "row",
   },
   tag: {
     display: "flex",
@@ -458,32 +609,37 @@ const styles = StyleSheet.create({
     color: "#2EA5DD",
     marginBottom: 10,
   },
+  IconsDisabled: {
+    fontSize: 30,
+    color: "#aaa",
+    marginBottom: 10,
+  },
   PostArea: {
     display: "flex",
     flex: 1,
   },
   PrimaryTextInput: {
     fontSize: 18,
+    width: "100%",
     color: "#000",
     flex: 1,
     textAlignVertical: "top",
     padding: 5,
-    paddingTop: 20,
     paddingHorizontal: 10,
-    marginLeft: 10,
+    marginLeft: 5,
   },
   ProfilePicAndCaption: {
-    flex: 0.2,
+    flex: 0.25,
     display: "flex",
-    // flexDirection: "row",
     marginHorizontal: 15,
     marginVertical: 15,
   },
-  fileContainer: {
+  MediaArea: {
+    flex: 0.75,
+    marginHorizontal: 15,
     display: "flex",
-    minWidth: "60%",
-    flexWrap: "wrap",
-    flexDirection: "row",
+  },
+  video: {
     padding: 10,
     alignItems: "center",
     // maxHeight: 40,
@@ -495,6 +651,8 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowColor: "#2EA5DD",
     elevation: 3,
+    borderWidth: 5,
+    borderColor: "#000",
   },
   topContainer: {
     display: "flex",
@@ -517,8 +675,6 @@ const styles = StyleSheet.create({
   bottomContainer: {
     display: "flex",
     paddingHorizontal: 10,
-    // borderWidth: 1,
-    // borderColor: "gray",
     backgroundColor: "#fff",
     flex: 1,
     paddingTop: 10,

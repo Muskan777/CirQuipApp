@@ -11,8 +11,14 @@ const app = express();
 const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 
-app.use(bodyparser.urlencoded({ extended: false }));
-app.use(bodyparser.json());
+app.use(
+  bodyparser.urlencoded({
+    limit: "50mb",
+    extended: true,
+    parameterLimit: 50000,
+  })
+);
+app.use(bodyparser.json({ limit: "50mb", extended: true }));
 app.use(cookieparser());
 
 (async () => await connectDB())();

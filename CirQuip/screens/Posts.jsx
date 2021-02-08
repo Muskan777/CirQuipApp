@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { ScrollView, FlatList } from "react-native";
 import {
-  SafeAreaView,
+  FlatList,
   Image,
-  StyleSheet,
-  View,
-  Text,
-  StatusBar,
-  TouchableHighlight,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  ScrollView,
+  Alert,
 } from "react-native";
-import { Card } from "react-native-material-cards";
+import { SafeAreaView, StyleSheet, View } from "react-native";
 import axios from "axios";
-import Post from "../components/Post";
+import PostsCarousel from "../components/PostsCarousel";
+import Comment from "../components/Comment";
 import Loader from "./Loader";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
+import { MaterialIcons } from "@expo/vector-icons";
 export default function Posts({ navigation }) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [CCPIndex, setCCPIndex] = useState(null);
+  const [commentText, setCommentText] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(true);
 
   useEffect(() => {
     fetchData();
@@ -28,130 +36,215 @@ export default function Posts({ navigation }) {
     setIsRefreshing(false);
   };
 
-  const fetchData = () => {
+  const fetchData = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
     axios
-      .get(`${global.config.host}/post/getPosts`)
+      .get(`${global.config.host}/post/getPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
+      })
       .then(res => {
         setData(res.data.post);
+        setLoading(false);
       })
       .catch(e => console.log(e));
   };
 
-  if (data.length === 0) {
-    console.log("im here");
-    return <Loader />;
-  }
+  const onCommentClick = (index, postId) => {
+    axios
+      .post(`${global.config.host}/post/getComments`, { id: postId })
+      .then(res => {
+        setComments(res.data.comments);
+        setCommentLoading(false);
+      })
+      .catch(e => console.log(e));
+    setModalOpen(!modalOpen);
+    setCCPIndex(index);
+  };
+  const handleComment = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(
+        `${global.config.host}/comment/createComment`,
+        {
+          postId: data[CCPIndex]?._id,
+          comment: commentText,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        Alert.alert("CirQuip", "New Comment Created");
+        setCommentText(null);
+        setComments([...comments, res.data.comment]);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.post}>
-      <FlatList
-        data={data}
-        renderItem={({ item }) => (
-          <Post
-            name={item.userName}
-            role={item.userRole}
-            createdAt={item.createdAt}
-            caption={item.caption}
-            comments={item.comments}
-            likes={item.likes}
-            content={item.content}
-            navigation={navigation}
-            id={item.userId}
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <FlatList
+          data={data}
+          renderItem={({ item, index }) => (
+            <PostsCarousel
+              name={item.userName}
+              role={item.userRole}
+              createdAt={item.createdAt}
+              caption={item.caption}
+              comments={item.comments}
+              taggedUsers={item.taggedUsers}
+              likes={item.likes}
+              saves={item.saves}
+              shares={item.shares}
+              content={item.content}
+              onCommentClick={onCommentClick}
+              navigation={navigation}
+              postId={item._id}
+              taggedUsers={item.taggedUsers}
+              postIndex={index}
+              id={item.userId}
+            />
+          )}
+          keyExtractor={item => item._id}
+          onRefresh={() => onRefresh()}
+          refreshing={isRefreshing}
+        />
+      )}
+      <Modal visible={modalOpen} animationType="slide">
+        <View style={styles.topContainer}>
+          <MaterialIcons
+            name="arrow-back"
+            style={{ ...styles.Icons, marginTop: 20 }}
+            size={28}
+            onPress={() => {
+              setModalOpen(false);
+              setComments([]);
+            }}
           />
-        )}
-        keyExtractor={item => item._id}
-        onRefresh={() => onRefresh()}
-        refreshing={isRefreshing}
-      />
+        </View>
+        <ScrollView>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <PostsCarousel
+              name={data[CCPIndex]?.userName}
+              role={data[CCPIndex]?.userRole}
+              createdAt={data[CCPIndex]?.createdAt}
+              caption={data[CCPIndex]?.caption}
+              comments={data[CCPIndex]?.comments}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
+              likes={data[CCPIndex]?.likes}
+              saves={data[CCPIndex]?.saves}
+              shares={data[CCPIndex]?.shares}
+              content={data[CCPIndex]?.content}
+              onCommentClick={onCommentClick}
+              navigation={navigation}
+              taggedUsers={data[CCPIndex]?.taggedUsers}
+              // postIndex={index}
+              postId={data[CCPIndex]?._id}
+              id={data[CCPIndex]?.userId}
+            />
+          )}
+          <View style={styles.CommentInputContainer}>
+            <Image
+              style={{
+                ...styles.CommentInputImage,
+                width: 30,
+                height: 30,
+                alignSelf: "center",
+                borderRadius: 15,
+                marginRight: 15,
+              }}
+              source={require("../assets/ellipse174b251b3.png")}
+            />
+            <TextInput
+              editable
+              multiline
+              style={styles.CommentTextInput}
+              onChangeText={text => setCommentText(text)}
+              placeholder="Leave your thoughts here..."
+              value={commentText}
+            />
+            <TouchableOpacity
+              onPress={() => {
+                handleComment();
+              }}
+            >
+              <MaterialIcons
+                name="check"
+                style={{ ...styles.Icons, marginTop: 5 }}
+              />
+            </TouchableOpacity>
+          </View>
+          {commentLoading ? (
+            <Loader />
+          ) : (
+            comments.map((item, i) => {
+              return (
+                <Comment
+                  key={i}
+                  id={item._id}
+                  name={item.userName}
+                  comment={item.comment}
+                  role={item.userRole}
+                  time={item.createdAt}
+                  likes={item.likes}
+                />
+              );
+            })
+          )}
+        </ScrollView>
+      </Modal>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  box: {
-    width: "98%",
-    alignContent: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-    padding: 10,
-    backgroundColor: "transparent",
-  },
-
-  container: {
-    height: 90,
-    width: "100%",
-    alignSelf: "center",
-    flexDirection: "row",
-    marginTop: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.8,
-    shadowRadius: 2,
-    elevation: 5,
-    backgroundColor: "transparent",
-  },
-
-  name: {
-    color: "black",
-    fontSize: 20,
-  },
-  about: {
-    backgroundColor: "transparent",
-  },
-  info: {
-    margin: 5,
-  },
-  postimage: {
-    marginTop: 10,
-    width: "100%",
-    overflow: "hidden",
-  },
-  img: {
-    height: 350,
-    width: 330,
-    borderRadius: 20,
-  },
-  contactimg: {
-    margin: 5,
-    height: 55,
-    width: 56,
-  },
-  datetime: {
-    flexDirection: "row",
-    margin: 15,
-  },
-  time: {
-    marginRight: 10,
-  },
-  dot: {
-    marginTop: 10,
-    marginBottom: 10,
-    padding: 10,
-    height: 10,
-    width: 10,
-  },
-  date: {
-    marginLeft: 10,
-  },
-  response: {
-    margin: 10,
-    width: "100%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
-  like: {
-    width: "25%",
-    flexDirection: "row",
-    justifyContent: "space-around",
-  },
   post: {
     flex: 1,
-    marginTop: StatusBar.currentHeight || 0,
-    backgroundColor: "transparent",
+    // marginTop: StatusBar.currentHeight || 0,
+    backgroundColor: "#eee",
   },
-  message: {
-    backgroundColor: "transparent",
+  Icons: {
+    fontSize: 30,
+    color: "#4FB5A5",
+    paddingHorizontal: 10,
+  },
+  topContainer: {
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    minHeight: 70,
+    justifyContent: "space-between",
+    borderBottomLeftRadius: 9,
+    borderBottomRightRadius: 9,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#4FB5A5",
+    elevation: 3,
+  },
+  CommentInputContainer: {
+    flexDirection: "row",
+    padding: 15,
+    borderBottomWidth: 1,
+  },
+  CommentTextInput: {
+    borderWidth: 1,
+    borderColor: "#aaa",
+    padding: 5,
+    flex: 1,
   },
 });

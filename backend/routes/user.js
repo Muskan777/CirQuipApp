@@ -4,6 +4,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
+const emailHandler = require("./email");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -11,6 +12,8 @@ const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
   let { name, phone, college, email, password, role } = req.body;
   phone = parseInt(phone);
+  let num = Math.floor(Math.random() * 10000).toString();
+  console.log(num);
   try {
     User.findOne({ email }).then(user => {
       if (user) {
@@ -29,7 +32,12 @@ router.post("/register", (req, res) => {
           projects: [],
           skills: [],
           clubs: [],
-          Post: [],
+          posts: [],
+          likedPosts: [],
+          savedPosts: [],
+          verified: false,
+          otp: num,
+          sharedPosts: [],
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -41,6 +49,7 @@ router.post("/register", (req, res) => {
             )
             .catch(err => res.status(400).send("Error:" + err));
         });
+        emailHandler.email(newUser.email, newUser.otp);
       }
     });
   } catch (e) {
@@ -68,6 +77,9 @@ router.post("/login", (req, res) => {
             role: user.role,
             email: user.email,
             phone: user.phone,
+            likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
+            sharedPosts: user.sharedPosts,
           };
           jwt.sign(
             payload,
@@ -144,6 +156,69 @@ router.route("/updateUser").patch(auth, async (req, res) => {
     )
       .then(() => res.status(200).send("User updated"))
       .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route GET /api/user/getLikedPosts
+// @desc Gets posts liked by user
+
+router.route("/getLikedPosts").get(auth, async (req, res) => {
+  try {
+    User.findOne({ _id: req.payload.id })
+      .then(user => {
+        if (user) {
+          return res.status(200).send({
+            likedPosts: user.likedPosts,
+            savedPosts: user.savedPosts,
+            sharedPosts: user.sharedPosts,
+          });
+        } else {
+          return res.status(400).send("User not found");
+        }
+      })
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+// @route PATCH /api/user/verify
+
+router.patch("/verify/:email", async (req, res) => {
+  let email = req.params.email;
+  console.log(email);
+  try {
+    if (email !== undefined) {
+      User.findOneAndUpdate({ email: email }, { $set: { verified: true } })
+        .then(() => res.status(200).send("Verified"))
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      res.status(400).send("Invalid email!");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+// @route DELETE /api/user/deleteUser
+// @desc Deletes existing user
+
+router.route("/deleteUser").delete(auth, async (req, res) => {
+  try {
+    let user = await User.findById(req.body.id);
+    let admin = await User.find({ email: "admin@coep.ac.in" });
+    let adminId = admin[0]._id;
+    if (!user) {
+      return res.status(400).send("User with id not found");
+    }
+    if (req.payload.id === `${user._id}` || req.payload.id === adminId) {
+      User.findByIdAndDelete(req.body.id)
+        .then(() => res.status(200).send("User deleted"))
+        .catch(err => res.status(400).send("Error:" + err));
+    } else {
+      return res.status(400).send("Unauthorized deletion requested");
+    }
   } catch (e) {
     console.log(e);
   }

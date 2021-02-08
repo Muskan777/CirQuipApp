@@ -15,7 +15,7 @@ export default function CreatePostImageBrowser(props) {
     // Alert.alert("Selected items are", JSON.stringify(data));
     const images = data;
     // const base64 = await ConvertBase64(data[0]?.uri);
-    console.log(data[0].uri);
+    // console.log(data[0].uri);
     // console.log(manipResult.base64);
     for (let i = 0; i < data.length; i++) {
       const manipResult = await ImageManipulator.manipulateAsync(
