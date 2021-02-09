@@ -1,7 +1,6 @@
 {
-
   "mongoURIAlt": "mongodb+srv://rootUser:sds2020root@sss-x10cv.mongodb.net/CirQuip?retryWrites=true&w=majority",
-  "mongoURI": "mongodb://rootUser:sds2020root@sss-shard-00-00.x10cv.mongodb.net:27017,sss-shard-00-01.x10cv.mongodb.net:27017,sss-shard-00-02.x10cv.mongodb.net:27017/CirQuip?ssl=true&replicaSet=SSS-shard-0&authSource=admin&retryWrites=true&w=majority",
+  "mongoURI": "mongodb+srv://cirquip:cirquip2020@cirquip.gzspv.mongodb.net/CirQuip?retryWrites=true&w=majority",
   "localMongoURI": "mongodb://localhost:27017",
   "jwtSecretKey": "tRUmPIsfOOlisH"
 }

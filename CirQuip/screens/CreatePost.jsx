@@ -73,6 +73,13 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    console.log(videoSource);
+    let content;
+    if (photos.length !== 0) {
+      content = photos;
+    } else {
+      content = videoSource.base64;
+    }
 
     let group = [];
     if (checkedA) {
@@ -88,7 +95,7 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos,
+          content: content,
           caption: postText,
           taggedUsers: taggedList,
           group: group,
