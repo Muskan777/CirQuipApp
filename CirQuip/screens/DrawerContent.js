@@ -55,7 +55,7 @@ export function DrawerContent(props) {
                 size={50}
               />
               <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>{props.user.name}}</Title>
+                <Title style={styles.title}>{props.user.name}</Title>
                 <Caption style={styles.caption}>props.user.role</Caption>
               </View>
             </View>
@@ -107,15 +107,6 @@ export function DrawerContent(props) {
               )}
               label="Buy Requests"
               onPress={() => {}}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="chat" color={color} size={size} />
-              )}
-              label="Chat with Admin"
-              onPress={() => {
-                props.navigation.navigate("ChatAdmin");
-              }}
             />
             {props.user.verified ? (
               <DrawerItem
