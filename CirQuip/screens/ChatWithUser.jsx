@@ -95,50 +95,55 @@ export function ChatWithUser(props) {
   useEffect(searchFunction, [searchQuery]);
 
   useEffect(() => {
-    axios
-      .get(`${global.config.host}/user/getUsers`)
-      .then(res => {
-        if (props.route.params.email == global.config.admin) {
-          let Users = res.data.users.filter(user => {
-            return user.email != global.config.admin;
-          });
-          const thread = Users.map(user => {
-            return {
-              _id: user.email,
-              name: user.name,
-              role: user.role,
-            };
-          });
-          setThreads(thread);
-          setRequiredUsers(thread);
-        }
-        if (loading) {
-          setLoading(false);
-        }
-      })
-      .catch(err => {
-        Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
-        console.log(err);
-      });
-    axios
-      .get(`${global.config.host}/message/getMessages`)
-      .then(res => {
-        let AdminMsg = res.data.messages.filter(message => {
-          return message.to === "Admin" && !message.recieverRead;
-        });
-        let UnreadMsgs = {};
-        for (let i = 0; i < AdminMsg.length; i++) {
-          if (UnreadMsgs[AdminMsg[i].user._id]) {
-            UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
-          } else {
-            UnreadMsgs[AdminMsg[i].user._id] = [];
-            UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
+    const unsubscribe = props.navigation.addListener("focus", () => {
+      console.log("Working Fine!");
+      axios
+        .get(`${global.config.host}/user/getUsers`)
+        .then(res => {
+          if (props.route.params.email == global.config.admin) {
+            let Users = res.data.users.filter(user => {
+              return user.email != global.config.admin;
+            });
+            const thread = Users.map(user => {
+              return {
+                _id: user.email,
+                name: user.name,
+                role: user.role,
+              };
+            });
+            setThreads(thread);
+            setRequiredUsers(thread);
           }
-        }
-        setUnread(UnreadMsgs);
-      })
-      .catch(e => console.log(e));
-  }, []);
+          if (loading) {
+            setLoading(false);
+          }
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
+          console.log(err);
+        });
+      axios
+        .get(`${global.config.host}/message/getMessages`)
+        .then(res => {
+          let AdminMsg = res.data.messages.filter(message => {
+            return message.to === "Admin" && !message.recieverRead;
+          });
+          let UnreadMsgs = {};
+          for (let i = 0; i < AdminMsg.length; i++) {
+            if (UnreadMsgs[AdminMsg[i].user._id]) {
+              UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
+            } else {
+              UnreadMsgs[AdminMsg[i].user._id] = [];
+              UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
+            }
+          }
+          setUnread(UnreadMsgs);
+        })
+        .catch(e => console.log(e));
+    });
+
+    return unsubscribe;
+  }, [props.navigation]);
 
   if (loading) {
     return <Loader />;

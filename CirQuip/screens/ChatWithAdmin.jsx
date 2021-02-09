@@ -102,6 +102,7 @@ export class ChatWithAdmin extends React.Component {
       this.state.socket.on("new message", message => {
         this.onRecv(message);
       });
+      console.log("unsubscribe");
       axios
         .get(`${global.config.host}/message/getMessages`)
         .then(res => {
@@ -136,11 +137,15 @@ export class ChatWithAdmin extends React.Component {
         ? this.state.socket.emit("new user", "Admin")
         : this.state.socket.emit("new user", this.props.route.params.email);
     });
+    this._blurevent = this.props.navigation.addListener("blur", () => {
+      console.log("blurevent");
+      this.state.socket.disconnect();
+    });
   }
 
   componentWillUnmount() {
     this._unsubscribe();
-    this.state.socket.disconnect();
+    this._blurevent();
   }
 
   onSend = (messages = []) => {
