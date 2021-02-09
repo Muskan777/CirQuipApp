@@ -327,7 +327,10 @@ export default function App() {
   return status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
-        <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
+        <Drawer.Navigator
+          drawerContent={props => <DrawerContent {...props} user={user} />}
+          initialRouteName={user.verified ? "HomeDrawer" : "OTP"}
+        >
           <Drawer.Screen name="HomeDrawer" component={AppNavigator} />
           <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
           <Drawer.Screen
@@ -337,13 +340,18 @@ export default function App() {
           <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
           <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
+          <Drawer.Screen
+            name="OTP"
+            component={OTP}
+            initialParams={{ email: user.email }}
+          />
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>
   ) : (
     <PaperProvider>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login">
             {props => <Login {...props} handleStatus={handleStatus} />}
           </Stack.Screen>

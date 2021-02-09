@@ -338,7 +338,7 @@ export default class Shop extends React.Component {
                   >
                     <Avatar.Icon
                       size={32}
-                      color="#a4c639 "
+                      color="#25D366"
                       icon="phone"
                       backgroundColor="#fff"
                       elevation={10}

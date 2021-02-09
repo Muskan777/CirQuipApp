@@ -34,8 +34,8 @@ export function DrawerContent(props) {
                 size={50}
               />
               <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>UserName</Title>
-                <Caption style={styles.caption}>Student</Caption>
+                <Title style={styles.title}>{props.user.name}}</Title>
+                <Caption style={styles.caption}>props.user.role</Caption>
               </View>
             </View>
           </View>
@@ -96,16 +96,27 @@ export function DrawerContent(props) {
                 props.navigation.navigate("ChatAdmin");
               }}
             />
+            {props.user.verified ? (
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon name="pin" color={color} size={size} />
+                )}
+                label="Verify Email"
+                onPress={() => {
+                  props.navigation.navigate("OTP");
+                }}
+              />
+            ) : (
+              <></>
+            )}
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>
 
       <Drawer.Section style={styles.bottomDrawerSection}>
         <DrawerItem
-          icon={({ color, size }) => (
-            <Icon name="exit-to-app" color={color} size={size} />
-          )}
-          label="Sign Out"
+          label="Developed by SDS COEP"
+          labelStyle={{ fontSize: 16 }}
           onPress={() => {}}
         />
       </Drawer.Section>

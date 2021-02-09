@@ -56,6 +56,18 @@ export default class Login extends React.Component {
   }
 
   handleSignUp() {
+    if (this.state.name.trim() === "") {
+      Alert.alert("Name Error", "Name cannot be empty");
+      return;
+    }
+
+    var phoneno = /^\d{10}$/;
+
+    if (!this.state.phone.match(phoneno)) {
+      Alert.alert("Phone error", "Enter a valid phone number");
+      return;
+    }
+
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
       return;
@@ -79,7 +91,6 @@ export default class Login extends React.Component {
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
         this.props.handleStatus(true);
-        this.props.navigation.navigate("OTP", { email: this.state.email });
       })
       .catch(err => {
         console.log(err.response.data);
@@ -132,7 +143,7 @@ export default class Login extends React.Component {
                   textContentType={"telephoneNumber"}
                   keyboardType={"phone-pad"}
                   style={styles.inputText}
-                  placeholder="Mobile no."
+                  placeholder="Mobile Number"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ phone: text })}
                 />
@@ -143,7 +154,7 @@ export default class Login extends React.Component {
                   value={this.state.password}
                   secureTextEntry
                   style={styles.inputText}
-                  placeholder="Password..."
+                  placeholder="Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password: text })}
                 />
@@ -154,7 +165,7 @@ export default class Login extends React.Component {
                   value={this.state.password2}
                   secureTextEntry
                   style={styles.inputText}
-                  placeholder="Confirm Password..."
+                  placeholder="Confirm Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password2: text })}
                 />
@@ -183,9 +194,10 @@ export default class Login extends React.Component {
                 <TextInput
                   value={this.state.email}
                   style={styles.inputText}
-                  placeholder="Email..."
+                  placeholder="Email Id"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ email: text })}
+                  selectionColor="cyan"
                 />
               </View>
               <View style={styles.line}></View>
@@ -194,7 +206,7 @@ export default class Login extends React.Component {
                   secureTextEntry
                   value={this.state.password}
                   style={styles.inputText}
-                  placeholder="Password..."
+                  placeholder="Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password: text })}
                 />
@@ -215,10 +227,12 @@ export default class Login extends React.Component {
                 style={styles.loginBtn}
                 onPress={() => this.handleLogin()}
               >
-                <Text style={styles.loginText}>LOGIN</Text>
+                <Text style={styles.loginText}>Login</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                <Text style={styles.loginText}>Signup</Text>
+                <Text style={styles.signUpText}>
+                  Don't have an account yet? Signup now!
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -249,12 +263,12 @@ const styles = StyleSheet.create({
     // sfontFamily: "Segoe UI",
     textAlign: "center",
     paddingVertical: 0,
-    marginTop: 9,
+    marginTop: 0,
     marginBottom: 1,
   },
   inputText: {
     color: "black",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "400",
     fontStyle: "normal",
     // fontFamily: "Segoe UI",
@@ -274,39 +288,30 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 10,
     marginBottom: 0,
-    shadowColor: "black",
-    elevation: 3,
-    shadowOpacity: 0.32941176470588235,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowRadius: 20,
   },
   loginText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
     // marginBottom: 100,
+  },
+  signUpText: {
+    color: "rgba(54, 181, 165, 0.6313725490196078)",
+    fontSize: 16,
+    marginTop: 20,
+    marginBottom: 10,
+    padding: 10,
   },
   line: {
     width: "65%",
     backgroundColor: "rgba(0,0,0,0.5)",
     height: 1,
-    marginBottom: 11,
-    shadowColor: "rgb(0,0,0)",
-    shadowOpacity: 0.4,
-    shadowOffset: {
-      width: 0,
-      height: 3.5,
-    },
-    shadowRadius: 6,
-    elevation: 4,
+    marginBottom: 10,
   },
   already: {
-    color: "rgba(39, 40, 51, 0.7)",
+    color: "rgba(54, 181, 165, 0.6313725490196078)",
     fontSize: 14,
     fontWeight: "100",
     fontStyle: "normal",
@@ -316,7 +321,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   loginfield: {
-    marginTop: 120,
+    marginTop: 30,
   },
   already1: {
     flexDirection: "row",
