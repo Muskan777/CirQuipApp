@@ -140,7 +140,7 @@ const CreatePostStackScreen = ({ navigation }) => (
     }}
   >
     <CreatePostStack.Screen
-      name="Create Post"
+      name="CreatePost"
       component={CreatePost}
       options={{
         title: "Create Post",
