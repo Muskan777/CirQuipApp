@@ -11,10 +11,31 @@ import {
   Switch,
 } from "react-native-paper";
 import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 export function DrawerContent(props) {
+  const findEmail = async () => {
+    let user = await AsyncStorage.getItem("user");
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          setemail(res.data.email);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
+          console.log(err);
+        });
+    }
+  };
+
+  let [email, setemail] = React.useState(() => {
+    return findEmail();
+  });
+
   return (
     <View style={{ flex: 1 }}>
       <DrawerContentScrollView {...props}>
@@ -108,6 +129,37 @@ export function DrawerContent(props) {
               />
             ) : (
               <></>
+            )}
+            {email != global.config.admin ? (
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon name="chat" color={color} size={size} />
+                )}
+                label="Chat with Admin"
+                onPress={() => {
+                  props.navigation.navigate("ChatAdmin", {
+                    screen: "Chat with Admin",
+                    params: {
+                      email: email,
+                    },
+                  });
+                }}
+              />
+            ) : (
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon name="chat" color={color} size={size} />
+                )}
+                label="Chat with User"
+                onPress={() => {
+                  props.navigation.navigate("ChatUser", {
+                    screen: "Chat With User",
+                    params: {
+                      email: email,
+                    },
+                  });
+                }}
+              />
             )}
           </Drawer.Section>
         </View>

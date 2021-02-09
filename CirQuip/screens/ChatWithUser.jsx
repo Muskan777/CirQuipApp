@@ -40,8 +40,6 @@ export function ChatWithUser(props) {
     setVisible(!visible);
   };
 
-  console.log(threads);
-
   const sendmessage = thread => {
     message.to = thread._id;
     socket.emit("send message", message);
@@ -137,7 +135,6 @@ export function ChatWithUser(props) {
             UnreadMsgs[AdminMsg[i].user._id].push(AdminMsg[i]);
           }
         }
-        console.log(UnreadMsgs);
         setUnread(UnreadMsgs);
       })
       .catch(e => console.log(e));
@@ -176,9 +173,13 @@ export function ChatWithUser(props) {
         renderItem={({ item }) => (
           <TouchableOpacity
             onPress={() => {
-              props.navigation.navigate("ChatWithAdmin", {
-                thread: item,
-                admin: true,
+              console.log(item);
+              props.navigation.navigate("ChatAdmin", {
+                screen: "Chat with Admin",
+                params: {
+                  thread: item,
+                  admin: true,
+                },
               });
               axios.patch(`${global.config.host}/message/updateMessages`, {
                 id: item._id,
@@ -397,7 +398,6 @@ export function ChatWithUser(props) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   searchContainer: {
     flexDirection: "row",
@@ -463,7 +463,6 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     width: "100%",
   },
-
   checkBoxContainer: {
     width: "100%",
     backgroundColor: "#fff",

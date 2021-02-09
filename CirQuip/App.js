@@ -164,7 +164,7 @@ export default function App() {
         name="SellProducts"
         component={Sell}
         options={{
-          title: "Saved Posts",
+          title: "Sell Products",
           headerRight: () => (
             <IconButton
               icon="logout"
@@ -283,7 +283,37 @@ export default function App() {
       <ChatStack.Screen
         name="Chat with Admin"
         component={ChatWithAdmin}
-        initialParams={{ _id: user.admin, email: user.email }}
+        options={{
+          title: "Chat",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+        }}
+      />
+    </ChatStack.Navigator>
+  );
+
+  const ChatUser = ({ navigation }) => (
+    <ChatStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <ChatStack.Screen
+        name="Chat With User"
+        component={ChatWithUser}
         options={{
           title: "Chat",
           headerRight: () => (
@@ -345,6 +375,7 @@ export default function App() {
             component={OTP}
             initialParams={{ email: user.email }}
           />
+          <Drawer.Screen name="ChatUser" component={ChatUser} />
         </Drawer.Navigator>
       </NavigationContainer>
     </PaperProvider>
