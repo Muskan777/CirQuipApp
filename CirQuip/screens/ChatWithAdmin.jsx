@@ -88,6 +88,7 @@ function renderBubble(props) {
     />
   );
 }
+
 export class ChatWithAdmin extends React.Component {
   constructor(props) {
     super(props);
@@ -97,45 +98,48 @@ export class ChatWithAdmin extends React.Component {
     };
   }
   componentDidMount() {
-    this.state.socket.on("new message", message => {
-      this.onRecv(message);
-    });
-    axios
-      .get(`${global.config.host}/message/getMessages`)
-      .then(res => {
-        let Messages = res.data.messages;
-        if (this.props.route.params.admin) {
-          let FilteredMessages = Messages.filter(msg => {
-            return (
-              this.props.route.params.thread._id === msg.to ||
-              this.props.route.params.thread._id === msg.user._id
-            );
-          });
-          FilteredMessages = FilteredMessages.reverse();
-          this.setState({
-            messages: FilteredMessages,
-          });
-        } else {
-          let FilteredMessages = Messages.filter(msg => {
-            return (
-              this.props.route.params.email === msg.to ||
-              this.props.route.params.email === msg.user._id
-            );
-          });
-          FilteredMessages = FilteredMessages.reverse();
-          this.setState({
-            messages: FilteredMessages,
-          });
-        }
-      })
-      .catch(e => console.log(e));
+    this._unsubscribe = this.props.navigation.addListener("focus", () => {
+      this.state.socket.on("new message", message => {
+        this.onRecv(message);
+      });
+      axios
+        .get(`${global.config.host}/message/getMessages`)
+        .then(res => {
+          let Messages = res.data.messages;
+          if (this.props.route.params.admin) {
+            let FilteredMessages = Messages.filter(msg => {
+              return (
+                this.props.route.params.thread._id === msg.to ||
+                this.props.route.params.thread._id === msg.user._id
+              );
+            });
+            FilteredMessages = FilteredMessages.reverse();
+            this.setState({
+              messages: FilteredMessages,
+            });
+          } else {
+            let FilteredMessages = Messages.filter(msg => {
+              return (
+                this.props.route.params.email === msg.to ||
+                this.props.route.params.email === msg.user._id
+              );
+            });
+            FilteredMessages = FilteredMessages.reverse();
+            this.setState({
+              messages: FilteredMessages,
+            });
+          }
+        })
+        .catch(e => console.log(e));
 
-    this.props.route.params.admin
-      ? this.state.socket.emit("new user", "Admin")
-      : this.state.socket.emit("new user", this.props.route.params.email);
+      this.props.route.params.admin
+        ? this.state.socket.emit("new user", "Admin")
+        : this.state.socket.emit("new user", this.props.route.params.email);
+    });
   }
 
   componentWillUnmount() {
+    this._unsubscribe();
     this.state.socket.disconnect();
   }
 
