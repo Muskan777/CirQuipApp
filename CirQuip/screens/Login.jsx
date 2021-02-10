@@ -26,6 +26,10 @@ export default class Login extends React.Component {
     };
   }
   async handleLogin() {
+    if (this.state.password === "") {
+      Alert.alert("CirQuip", "Please Enter Password");
+      return;
+    }
     await axios
       .post(`${global.config.host}/user/login`, this.state)
       .then(async res => {
@@ -42,9 +46,6 @@ export default class Login extends React.Component {
         }
       })
       .catch(err => {
-        console.log(
-          err?.response?.data ? error.response.data : "Something went wrong"
-        );
         Alert.alert(
           "Error",
           err?.response?.data ? err.response.data : "Something went wrong"

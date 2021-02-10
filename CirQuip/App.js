@@ -14,8 +14,8 @@ import {
 } from "react-native-paper";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
-import Profile2 from "./screens/Profile2.jsx";
-import Published from "./screens/Published";
+//import Profile2 from "./screens/Profile2.jsx";
+//import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -27,10 +27,11 @@ import SavedPosts from "./screens/SavedPosts";
 import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
-import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
-import CreatePostCamera from "./screens/CreatePostCamera";
-import Product from "./screens/Product";
+//import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
+//import CreatePostCamera from "./screens/CreatePostCamera";
+//import Product from "./screens/Product";
 import Shop from "./screens/Shop";
+import Splash from "./screens/splash";
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -53,9 +54,11 @@ const theme = {
 export default function App() {
   const [status, setStatus] = React.useState(false);
   const [user, setUser] = React.useState({});
+  const [splash, toggleSplash] = React.useState(true);
 
   React.useEffect(() => {
     checkJWT();
+    setTimeout(() => toggleSplash(!splash), 800);
   }, []);
 
   const handleLogout = async () => {
@@ -105,6 +108,8 @@ export default function App() {
             } catch {}
             if (global.config.debug) console.log(err);
           });
+      } else {
+        setStatus(false);
       }
     });
   };
@@ -354,7 +359,9 @@ export default function App() {
   };
   const handleStatus = param => setStatus(param);
 
-  return status ? (
+  return splash ? (
+    <Splash />
+  ) : status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Drawer.Navigator
