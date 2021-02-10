@@ -42,7 +42,7 @@ export default function CreatePost(props) {
   const [checkedA, setCheckedA] = React.useState(false);
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
-  const [user, setuser] = React.useState("");
+  const [user, setUser] = React.useState("");
 
   const handleDialog = () => setVisible(!visible);
 
@@ -53,7 +53,7 @@ export default function CreatePost(props) {
         axios
           .get(`${global.config.host}/user/getUserWithId/${user}`)
           .then(res => {
-            setuser(res.data.name);
+            setUser(res.data.name);
           })
           .catch(err => {
             Alert.alert("Error", "Something Went Wrong");
@@ -73,6 +73,14 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    console.log(videoSource);
+    let content;
+    if (photos.length !== 0) {
+      content = photos;
+    } else {
+      content = videoSource.base64;
+    }
+
     let group = [];
     if (checkedA) {
       group.push("Alumni");
@@ -87,7 +95,7 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos,
+          content: content,
           caption: postText,
           taggedUsers: taggedList,
           group: group,
@@ -100,12 +108,15 @@ export default function CreatePost(props) {
       )
       .then(() => {
         Alert.alert("CirQuip", "New Post Created");
+        setPhotos(null);
+        setPostHasImage(false);
       })
       .catch(err => {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
       });
     setVisible(false);
+
     props.navigation.goBack();
   };
   useEffect(() => {
@@ -115,17 +126,27 @@ export default function CreatePost(props) {
           icon="arrow-left"
           color="#000"
           size={30}
-          onPress={() => props.navigation.goBack()}
+          onPress={() => {
+            props.navigation.goBack();
+            setPhotos(null);
+            setPostHasImage(false);
+          }}
         />
       ),
     });
   });
+
   useEffect(() => {
     const { params } = props.route;
+    // console.log(props.route);
     if (params) {
       const { images } = params;
       if (images) setPhotos(images);
     }
+    return () => {
+      // console.log(params);
+      if (params) params.images = null;
+    };
   });
   function renderImage(item, i) {
     let imageHeight = Math.round((dimensions.width * 6) / 16);
@@ -192,6 +213,8 @@ export default function CreatePost(props) {
           onPress={() => {
             props.navigation.goBack();
             setPostText(null);
+            setPostHasImage(false);
+            setPhotos(null);
           }}
         />
         <FontAwesome
