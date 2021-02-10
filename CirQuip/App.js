@@ -41,7 +41,6 @@ const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
 const ShopProductsStack = createStackNavigator();
 
-
 const theme = {
   ...DefaultTheme,
   dark: true,
@@ -155,7 +154,6 @@ export default function App() {
       />
     </SavedStack.Navigator>
   );
-
 
   const ShopProductsStackScreen = ({ navigation }) => (
     <ShopProductsStack.Navigator
@@ -490,7 +488,11 @@ export default function App() {
           drawerContent={props => <DrawerContent {...props} user={user} />}
           initialRouteName={user.verified ? "HomeDrawer" : "OTP"}
         >
-          <Drawer.Screen name="HomeDrawer" component={AppNavigator} />
+          <Drawer.Screen
+            name="HomeDrawer"
+            component={AppNavigator}
+            initialParams={handleStatus}
+          />
           <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
           <Drawer.Screen
             name="SellProducts"
