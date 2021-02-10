@@ -78,18 +78,59 @@ export default class Login extends React.Component {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
-    if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
-      Alert.alert(
-        "CirQuip",
-        "We are not in your college yet! Sit tight while we expand!"
-      );
-      return;
-    }
     let emailId = this.state.email;
-    if (emailId.split("@")[1] !== "coep.ac.in") {
-      Alert.alert("CirQuip", "Please use valid college email address");
-      return;
+    if (this.state.college == "COEP") {
+      if (emailId.split("@")[1] !== "coep.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VJTI") {
+      if (emailId.split("@")[1] !== "vjti.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIT") {
+      if (emailId.split("@")[1] !== "vit.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PICT") {
+      if (emailId.split("@")[1] !== "pict.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PCCOE") {
+      if (emailId.split("@")[1] !== "pccoepune.org") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "MIT") {
+      if (emailId.split("@")[1] !== "mitwpu.edu.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIIT") {
+      if (emailId.split("@")[1] !== "viit.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "Sandeep University") {
+      if (emailId.split("@")[1] !== "sandipuniversity.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VU") {
+      if (emailId.split("@")[1] !== "vupune.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "IIIT Pune") {
+      if (emailId.split("@")[1] !== "iiitp.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
     }
+
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
@@ -118,16 +159,7 @@ export default class Login extends React.Component {
                   onChangeText={text => this.setState({ name: text })}
                 />
               </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.college}
-                  style={styles.inputText}
-                  placeholder="College..."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ college: text })}
-                />
-              </View>
+
               <View style={styles.line}></View>
               <View style={styles.inputView}>
                 <TextInput
@@ -140,7 +172,44 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
-
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "COEP", value: "COEP" },
+                    { label: "VJTI", value: "VJTI" },
+                    { label: "VIT", value: "VIT" },
+                    { label: "DY", value: "DY" },
+                    { label: "PICT", value: "PICT" },
+                    { label: "PCCOE", value: "PCCOE" },
+                    { label: "MIT", value: "MIT" },
+                    { label: "VIIT", value: "VIIT" },
+                    {
+                      label: "Sandeep University",
+                      value: "Sandeep University",
+                    },
+                    { label: "VU", value: "VU" },
+                    { label: "IIIT Pune", value: "IIIT Pune" },
+                  ]}
+                  defaultNull
+                  placeholder="Select College"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ college: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   maxLength={10}
@@ -304,6 +373,7 @@ const styles = StyleSheet.create({
   },
   dropDown: {
     width: 265,
+    backgroundColor: "#fff",
   },
   activeItem: {
     fontWeight: "bold",
