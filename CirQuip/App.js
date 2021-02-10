@@ -359,9 +359,7 @@ export default function App() {
   };
   const handleStatus = param => setStatus(param);
 
-  return splash ? (
-    <Splash />
-  ) : status ? (
+  return status ? (
     <PaperProvider theme={theme}>
       <NavigationContainer>
         <Drawer.Navigator

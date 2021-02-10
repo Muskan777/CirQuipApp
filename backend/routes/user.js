@@ -62,6 +62,7 @@ router.post("/register", (req, res) => {
 
 router.post("/login", (req, res) => {
   let { email, password } = req.body;
+  console.log(email, password);
   try {
     User.findOne({ email }).then(user => {
       if (!user) {
@@ -128,7 +129,6 @@ router.post("/verifyJWT", auth, (req, res) => {
     ? res.status(200).json(req.payload.id)
     : res.status(400).json("Token Invalid");
 });
-module.exports = router;
 
 // @route GET /api/user/getUsers
 // @desc Get all existing users
@@ -223,3 +223,5 @@ router.route("/deleteUser").delete(auth, async (req, res) => {
     console.log(e);
   }
 });
+
+module.exports = router;

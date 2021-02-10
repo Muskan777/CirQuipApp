@@ -23,13 +23,6 @@ const HomeStack = createStackNavigator();
 const CreatePostStack = createStackNavigator();
 const ShopStack = createStackNavigator();
 
-const handleLogout = async () => {
-  await AsyncStorage.clear();
-  //await AsyncStorage.removeItem("user");
-  //await AsyncStorage.removeItem("cirquip-auth-token");
-  setStatus(false);
-};
-
 const AppNavigator = () => (
   <Tab.Navigator
     initialRouteName="Home"
@@ -94,6 +87,7 @@ const HomeStackScreen = ({ navigation }) => (
             size={30}
             onPress={() => {
               handleLogout();
+              console.log("exiting...");
             }}
           />
         ),

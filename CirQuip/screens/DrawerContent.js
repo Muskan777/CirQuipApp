@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Alert } from "react-native";
 import {
   Avatar,
   Title,
@@ -108,7 +108,7 @@ export function DrawerContent(props) {
               label="Buy Requests"
               onPress={() => {}}
             />
-            {props.user.verified ? (
+            {!props.user.verified ? (
               <DrawerItem
                 icon={({ color, size }) => (
                   <Icon name="pin" color={color} size={size} />
