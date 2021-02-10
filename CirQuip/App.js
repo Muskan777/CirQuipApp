@@ -29,7 +29,7 @@ import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 //import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import CreatePostCamera from "./screens/CreatePostCamera";
-//import Product from "./screens/Product";
+import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
 
@@ -39,6 +39,8 @@ const SavedStack = createStackNavigator();
 const SellProductsStack = createStackNavigator();
 const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
+const ShopProductsStack = createStackNavigator();
+
 
 const theme = {
   ...DefaultTheme,
@@ -152,6 +154,47 @@ export default function App() {
         }}
       />
     </SavedStack.Navigator>
+  );
+
+
+  const ShopProductsStackScreen = ({ navigation }) => (
+    <ShopProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <ShopProductsStack.Screen
+        name="Product"
+        component={Product}
+        options={{
+          title: "Product",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ShopProductsStack.Navigator>
   );
 
   const SellProductsStackScreen = ({ navigation }) => (
@@ -459,6 +502,7 @@ export default function App() {
             name="SellProductsCamera"
             component={SellProductsCamera}
           />
+          <Drawer.Screen name="Product" component={ShopProductsStackScreen} />
           <Drawer.Screen name="Published" component={PublishedProduct} />
           <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
