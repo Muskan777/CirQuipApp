@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
+import DropDownPicker from "react-native-dropdown-picker";
+
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -106,6 +108,7 @@ export default class Login extends React.Component {
           <SignUp1 />
           {this.state.toggleSignUp ? (
             <>
+              {console.log(this.state)}
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.name}
@@ -137,6 +140,7 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
+
               <View style={styles.inputView}>
                 <TextInput
                   maxLength={10}
@@ -150,6 +154,33 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "Student", value: "Student" },
+                    { label: "Faculty", value: "Faculty" },
+                    { label: "Alumni", value: "Alumni" },
+                  ]}
+                  defaultNull
+                  placeholder="Select Role"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ role: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.password}
@@ -255,6 +286,42 @@ const styles = StyleSheet.create({
     fontSize: 50,
     color: "#fb5b5a",
     marginBottom: 40,
+  },
+  drops: {
+    marginTop: 10,
+  },
+  dropContainer: {
+    marginHorizontal: 65,
+    height: 50,
+    width: 265,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  placeholder: {
+    color: "#fff",
+    fontSize: 20,
+    lineHeight: 28,
+  },
+  dropDown: {
+    width: 265,
+  },
+  activeItem: {
+    fontWeight: "bold",
+    backgroundColor: "rgba(54, 181, 165, 1)",
+  },
+  activeLabel: {
+    color: "#fff",
+  },
+  label: {
+    color: "rgba(44, 101, 109, 1)",
+    fontSize: 18,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 18,
+  },
+  picker: {
+    backgroundColor: "rgba(44, 101, 109, 0.9)",
+    color: "#fff",
   },
   inputView: {
     color: "rgba(159,159,159,1)",
