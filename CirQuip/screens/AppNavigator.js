@@ -30,7 +30,7 @@ const HomeStack = createStackNavigator();
 const CreatePostStack = createStackNavigator();
 const ShopStack = createStackNavigator();
 
-const AppNavigator = ({ route }) => (
+const AppNavigator = ({ route, verified }) => (
   <Tab.Navigator
     initialRouteName="Home"
     activeColor="#fff"
@@ -47,17 +47,21 @@ const AppNavigator = ({ route }) => (
         ),
       }}
     />
-    <Tab.Screen
-      name="Create"
-      component={CreatePostStackScreen}
-      initialParams={{ handleStatus: route.params.handleStatus }}
-      options={{
-        tabBarLabel: "Create",
-        tabBarIcon: ({ color }) => (
-          <Ionicons name="md-add-circle" color={color} size={27} />
-        ),
-      }}
-    />
+    {verified === true ? (
+      <Tab.Screen
+        name="Create"
+        component={CreatePostStackScreen}
+        initialParams={{ handleStatus: route.params.handleStatus }}
+        options={{
+          tabBarLabel: "Create",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="md-add-circle" color={color} size={27} />
+          ),
+        }}
+      />
+    ) : (
+      <></>
+    )}
     <Tab.Screen
       name="Shop"
       component={ShopStackScreen}
@@ -97,7 +101,6 @@ const HomeStackScreen = ({ navigation, route }) => (
             size={30}
             onPress={() => {
               handleLogout();
-              console.log("exiting...");
               route.params.handleStatus(false);
             }}
           />

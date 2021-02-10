@@ -32,7 +32,7 @@ export function ChatWithUser(props) {
   const [Alumni, setAlumni] = React.useState(false);
   const [Faculty, setFaculty] = React.useState(false);
   const [socket, setSocket] = React.useState(() => {
-    return io(`http://192.168.43.192:3000`);
+    return io(`http://192.168.0.106:3000`);
   });
   let message = {};
 

@@ -108,7 +108,7 @@ export function DrawerContent(props) {
               label="Buy Requests"
               onPress={() => {}}
             />
-            {!props.user.verified ? (
+            {props.user.verified === false ? (
               <DrawerItem
                 icon={({ color, size }) => (
                   <Icon name="pin" color={color} size={size} />

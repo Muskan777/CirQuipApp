@@ -10,7 +10,7 @@ global.config = {
   debug: true,
   host:
     "http://" + Constants.default.manifest.hostUri.split(":")[0] + ":3000/api",
-  admin: "vasusharma656@gmail.com",
+  admin: "aniketj18.instru@coep.ac.in",
 };
 //global.config = {
 //test: "http://a053e0e96ed0.ngrok.io",

@@ -486,12 +486,15 @@ export default function App() {
       <NavigationContainer>
         <Drawer.Navigator
           drawerContent={props => <DrawerContent {...props} user={user} />}
-          initialRouteName={user.verified ? "HomeDrawer" : "OTP"}
+          initialRouteName={user.verified === true ? "HomeDrawer" : "OTP"}
         >
           <Drawer.Screen
             name="HomeDrawer"
             component={AppNavigator}
-            initialParams={handleStatus}
+            initialParams={{
+              handleStatus: handleStatus,
+              verified: user.verified,
+            }}
           />
           <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
           <Drawer.Screen
