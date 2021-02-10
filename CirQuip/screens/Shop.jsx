@@ -238,8 +238,8 @@ export default class Shop extends React.Component {
           <TouchableOpacity
             key={this.state.user.likes}
             onPress={() =>
-              this.props.navigation.navigate({
-                name: "Product",
+              this.props.navigation.navigate("Product", {
+                screen: "Product",
                 params: {
                   ...data,
                   onGoBack: async () => await this.refresh(),

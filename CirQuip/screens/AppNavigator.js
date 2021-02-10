@@ -16,21 +16,21 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CreatePostImageBrowser from "./CreatePostImageBrowser";
 import CreatePostCamera from "./CreatePostCamera";
 import Profile2 from "./Profile2";
+import { setStatusBarBackgroundColor } from "expo-status-bar";
 
 const Tab = createMaterialBottomTabNavigator();
-
-const HomeStack = createStackNavigator();
-const CreatePostStack = createStackNavigator();
-const ShopStack = createStackNavigator();
 
 const handleLogout = async () => {
   await AsyncStorage.clear();
   //await AsyncStorage.removeItem("user");
   //await AsyncStorage.removeItem("cirquip-auth-token");
-  setStatus(false);
 };
 
-const AppNavigator = () => (
+const HomeStack = createStackNavigator();
+const CreatePostStack = createStackNavigator();
+const ShopStack = createStackNavigator();
+
+const AppNavigator = ({ route, verified }) => (
   <Tab.Navigator
     initialRouteName="Home"
     activeColor="#fff"
@@ -39,6 +39,7 @@ const AppNavigator = () => (
     <Tab.Screen
       name="Home"
       component={HomeStackScreen}
+      initialParams={{ handleStatus: route.params.handleStatus }}
       options={{
         tabBarLabel: "Home",
         tabBarIcon: ({ color }) => (
@@ -46,19 +47,25 @@ const AppNavigator = () => (
         ),
       }}
     />
-    <Tab.Screen
-      name="Create"
-      component={CreatePostStackScreen}
-      options={{
-        tabBarLabel: "Create",
-        tabBarIcon: ({ color }) => (
-          <Ionicons name="md-add-circle" color={color} size={27} />
-        ),
-      }}
-    />
+    {verified === true ? (
+      <Tab.Screen
+        name="Create"
+        component={CreatePostStackScreen}
+        initialParams={{ handleStatus: route.params.handleStatus }}
+        options={{
+          tabBarLabel: "Create",
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="md-add-circle" color={color} size={27} />
+          ),
+        }}
+      />
+    ) : (
+      <></>
+    )}
     <Tab.Screen
       name="Shop"
       component={ShopStackScreen}
+      initialParams={{ handleStatus: route.params.handleStatus }}
       options={{
         tabBarLabel: "Shop",
         tabBarIcon: ({ color }) => (
@@ -71,7 +78,7 @@ const AppNavigator = () => (
 
 export default AppNavigator;
 
-const HomeStackScreen = ({ navigation }) => (
+const HomeStackScreen = ({ navigation, route }) => (
   <HomeStack.Navigator
     screenOptions={{
       headerTitleStyle: {
@@ -94,6 +101,7 @@ const HomeStackScreen = ({ navigation }) => (
             size={30}
             onPress={() => {
               handleLogout();
+              route.params.handleStatus(false);
             }}
           />
         ),
@@ -128,7 +136,7 @@ const HomeStackScreen = ({ navigation }) => (
   </HomeStack.Navigator>
 );
 
-const CreatePostStackScreen = ({ navigation }) => (
+const CreatePostStackScreen = ({ navigation, route }) => (
   <CreatePostStack.Navigator
     screenOptions={{
       headerTitleStyle: {
@@ -151,6 +159,7 @@ const CreatePostStackScreen = ({ navigation }) => (
             size={30}
             onPress={() => {
               handleLogout();
+              route.params.handleStatus(false);
             }}
           />
         ),
@@ -202,7 +211,7 @@ const CreatePostStackScreen = ({ navigation }) => (
   </CreatePostStack.Navigator>
 );
 
-const ShopStackScreen = ({ navigation }) => (
+const ShopStackScreen = ({ navigation, route }) => (
   <ShopStack.Navigator
     screenOptions={{
       headerTitleStyle: {
@@ -226,6 +235,7 @@ const ShopStackScreen = ({ navigation }) => (
             size={30}
             onPress={() => {
               handleLogout();
+              route.params.handleStatus(false);
             }}
           />
         ),

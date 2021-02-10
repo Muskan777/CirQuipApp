@@ -50,6 +50,7 @@ export default function OTP({ email, navigation }) {
             navigation.navigate("HomeDrawer");
           } else {
             Alert.alert("Error", "Verification failed");
+            navigation.closeDrawer();
           }
         })
         .catch(e => {
@@ -65,7 +66,7 @@ export default function OTP({ email, navigation }) {
       <TextInput
         style={styles.inputView}
         placeholder="Enter OTP"
-        placeholderTextColor="#fff"
+        placeholderTextColor="grey"
         onChangeText={text => setOTP(text)}
         maxLength={4}
         keyboardType="phone-pad"
@@ -77,6 +78,13 @@ export default function OTP({ email, navigation }) {
         }}
       >
         <Text style={styles.loginText}>Verify</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("HomeDrawer");
+        }}
+      >
+        <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
       </TouchableOpacity>
     </View>
   );
@@ -100,11 +108,14 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "400",
     fontStyle: "normal",
+    borderWidth: 2,
+    width: "40%",
+    borderBottomColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    borderColor: "transparent",
     // sfontFamily: "Segoe UI",
     textAlign: "center",
-    paddingVertical: 0,
     marginTop: 0,
-    marginBottom: 1,
+    marginBottom: 5,
   },
   inputText: {
     color: "black",
@@ -128,7 +139,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginTop: 20,
     marginBottom: 0,
   },
   loginText: {

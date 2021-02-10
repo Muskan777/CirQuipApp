@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
+import DropDownPicker from "react-native-dropdown-picker";
+
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -76,18 +78,59 @@ export default class Login extends React.Component {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
-    if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
-      Alert.alert(
-        "CirQuip",
-        "We are not in your college yet! Sit tight while we expand!"
-      );
-      return;
-    }
     let emailId = this.state.email;
-    if (emailId.split("@")[1] !== "coep.ac.in") {
-      Alert.alert("CirQuip", "Please use valid college email address");
-      return;
+    if (this.state.college == "COEP") {
+      if (emailId.split("@")[1] !== "coep.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VJTI") {
+      if (emailId.split("@")[1] !== "vjti.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIT") {
+      if (emailId.split("@")[1] !== "vit.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PICT") {
+      if (emailId.split("@")[1] !== "pict.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PCCOE") {
+      if (emailId.split("@")[1] !== "pccoepune.org") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "MIT") {
+      if (emailId.split("@")[1] !== "mitwpu.edu.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIIT") {
+      if (emailId.split("@")[1] !== "viit.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "Sandeep University") {
+      if (emailId.split("@")[1] !== "sandipuniversity.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VU") {
+      if (emailId.split("@")[1] !== "vupune.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "IIIT Pune") {
+      if (emailId.split("@")[1] !== "iiitp.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
     }
+
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
@@ -106,6 +149,7 @@ export default class Login extends React.Component {
           <SignUp1 />
           {this.state.toggleSignUp ? (
             <>
+              {console.log(this.state)}
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.name}
@@ -115,16 +159,7 @@ export default class Login extends React.Component {
                   onChangeText={text => this.setState({ name: text })}
                 />
               </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.college}
-                  style={styles.inputText}
-                  placeholder="College..."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ college: text })}
-                />
-              </View>
+
               <View style={styles.line}></View>
               <View style={styles.inputView}>
                 <TextInput
@@ -137,6 +172,44 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "COEP", value: "COEP" },
+                    { label: "VJTI", value: "VJTI" },
+                    { label: "VIT", value: "VIT" },
+                    { label: "DY", value: "DY" },
+                    { label: "PICT", value: "PICT" },
+                    { label: "PCCOE", value: "PCCOE" },
+                    { label: "MIT", value: "MIT" },
+                    { label: "VIIT", value: "VIIT" },
+                    {
+                      label: "Sandeep University",
+                      value: "Sandeep University",
+                    },
+                    { label: "VU", value: "VU" },
+                    { label: "IIIT Pune", value: "IIIT Pune" },
+                  ]}
+                  defaultNull
+                  placeholder="Select College"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ college: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   maxLength={10}
@@ -150,6 +223,33 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "Student", value: "Student" },
+                    { label: "Faculty", value: "Faculty" },
+                    { label: "Alumni", value: "Alumni" },
+                  ]}
+                  defaultNull
+                  placeholder="Select Role"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ role: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.password}
@@ -255,6 +355,43 @@ const styles = StyleSheet.create({
     fontSize: 50,
     color: "#fb5b5a",
     marginBottom: 40,
+  },
+  drops: {
+    marginTop: 10,
+  },
+  dropContainer: {
+    marginHorizontal: 65,
+    height: 50,
+    width: 265,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  placeholder: {
+    color: "#fff",
+    fontSize: 20,
+    lineHeight: 28,
+  },
+  dropDown: {
+    width: 265,
+    backgroundColor: "#fff",
+  },
+  activeItem: {
+    fontWeight: "bold",
+    backgroundColor: "rgba(54, 181, 165, 1)",
+  },
+  activeLabel: {
+    color: "#fff",
+  },
+  label: {
+    color: "rgba(44, 101, 109, 1)",
+    fontSize: 18,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 18,
+  },
+  picker: {
+    backgroundColor: "rgba(44, 101, 109, 0.9)",
+    color: "#fff",
   },
   inputView: {
     color: "rgba(159,159,159,1)",
