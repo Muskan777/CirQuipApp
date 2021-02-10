@@ -44,9 +44,18 @@ export default function CreatePostCamera(props) {
     // } else {
     //   Alert.alert("Access to Gallery Permission is required");
     // }
-    props.navigation.navigate(props.route.params.from, {
-      images: [source.base64],
-    });
+    if (props.route.params.from != "SellProducts") {
+      props.navigation.navigate(props.route.params.from, {
+        images: [source.base64],
+      });
+    } else {
+      props.navigation.navigate(props.route.params.from, {
+        screen: props.route.params.from,
+        params: {
+          images: [source.base64],
+        },
+      });
+    }
     setSource(null);
   };
   useEffect(() => {
