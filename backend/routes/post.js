@@ -3,7 +3,8 @@ let Post = require("../models/Post");
 let User = require("../models/user");
 let Comment = require("../models/Comments");
 const auth = require("../middlewares/auth");
-
+const { s3 } = require("../config/config");
+const ObjectId = require("mongodb").ObjectId;
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
 
@@ -20,6 +21,7 @@ router.route("/getPosts").get(auth, (req, res) => {
             }
           }
         });
+        console.log(arr);
         res.status(200).send({ post: arr });
       })
       .catch(err => res.status(400).json("Error: " + err));
@@ -28,37 +30,83 @@ router.route("/getPosts").get(auth, (req, res) => {
   }
 });
 
+//uploads images to S3 and returns the array of URLs
+
+const uploadImages = async (content, id) => {
+  let promises = [];
+  content.forEach((image, index) => {
+    promises.push(
+      new Promise((resolve, reject) => {
+        const buf = Buffer.from(
+          image.replace(/^data:image\/\w+;base64,/, ""),
+          "base64"
+        );
+
+        var params = {
+          Bucket: "cirquip",
+          Body: buf,
+          ContentEncoding: "base64",
+          ContentType: "image/jpeg",
+          Key: `posts/${id}/${Date.now()}_${index}.jpeg`,
+          ACL: "public-read",
+        };
+
+        s3.upload(params, async function (err, data) {
+          //handle error
+          if (err) {
+            console.log("Error", err);
+            reject(err);
+          }
+          //success
+          if (data) {
+            console.log("Uploaded in:", data.Location);
+            resolve(data.Location);
+          }
+        });
+      })
+    );
+  });
+  return Promise.all(promises);
+};
+
 // @route POST /api/post/createPost
 // @desc Creates new post
 
-router.route("/createPost").post(auth, (req, res) => {
+router.route("/createPost").post(auth, async (req, res) => {
   let { content, caption, group, taggedUsers } = req.body;
-  const createdAt = Date.now();
-  const newPost = new Post({
-    userId: req.payload.id,
-    userName: req.payload.name,
-    userRole: req.payload.role,
-    group,
-    content,
-    caption,
-    taggedUsers,
-    likes: 0,
-    saves: 0,
-    shares: 0,
-    createdAt,
-    comments: [],
-  });
+  await uploadImages(content, req.payload.email)
+    .then(images => {
+      const createdAt = Date.now();
+      const newPost = new Post({
+        userId: req.payload.id,
+        userName: req.payload.name,
+        userRole: req.payload.role,
+        group,
+        content: images,
+        caption,
+        taggedUsers,
+        likes: 0,
+        saves: 0,
+        shares: 0,
+        createdAt,
+        comments: [],
+      });
 
-  try {
-    newPost
-      .save()
-      .then(() =>
-        res.status(200).send({ msg: "New post created", post: newPost })
-      )
-      .catch(err => res.status(400).send("Error:" + err));
-  } catch (e) {
-    console.log(e);
-  }
+      try {
+        newPost
+          .save()
+          .then(() =>
+            res.status(200).send({ msg: "New post created", post: newPost })
+          )
+          .catch(err => res.status(400).send("Error:" + err));
+      } catch (e) {
+        console.log(e);
+      }
+    })
+    .catch(err => {
+      console.log(err);
+      return resp.status(400).json("Error in uploading images");
+    });
 });
 
 // @route PATCH /api/post/updatePost
@@ -242,12 +290,32 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 router.route("/deletePost").delete(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
+    let user = await User.findById(ObjectId(post._doc.userId));
+    if (!user) throw "User not found";
     let admin = await User.find({ email: "admin@coep.ac.in" });
     let adminId = admin[0]._id;
     if (!post) {
       return res.status(400).send("Post with id not found");
     }
     if (req.payload.id === post.userId || req.payload.id === adminId) {
+      let images = [];
+      post._doc.content.forEach(image => {
+        images.push({
+          Key: `posts/${user._doc.email}/${image.split("/").splice(-1)}`,
+        });
+      });
+      let params = {
+        Bucket: "cirquip",
+        Delete: {
+          Objects: images,
+        },
+      };
+      try {
+        s3.deleteObjects(params).promise();
+      } catch (err) {
+        console.log(err, err.stack);
+        return res.status(400).json("could not delete images");
+      }
       Post.findByIdAndDelete(req.body.id)
         .then(() => res.status(200).send("Post deleted"))
         .catch(err => res.status(400).send("Error:" + err));
@@ -256,6 +324,7 @@ router.route("/deletePost").delete(auth, async (req, res) => {
     }
   } catch (e) {
     console.log(e);
+    return res.status(400).json(e);
   }
 });
 
