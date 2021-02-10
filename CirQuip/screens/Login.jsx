@@ -11,6 +11,8 @@ import {
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
+import DropDownPicker from "react-native-dropdown-picker";
+
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
@@ -26,6 +28,10 @@ export default class Login extends React.Component {
     };
   }
   async handleLogin() {
+    if (this.state.password === "") {
+      Alert.alert("CirQuip", "Please Enter Password");
+      return;
+    }
     await axios
       .post(`${global.config.host}/user/login`, this.state)
       .then(async res => {
@@ -42,9 +48,6 @@ export default class Login extends React.Component {
         }
       })
       .catch(err => {
-        console.log(
-          err?.response?.data ? error?.response?.data : "Something went wrong"
-        );
         Alert.alert(
           "Error",
           err?.response?.data ? err?.response?.data : "Something went wrong"
@@ -56,6 +59,18 @@ export default class Login extends React.Component {
   }
 
   handleSignUp() {
+    if (this.state.name.trim() === "") {
+      Alert.alert("Name Error", "Name cannot be empty");
+      return;
+    }
+
+    var phoneno = /^\d{10}$/;
+
+    if (!this.state.phone.match(phoneno)) {
+      Alert.alert("Phone error", "Enter a valid phone number");
+      return;
+    }
+
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
       return;
@@ -63,23 +78,63 @@ export default class Login extends React.Component {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
-    if (collegeName !== "coep" && collegeName !== "collegeofengineeringpune") {
-      Alert.alert(
-        "CirQuip",
-        "We are not in your college yet! Sit tight while we expand!"
-      );
-      return;
-    }
     let emailId = this.state.email;
-    if (emailId.split("@")[1] !== "coep.ac.in") {
-      Alert.alert("CirQuip", "Please use valid college email address");
-      return;
+    if (this.state.college == "COEP") {
+      if (emailId.split("@")[1] !== "coep.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VJTI") {
+      if (emailId.split("@")[1] !== "vjti.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIT") {
+      if (emailId.split("@")[1] !== "vit.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PICT") {
+      if (emailId.split("@")[1] !== "pict.edu") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "PCCOE") {
+      if (emailId.split("@")[1] !== "pccoepune.org") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "MIT") {
+      if (emailId.split("@")[1] !== "mitwpu.edu.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VIIT") {
+      if (emailId.split("@")[1] !== "viit.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "Sandeep University") {
+      if (emailId.split("@")[1] !== "sandipuniversity.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "VU") {
+      if (emailId.split("@")[1] !== "vupune.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
+    } else if (this.state.college == "IIIT Pune") {
+      if (emailId.split("@")[1] !== "iiitp.ac.in") {
+        Alert.alert("CirQuip", "Please use valid college email address");
+        return;
+      }
     }
+
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
         this.props.handleStatus(true);
-        this.props.navigation.navigate("OTP", { email: this.state.email });
       })
       .catch(err => {
         console.log(err.response.data);
@@ -94,6 +149,7 @@ export default class Login extends React.Component {
           <SignUp1 />
           {this.state.toggleSignUp ? (
             <>
+              {console.log(this.state)}
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.name}
@@ -103,16 +159,7 @@ export default class Login extends React.Component {
                   onChangeText={text => this.setState({ name: text })}
                 />
               </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.college}
-                  style={styles.inputText}
-                  placeholder="College..."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ college: text })}
-                />
-              </View>
+
               <View style={styles.line}></View>
               <View style={styles.inputView}>
                 <TextInput
@@ -125,6 +172,44 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "COEP", value: "COEP" },
+                    { label: "VJTI", value: "VJTI" },
+                    { label: "VIT", value: "VIT" },
+                    { label: "DY", value: "DY" },
+                    { label: "PICT", value: "PICT" },
+                    { label: "PCCOE", value: "PCCOE" },
+                    { label: "MIT", value: "MIT" },
+                    { label: "VIIT", value: "VIIT" },
+                    {
+                      label: "Sandeep University",
+                      value: "Sandeep University",
+                    },
+                    { label: "VU", value: "VU" },
+                    { label: "IIIT Pune", value: "IIIT Pune" },
+                  ]}
+                  defaultNull
+                  placeholder="Select College"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ college: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   maxLength={10}
@@ -132,18 +217,45 @@ export default class Login extends React.Component {
                   textContentType={"telephoneNumber"}
                   keyboardType={"phone-pad"}
                   style={styles.inputText}
-                  placeholder="Mobile no."
+                  placeholder="Mobile Number"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ phone: text })}
                 />
               </View>
               <View style={styles.line}></View>
+              <View style={styles.drops}>
+                <DropDownPicker
+                  items={[
+                    { label: "Student", value: "Student" },
+                    { label: "Faculty", value: "Faculty" },
+                    { label: "Alumni", value: "Alumni" },
+                  ]}
+                  defaultNull
+                  placeholder="Select Role"
+                  dropDownMaxHeight={130}
+                  selectedLabelStyle={{
+                    color: "#fff",
+                  }}
+                  containerStyle={styles.dropContainer}
+                  placeholderStyle={styles.placeholder}
+                  dropDownStyle={styles.dropDown}
+                  activeLabelStyle={styles.activeLabel}
+                  activeItemStyle={styles.activeItem}
+                  style={styles.picker}
+                  labelStyle={styles.label}
+                  arrowColor="white"
+                  arrowSize={30}
+                  onChangeItem={item => {
+                    this.setState({ role: item.value });
+                  }}
+                />
+              </View>
               <View style={styles.inputView}>
                 <TextInput
                   value={this.state.password}
                   secureTextEntry
                   style={styles.inputText}
-                  placeholder="Password..."
+                  placeholder="Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password: text })}
                 />
@@ -154,7 +266,7 @@ export default class Login extends React.Component {
                   value={this.state.password2}
                   secureTextEntry
                   style={styles.inputText}
-                  placeholder="Confirm Password..."
+                  placeholder="Confirm Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password2: text })}
                 />
@@ -183,9 +295,10 @@ export default class Login extends React.Component {
                 <TextInput
                   value={this.state.email}
                   style={styles.inputText}
-                  placeholder="Email..."
+                  placeholder="Email Id"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ email: text })}
+                  selectionColor="cyan"
                 />
               </View>
               <View style={styles.line}></View>
@@ -194,7 +307,7 @@ export default class Login extends React.Component {
                   secureTextEntry
                   value={this.state.password}
                   style={styles.inputText}
-                  placeholder="Password..."
+                  placeholder="Password"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ password: text })}
                 />
@@ -215,10 +328,12 @@ export default class Login extends React.Component {
                 style={styles.loginBtn}
                 onPress={() => this.handleLogin()}
               >
-                <Text style={styles.loginText}>LOGIN</Text>
+                <Text style={styles.loginText}>Login</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                <Text style={styles.loginText}>Signup</Text>
+                <Text style={styles.signUpText}>
+                  Don't have an account yet? Signup now!
+                </Text>
               </TouchableOpacity>
             </>
           )}
@@ -241,6 +356,43 @@ const styles = StyleSheet.create({
     color: "#fb5b5a",
     marginBottom: 40,
   },
+  drops: {
+    marginTop: 10,
+  },
+  dropContainer: {
+    marginHorizontal: 65,
+    height: 50,
+    width: 265,
+    marginBottom: 10,
+    alignItems: "center",
+  },
+  placeholder: {
+    color: "#fff",
+    fontSize: 20,
+    lineHeight: 28,
+  },
+  dropDown: {
+    width: 265,
+    backgroundColor: "#fff",
+  },
+  activeItem: {
+    fontWeight: "bold",
+    backgroundColor: "rgba(54, 181, 165, 1)",
+  },
+  activeLabel: {
+    color: "#fff",
+  },
+  label: {
+    color: "rgba(44, 101, 109, 1)",
+    fontSize: 18,
+    fontStyle: "normal",
+    fontWeight: "400",
+    lineHeight: 18,
+  },
+  picker: {
+    backgroundColor: "rgba(44, 101, 109, 0.9)",
+    color: "#fff",
+  },
   inputView: {
     color: "rgba(159,159,159,1)",
     fontSize: 20,
@@ -249,12 +401,12 @@ const styles = StyleSheet.create({
     // sfontFamily: "Segoe UI",
     textAlign: "center",
     paddingVertical: 0,
-    marginTop: 9,
+    marginTop: 0,
     marginBottom: 1,
   },
   inputText: {
     color: "black",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "400",
     fontStyle: "normal",
     // fontFamily: "Segoe UI",
@@ -274,39 +426,30 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
+    marginTop: 10,
     marginBottom: 0,
-    shadowColor: "black",
-    elevation: 3,
-    shadowOpacity: 0.32941176470588235,
-    shadowOffset: {
-      width: 0,
-      height: 0,
-    },
-    shadowRadius: 20,
   },
   loginText: {
     color: "white",
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "700",
     // marginBottom: 100,
+  },
+  signUpText: {
+    color: "rgba(54, 181, 165, 0.6313725490196078)",
+    fontSize: 16,
+    marginTop: 20,
+    marginBottom: 10,
+    padding: 10,
   },
   line: {
     width: "65%",
     backgroundColor: "rgba(0,0,0,0.5)",
     height: 1,
-    marginBottom: 11,
-    shadowColor: "rgb(0,0,0)",
-    shadowOpacity: 0.4,
-    shadowOffset: {
-      width: 0,
-      height: 3.5,
-    },
-    shadowRadius: 6,
-    elevation: 4,
+    marginBottom: 10,
   },
   already: {
-    color: "rgba(39, 40, 51, 0.7)",
+    color: "rgba(54, 181, 165, 0.6313725490196078)",
     fontSize: 14,
     fontWeight: "100",
     fontStyle: "normal",
@@ -316,7 +459,7 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   loginfield: {
-    marginTop: 120,
+    marginTop: 30,
   },
   already1: {
     flexDirection: "row",

@@ -65,11 +65,13 @@ export default class Sell extends React.Component {
     this.setState({ currentPosition: position });
   }
   componentDidUpdate() {
-    let image = this.props.route?.params?.images[0];
-    console.log(image);
-    if (image) {
-      this.setState({ image: image });
-    }
+    const unsubscribe = this.props.navigation.addListener("focus", () => {
+      let image = this.props.route?.params?.images[0];
+      console.log("Image", image);
+      if (image) {
+        this.setState({ image: image });
+      }
+    });
   }
   componentDidMount() {
     this.props.navigation.setOptions({
@@ -98,6 +100,11 @@ export default class Sell extends React.Component {
       }
     })();
   }
+
+  componentWillUnmount() {
+    this._unsubscribe();
+  }
+
   pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -296,10 +303,7 @@ export default class Sell extends React.Component {
                       fontWeight: "700",
                     }}
                     onPress={() => {
-                      this.props.navigation.navigate({
-                        name: "Camera",
-                        params: { from: "Sell" },
-                      });
+                      this.props.navigation.navigate("SellProductsCamera");
                     }}
                   >
                     Camera

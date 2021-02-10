@@ -42,10 +42,26 @@ export default function CreatePost(props) {
   const [checkedA, setCheckedA] = React.useState(false);
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
+  const [user, setUser] = React.useState("");
 
   const handleDialog = () => setVisible(!visible);
 
   useEffect(() => {
+    const user = async () => {
+      let user = await AsyncStorage.getItem("user");
+      if (user) {
+        axios
+          .get(`${global.config.host}/user/getUserWithId/${user}`)
+          .then(res => {
+            setUser(res.data.name);
+          })
+          .catch(err => {
+            Alert.alert("Error", "Something Went Wrong");
+            console.log(err);
+          });
+      }
+    };
+    user();
     axios
       .get(`${global.config.host}/user/getUsers`)
       .then(res => {
@@ -57,6 +73,14 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    console.log(videoSource);
+    let content;
+    if (photos.length !== 0) {
+      content = photos;
+    } else {
+      content = videoSource.base64;
+    }
+
     let group = [];
     if (checkedA) {
       group.push("Alumni");
@@ -71,7 +95,7 @@ export default function CreatePost(props) {
       .post(
         `${global.config.host}/post/createPost`,
         {
-          content: photos,
+          content: content,
           caption: postText,
           taggedUsers: taggedList,
           group: group,
@@ -84,12 +108,15 @@ export default function CreatePost(props) {
       )
       .then(() => {
         Alert.alert("CirQuip", "New Post Created");
+        setPhotos(null);
+        setPostHasImage(false);
       })
       .catch(err => {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
       });
     setVisible(false);
+
     props.navigation.goBack();
   };
   useEffect(() => {
@@ -99,17 +126,27 @@ export default function CreatePost(props) {
           icon="arrow-left"
           color="#000"
           size={30}
-          onPress={() => props.navigation.goBack()}
+          onPress={() => {
+            props.navigation.goBack();
+            setPhotos(null);
+            setPostHasImage(false);
+          }}
         />
       ),
     });
   });
+
   useEffect(() => {
     const { params } = props.route;
+    // console.log(props.route);
     if (params) {
       const { images } = params;
       if (images) setPhotos(images);
     }
+    return () => {
+      // console.log(params);
+      if (params) params.images = null;
+    };
   });
   function renderImage(item, i) {
     let imageHeight = Math.round((dimensions.width * 6) / 16);
@@ -176,6 +213,8 @@ export default function CreatePost(props) {
           onPress={() => {
             props.navigation.goBack();
             setPostText(null);
+            setPostHasImage(false);
+            setPhotos(null);
           }}
         />
         <FontAwesome
@@ -203,16 +242,14 @@ export default function CreatePost(props) {
                 display: "flex",
               }}
             >
-              <Text style={{ fontWeight: "bold", fontSize: 18 }}>
-                Kartik Mandhan
-              </Text>
+              <Text style={{ fontWeight: "bold", fontSize: 18 }}>{user}</Text>
               <Text
                 onPress={() => setModalOpen(true)}
                 style={{ fontWeight: "bold" }}
               >
                 {taggedList.length != 0 && <Text>with </Text>}
                 {taggedList.length != 0 && (
-                  <Text style={{ color: "#4FB5A5" }}>
+                  <Text style={{ color: "#2EA5DD" }}>
                     {taggedList[0]?.name}, and {taggedList?.length - 1} others
                   </Text>
                 )}
@@ -562,7 +599,7 @@ const styles = StyleSheet.create({
     marginVertical: 3,
     paddingVertical: 7,
     borderRadius: 7,
-    backgroundColor: "#4FB5A5",
+    backgroundColor: "#2EA5DD",
     color: "white",
   },
   tagImage: {
@@ -592,7 +629,7 @@ const styles = StyleSheet.create({
   },
   Icons: {
     fontSize: 30,
-    color: "#4FB5A5",
+    color: "#2EA5DD",
     marginBottom: 10,
   },
   IconsDisabled: {
@@ -627,6 +664,16 @@ const styles = StyleSheet.create({
   },
   video: {
     padding: 10,
+    alignItems: "center",
+    // maxHeight: 40,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#2EA5DD",
+    elevation: 3,
     borderWidth: 5,
     borderColor: "#000",
   },
@@ -645,7 +692,7 @@ const styles = StyleSheet.create({
       height: 3,
     },
     shadowRadius: 6,
-    shadowColor: "#4FB5A5",
+    shadowColor: "#2EA5DD",
     elevation: 3,
   },
   bottomContainer: {

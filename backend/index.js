@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieparser = require("cookie-parser");
 const { connectDB } = require("./config/config");
+const Message = require("./models/message");
 const users = {};
 
 const app = express();
@@ -26,30 +27,40 @@ app.get("/", (req, res) => {
   res.status(200).send("CirQuip API");
 });
 
-const routes = ["post", "comment", "user", "shop"];
+const routes = ["post", "comment", "user", "shop", "message"];
 
 routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
-// io.on("connection", socket => {
-//   console.log("A user connected :)");
-//   socket.on("new user", function (data) {
-//     users[socket.email] = socket;
-//     console.log(users);
-//   });
+io.on("connection", socket => {
+  socket.on("new user", function (data) {
+    users[data] = socket;
+  });
 
-//   socket.on("send message", data => {
-//     console.log(data);
-//     users[email].emit("new message", { msg: data, nick: socket.email });
-//   });
+  socket.on("send message", msg => {
+    delete msg["_id"];
+    if (users[msg.to]) {
+      users[msg.to].emit("new message", msg);
+      msg.recieverRead = true;
+    } else {
+      console.log("user offline");
+      msg.recieverRead = false;
+    }
+    NewMessage = new Message({
+      ...msg,
+    });
+    try {
+      NewMessage.save()
+        .then(() => console.log("Successful"))
+        .catch(err => console.log("Error:", err));
+    } catch (e) {
+      console.log("Error", e);
+    }
+  });
 
-//   socket.on("disconnect", function (data) {
-//     if (!socket.email) {
-//       return;
-//     }
-//     delete users[socket.email];
-//     updatenicknames();
-//   });
-// });
+  socket.on("disconnect", () => {
+    delete users[Object.keys(users).find(key => users[key] === socket)];
+  });
+});
 
 const PORT = process.env.PORT || 3000;
 

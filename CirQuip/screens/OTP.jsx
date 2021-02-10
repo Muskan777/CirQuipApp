@@ -47,9 +47,10 @@ export default function OTP({ email, navigation }) {
         .then(res => {
           if (res.status === 200) {
             Alert.alert("CirQuip", "Successfully Verified");
-            navigation.pop();
+            navigation.navigate("HomeDrawer");
           } else {
             Alert.alert("Error", "Verification failed");
+            navigation.closeDrawer();
           }
         })
         .catch(e => {
@@ -65,7 +66,7 @@ export default function OTP({ email, navigation }) {
       <TextInput
         style={styles.inputView}
         placeholder="Enter OTP"
-        placeholderTextColor="#fff"
+        placeholderTextColor="grey"
         onChangeText={text => setOTP(text)}
         maxLength={4}
         keyboardType="phone-pad"
@@ -78,6 +79,13 @@ export default function OTP({ email, navigation }) {
       >
         <Text style={styles.loginText}>Verify</Text>
       </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("HomeDrawer");
+        }}
+      >
+        <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -85,7 +93,7 @@ export default function OTP({ email, navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#003f5c",
+    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
   },
@@ -96,35 +104,48 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   inputView: {
-    width: "80%",
-    backgroundColor: "#465881",
-    borderRadius: 25,
-    height: 50,
+    color: "rgba(159,159,159,1)",
+    fontSize: 20,
+    fontWeight: "400",
+    fontStyle: "normal",
+    borderWidth: 2,
+    width: "40%",
+    borderBottomColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    borderColor: "transparent",
+    // sfontFamily: "Segoe UI",
     textAlign: "center",
-    marginBottom: 20,
-    justifyContent: "center",
-    padding: 10,
-    color: "#fff",
+    marginTop: 0,
+    marginBottom: 5,
   },
   inputText: {
-    height: 50,
-    color: "white",
+    color: "black",
+    fontSize: 16,
+    fontWeight: "400",
+    fontStyle: "normal",
+    // fontFamily: "Segoe UI",
+    textAlign: "center",
+    paddingVertical: 0,
+    marginTop: 9,
+    marginBottom: 1,
   },
   forgot: {
     color: "white",
     fontSize: 11,
   },
   loginBtn: {
-    width: "80%",
-    backgroundColor: "#fb5b5a",
+    width: "40%",
+    backgroundColor: "rgba(54, 181, 165, 0.6313725490196078)",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 40,
-    marginBottom: 10,
+    marginTop: 20,
+    marginBottom: 0,
   },
   loginText: {
     color: "white",
+    fontSize: 16,
+    fontWeight: "700",
+    // marginBottom: 100,
   },
 });

@@ -238,8 +238,8 @@ export default class Shop extends React.Component {
           <TouchableOpacity
             key={this.state.user.likes}
             onPress={() =>
-              this.props.navigation.navigate({
-                name: "Product",
+              this.props.navigation.navigate("Product", {
+                screen: "Product",
                 params: {
                   ...data,
                   onGoBack: async () => await this.refresh(),
@@ -338,7 +338,7 @@ export default class Shop extends React.Component {
                   >
                     <Avatar.Icon
                       size={32}
-                      color="#a4c639 "
+                      color="#25D366"
                       icon="phone"
                       backgroundColor="#fff"
                       elevation={10}
