@@ -15,7 +15,7 @@ import {
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
 //import Profile2 from "./screens/Profile2.jsx";
-//import Published from "./screens/Published";
+import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -28,8 +28,8 @@ import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
 //import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
-//import CreatePostCamera from "./screens/CreatePostCamera";
-//import Product from "./screens/Product";
+import CreatePostCamera from "./screens/CreatePostCamera";
+import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
 
@@ -39,6 +39,8 @@ const SavedStack = createStackNavigator();
 const SellProductsStack = createStackNavigator();
 const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
+const ShopProductsStack = createStackNavigator();
+
 
 const theme = {
   ...DefaultTheme,
@@ -154,6 +156,47 @@ export default function App() {
     </SavedStack.Navigator>
   );
 
+
+  const ShopProductsStackScreen = ({ navigation }) => (
+    <ShopProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <ShopProductsStack.Screen
+        name="Product"
+        component={Product}
+        options={{
+          title: "Product",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ShopProductsStack.Navigator>
+  );
+
   const SellProductsStackScreen = ({ navigation }) => (
     <SellProductsStack.Navigator
       screenOptions={{
@@ -168,6 +211,87 @@ export default function App() {
       <SellProductsStack.Screen
         name="SellProducts"
         component={Sell}
+        options={{
+          title: "Sell Products",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </SellProductsStack.Navigator>
+  );
+
+  const SellProductsCamera = ({ navigation }) => (
+    <SellProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <SellProductsStack.Screen
+        name="SellProductsCamera"
+        component={CreatePostCamera}
+        initialParams={{ from: "SellProducts" }}
+        options={{
+          title: "Sell Products Camera",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </SellProductsStack.Navigator>
+  );
+
+  const PublishedProduct = ({ navigation }) => (
+    <SellProductsStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <SellProductsStack.Screen
+        name="Published"
+        component={Published}
         options={{
           title: "Sell Products",
           headerRight: () => (
@@ -372,6 +496,12 @@ export default function App() {
             name="SellProducts"
             component={SellProductsStackScreen}
           />
+          <Drawer.Screen
+            name="SellProductsCamera"
+            component={SellProductsCamera}
+          />
+          <Drawer.Screen name="Product" component={ShopProductsStackScreen} />
+          <Drawer.Screen name="Published" component={PublishedProduct} />
           <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
           <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
