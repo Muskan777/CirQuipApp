@@ -15,6 +15,10 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import {
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 
 export function DrawerContent(props) {
   const findEmail = async () => {
@@ -48,16 +52,22 @@ export function DrawerContent(props) {
                 alignItems: "center",
               }}
             >
-              <Avatar.Image
-                source={{
-                  uri: "https://reactnavigation.org/img/spiro.svg",
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate("Profile");
                 }}
-                size={50}
-              />
-              <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>{props.user.name}</Title>
-                <Caption style={styles.caption}>props.user.role</Caption>
-              </View>
+              >
+                <Avatar.Image
+                  source={{
+                    uri: "https://reactnavigation.org/img/spiro.svg",
+                  }}
+                  size={50}
+                />
+                <View style={{ marginLeft: 15, flexDirection: "column" }}>
+                  <Title style={styles.title}>{props.user.name}</Title>
+                  <Caption style={styles.caption}>{props.user.role}</Caption>
+                </View>
+              </TouchableWithoutFeedback>
             </View>
           </View>
 

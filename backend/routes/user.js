@@ -130,6 +130,76 @@ router.post("/verifyJWT", auth, (req, res) => {
     : res.status(400).json("Token Invalid");
 });
 
+router.route("/sharePost").patch(auth, async (req, res) => {
+  try {
+    let post = await Post.findById(req.body.id);
+    if (!post) {
+      res.status(400).send("Post with id not found");
+    }
+    if (req.body.shared) {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares - 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $pull: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post unshared",
+              post: post,
+              shares: post.shares - 1,
+              shared: false,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    } else {
+      Post.findOneAndUpdate(
+        { _id: req.body.id },
+        { $set: { shares: post.shares + 1 } }
+      )
+        .then(async post => {
+          await User.findOneAndUpdate(
+            { _id: req.payload.id },
+            { $push: { sharedPosts: req.body.id } }
+          ),
+            res.status(200).send({
+              msg: "Post shared",
+              post: post,
+              shares: post.shares + 1,
+              shared: true,
+            });
+        })
+        .catch(err => res.status(400).send("Error: " + err));
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.route("/updateUserData").patch(async (req, res) => {
+  console.log("Update!", req.body.user);
+  console.log(req.body.user._id);
+  try {
+    let user = await User.findById(req.body.user._id);
+    console.log(user);
+    if (!user) {
+      res.status(400).send("User with id not found");
+    }
+    await User.findOneAndUpdate(
+      { _id: user },
+      { $set: { skills: req.body.user.skills, clubs: req.body.user.clubs } }
+    )
+      .then(() => {
+        console.log("Done");
+      })
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch {
+    e => console.log("Error", e);
+  }
+});
+
 // @route GET /api/user/getUsers
 // @desc Get all existing users
 
