@@ -2,5 +2,8 @@
   "mongoURIAlt": "mongodb+srv://rootUser:sds2020root@sss-x10cv.mongodb.net/CirQuip?retryWrites=true&w=majority",
   "mongoURI": "mongodb+srv://cirquip:cirquip2020@cirquip.gzspv.mongodb.net/CirQuip?retryWrites=true&w=majority",
   "localMongoURI": "mongodb://localhost:27017",
-  "jwtSecretKey": "tRUmPIsfOOlisH"
+  "jwtSecretKey": "tRUmPIsfOOlisH",
+  "awsAcccessKey": "AKIAY3PMMCO5VJ37HNNY",
+  "awsSecretAccessKey": "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",
+  "region": "ap-south-1"
 }

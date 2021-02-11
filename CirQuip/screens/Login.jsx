@@ -50,7 +50,7 @@ export default class Login extends React.Component {
       .catch(err => {
         Alert.alert(
           "Error",
-          err?.response?.data ? err.response.data : "Something went wrong"
+          err?.response?.data ? err?.response?.data : "Something went wrong"
         );
       });
   }

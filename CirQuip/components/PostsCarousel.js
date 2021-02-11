@@ -184,12 +184,7 @@ export default function PostCarousel({
   };
 
   function renderImage({ item }) {
-    return (
-      <Image
-        style={styles.postImage}
-        source={{ uri: `data:image/jpg;base64,${item}` }}
-      ></Image>
-    );
+    return <Image style={styles.postImage} source={{ uri: `${item}` }}></Image>;
   }
   function pagination() {
     return (

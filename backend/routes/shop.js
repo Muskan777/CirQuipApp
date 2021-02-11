@@ -5,6 +5,8 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
+const { s3 } = require("../config/config");
+const auth = require("../middlewares/auth");
 //const ObjectId = require("mongodb").ObjectID;
 
 /*
@@ -103,22 +105,49 @@ router.post("/products/:type/:query", async (req, resp) => {
 // @route POST api/shop/addProduct
 // @desc add a new prodcut for sale
 
-router.post("/addProduct", async (req, resp) => {
-  const { pName, pPrice, image, pDetails, id } = req.body;
-  const prodcut = new Shop({
-    seller: id,
-    name: pName,
-    info: pDetails,
-    price: pPrice,
-    image: image,
+router.post("/addProduct", auth, async (req, resp) => {
+  let { pName, pPrice, image, pDetails, id } = req.body;
+  const buf = Buffer.from(
+    image.replace(/^data:image\/\w+;base64,/, ""),
+    "base64"
+  );
+  //configuring parameters
+
+  var params = {
+    Bucket: "cirquip",
+    Body: buf,
+    ContentEncoding: "base64",
+    ContentType: "image/jpeg",
+    Key: `products/${req.payload.email}/${Date.now()}.jpeg`,
+    ACL: "public-read",
+  };
+
+  s3.upload(params, async function (err, data) {
+    //handle error
+    if (err) {
+      console.log("Error", err);
+      return resp.status(400).json("error in uploading image");
+    }
+    //success
+    if (data) {
+      console.log("Uploaded in:", data.Location);
+      image = data.Location;
+      const product = new Shop({
+        seller: id,
+        name: pName,
+        info: pDetails,
+        price: pPrice,
+        image: image,
+      });
+      try {
+        await product.save();
+        return resp.status(200).json("Success");
+      } catch (err) {
+        console.log(err);
+        return resp.status(400).json("Error Saving data");
+      }
+    }
   });
-  try {
-    await prodcut.save();
-    return resp.status(200).json("Success");
-  } catch (err) {
-    console.log(err);
-    return resp.status(400).json("Error Saving data");
-  }
 });
 
 // @route PUT api/shop/like
@@ -186,12 +215,43 @@ router.put("/revoke/:productId", async (req, resp) => {
 
 // @route post api/shop/sell
 // @desc to mark a product as sold
-router.delete("/sell/:productId", async (req, resp) => {
+router.post("/sell/:productId", auth, async (req, resp) => {
   const productId = req.params.productId;
   log("sell id", productId);
   try {
-    await Shop.findByIdAndDelete(productId);
-    return resp.status(200).json("success");
+    await Shop.findById(productId)
+      .then(async product => {
+        console.log(product._doc.image);
+        console.log(
+          `products/${req.payload.email}/${product._doc.image
+            .split("/")
+            .splice(-1)}`
+        );
+        var params = {
+          Bucket: "cirquip",
+          Key: `products/${req.payload.email}/${product._doc.image
+            .split("/")
+            .splice(-1)}`,
+        };
+        try {
+          s3.deleteObject(params).promise();
+        } catch (err) {
+          console.log(err, err.stack);
+          resp.status(400).json("could not delete product image");
+        }
+        await Shop.findByIdAndDelete(productId)
+          .then(() => {
+            return resp.status(200).json("success");
+          })
+          .catch(err => {
+            log("delete", err);
+            return resp.status(400).json("Error in deletion");
+          });
+      })
+      .catch(err => {
+        log("delete", err);
+        return resp.status(400).json("Error in deletion");
+      });
   } catch (err) {
     log("sell", err);
     return resp.status(400).json(err);

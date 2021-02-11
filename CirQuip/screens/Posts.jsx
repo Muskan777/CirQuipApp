@@ -37,18 +37,23 @@ export default function Posts({ navigation }) {
   };
 
   const fetchData = async () => {
-    let token = await AsyncStorage.getItem("cirquip-auth-token");
-    axios
-      .get(`${global.config.host}/post/getPosts`, {
-        headers: {
-          "cirquip-auth-token": token,
-        },
+    await AsyncStorage.getItem("cirquip-auth-token")
+      .then(async token => {
+        await axios
+          .get(`${global.config.host}/post/getPosts`, {
+            headers: {
+              "cirquip-auth-token": token,
+            },
+          })
+          .then(res => {
+            setData(res.data.post);
+            setLoading(false);
+          })
+          .catch(e => console.log(e));
       })
-      .then(res => {
-        setData(res.data.post);
-        setLoading(false);
-      })
-      .catch(e => console.log(e));
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   const onCommentClick = (index, postId) => {
