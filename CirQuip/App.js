@@ -59,7 +59,7 @@ export default function App() {
 
   React.useEffect(() => {
     checkJWT();
-    setTimeout(() => toggleSplash(!splash), 800);
+    setTimeout(() => toggleSplash(!splash), 10000);
   }, []);
 
   const handleLogout = async () => {
