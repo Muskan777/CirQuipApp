@@ -56,26 +56,24 @@ const theme = {
 export default function App() {
   const [status, setStatus] = React.useState(false);
   const [user, setUser] = React.useState({});
+  const [verified, setVerified] = React.useState(false);
   const [splash, toggleSplash] = React.useState(true);
 
   React.useEffect(() => {
     checkJWT();
-<<<<<<< HEAD
-    handleSplash();
-=======
     setTimeout(() => toggleSplash(!splash), 10000);
->>>>>>> a5af189a88c189c6b6eb950ef4b514284db92215
   }, []);
 
-  const handleSplash = async () => {
-    await SplashScreen.preventAutoHideAsync().then(setTimeout(() => {}, 2000));
-    await SplashScreen.hideAsync();
-  };
   const handleLogout = async () => {
     await AsyncStorage.clear();
     //await AsyncStorage.removeItem("user");
     //await AsyncStorage.removeItem("cirquip-auth-token");
     setStatus(false);
+  };
+  const setVariables = async () => {
+    const data = await AsyncStorage.getItem("user");
+    setUser(data);
+    setVerified(data.verified);
   };
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
@@ -95,21 +93,7 @@ export default function App() {
             console.log("data", res.data);
             try {
               await AsyncStorage.setItem("user", res.data);
-              axios
-                .get(`${global.config.host}/user/getUserWithId/${res.data}`)
-                .then(res => {
-                  setUser(res.data);
-                  console.log(res.data.email);
-                })
-                .catch(err => {
-                  Alert.alert(
-                    "Error",
-                    "Something Went Wrong In Fetching Admin 1"
-                  );
-                  console.log(err);
-                });
             } catch {}
-            setStatus(true);
           })
           .catch(async err => {
             try {
@@ -122,6 +106,7 @@ export default function App() {
         setStatus(false);
       }
     });
+    await setVariables();
   };
 
   const SavedStackScreen = ({ navigation }) => (
@@ -131,7 +116,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -171,7 +156,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -211,7 +196,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -251,7 +236,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -292,7 +277,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -332,7 +317,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -372,7 +357,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -412,7 +397,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -453,7 +438,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -484,7 +469,7 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(54, 181, 165, 1)",
+          backgroundColor: "rgba(43, 164, 219, 1)",
         },
       }}
     >
@@ -522,7 +507,7 @@ export default function App() {
       fontSize: 20,
     },
     headerStyle: {
-      backgroundColor: "rgba(54, 181, 165, 1)",
+      backgroundColor: "rgba(43, 164, 219, 1)",
       //backgroundColor: "#fb5b5a",
     },
     headerRight: () => (
@@ -536,14 +521,14 @@ export default function App() {
       <NavigationContainer>
         <Drawer.Navigator
           drawerContent={props => <DrawerContent {...props} user={user} />}
-          initialRouteName={user.verified === true ? "HomeDrawer" : "OTP"}
+          initialRouteName={verified ? "HomeDrawer" : "OTP"}
         >
           <Drawer.Screen
             name="HomeDrawer"
             component={AppNavigator}
             initialParams={{
               handleStatus: handleStatus,
-              verified: user.verified,
+              verified: verified,
             }}
           />
           <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
@@ -575,7 +560,14 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name="Login">
-            {props => <Login {...props} handleStatus={handleStatus} />}
+            {props => (
+              <Login
+                {...props}
+                handleStatus={handleStatus}
+                setUser={setUser}
+                setVerified={setVerified}
+              />
+            )}
           </Stack.Screen>
         </Stack.Navigator>
       </NavigationContainer>

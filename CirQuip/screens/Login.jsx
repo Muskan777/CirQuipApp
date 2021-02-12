@@ -37,6 +37,8 @@ export default class Login extends React.Component {
       .then(async res => {
         try {
           console.log("response", res.data);
+          this.props.setUser(res.data);
+          this.props.setVerified(res.data.verified);
           await AsyncStorage.setItem("cirquip-auth-token", res.data.token);
           await AsyncStorage.setItem("user", res.data._id);
           let info = { likes: res.data.likes ? res.data.likes : [] };
@@ -421,7 +423,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     width: "40%",
-    backgroundColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    backgroundColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderRadius: 25,
     height: 50,
     alignItems: "center",
@@ -436,7 +438,7 @@ const styles = StyleSheet.create({
     // marginBottom: 100,
   },
   signUpText: {
-    color: "rgba(54, 181, 165, 0.6313725490196078)",
+    color: "rgba(43, 164, 219, 0.6313725490196078)",
     fontSize: 16,
     marginTop: 20,
     marginBottom: 10,
@@ -449,7 +451,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   already: {
-    color: "rgba(54, 181, 165, 0.6313725490196078)",
+    color: "rgba(43, 164, 219, 0.6313725490196078)",
     fontSize: 14,
     fontWeight: "100",
     fontStyle: "normal",

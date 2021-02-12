@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
   },
   appButtonContainer: {
     elevation: 3,
-    backgroundColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    backgroundColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderRadius: 16,
     shadowColor: "rgb(0,0,0)",
     shadowOpacity: 0.32941176470588235,

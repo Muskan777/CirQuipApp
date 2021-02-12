@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     borderWidth: 2,
     width: "40%",
-    borderBottomColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    borderBottomColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderColor: "transparent",
     // sfontFamily: "Segoe UI",
     textAlign: "center",
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
   },
   loginBtn: {
     width: "40%",
-    backgroundColor: "rgba(54, 181, 165, 0.6313725490196078)",
+    backgroundColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderRadius: 25,
     height: 50,
     alignItems: "center",

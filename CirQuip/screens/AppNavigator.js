@@ -30,24 +30,31 @@ const HomeStack = createStackNavigator();
 const CreatePostStack = createStackNavigator();
 const ShopStack = createStackNavigator();
 
-const AppNavigator = ({ route, verified }) => (
-  <Tab.Navigator
-    initialRouteName="Home"
-    activeColor="#fff"
-    barStyle={{ backgroundColor: "rgba(54, 181, 165, 1)" }}
-  >
-    <Tab.Screen
-      name="Home"
-      component={HomeStackScreen}
-      initialParams={{ handleStatus: route.params.handleStatus }}
-      options={{
-        tabBarLabel: "Home",
-        tabBarIcon: ({ color }) => (
-          <MaterialCommunityIcons name="home" color={color} size={26} />
-        ),
-      }}
-    />
-    {verified === true ? (
+const AppNavigator = ({ route, verified }) => {
+  const [ver, setVer] = React.useState(false);
+  React.useEffect(() => {
+    if (verified) {
+      setVer(true);
+      console.log(ver);
+    }
+  }, []);
+  return (
+    <Tab.Navigator
+      initialRouteName="Home"
+      activeColor="#fff"
+      barStyle={{ backgroundColor: "rgba(43, 164, 219, 1)" }}
+    >
+      <Tab.Screen
+        name="Home"
+        component={HomeStackScreen}
+        initialParams={{ handleStatus: route.params.handleStatus }}
+        options={{
+          tabBarLabel: "Home",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="home" color={color} size={26} />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Create"
         component={CreatePostStackScreen}
@@ -59,23 +66,20 @@ const AppNavigator = ({ route, verified }) => (
           ),
         }}
       />
-    ) : (
-      <></>
-    )}
-    <Tab.Screen
-      name="Shop"
-      component={ShopStackScreen}
-      initialParams={{ handleStatus: route.params.handleStatus }}
-      options={{
-        tabBarLabel: "Shop",
-        tabBarIcon: ({ color }) => (
-          <MaterialCommunityIcons name="cart" color={color} size={26} />
-        ),
-      }}
-    />
-  </Tab.Navigator>
-);
-
+      <Tab.Screen
+        name="Shop"
+        component={ShopStackScreen}
+        initialParams={{ handleStatus: route.params.handleStatus }}
+        options={{
+          tabBarLabel: "Shop",
+          tabBarIcon: ({ color }) => (
+            <MaterialCommunityIcons name="cart" color={color} size={26} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
+  );
+};
 export default AppNavigator;
 
 const HomeStackScreen = ({ navigation, route }) => (
@@ -85,7 +89,7 @@ const HomeStackScreen = ({ navigation, route }) => (
         fontSize: 20,
       },
       headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
+        backgroundColor: "rgba(43, 164, 219, 1)",
       },
     }}
   >
@@ -143,7 +147,7 @@ const CreatePostStackScreen = ({ navigation, route }) => (
         fontSize: 20,
       },
       headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
+        backgroundColor: "rgba(43, 164, 219, 1)",
       },
     }}
   >
@@ -218,7 +222,7 @@ const ShopStackScreen = ({ navigation, route }) => (
         fontSize: 20,
       },
       headerStyle: {
-        backgroundColor: "rgba(54, 181, 165, 1)",
+        backgroundColor: "rgba(43, 164, 219, 1)",
       },
     }}
   >

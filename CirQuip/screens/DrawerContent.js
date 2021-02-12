@@ -45,30 +45,22 @@ export function DrawerContent(props) {
       <DrawerContentScrollView {...props}>
         <View style={styles.drawerContent}>
           <View style={styles.userInfoSection}>
-            <View
-              style={{
-                flexDirection: "row",
-                marginTop: 10,
-                alignItems: "center",
+            <TouchableWithoutFeedback
+              onPress={() => {
+                props.navigation.navigate("Profile");
               }}
             >
-              <TouchableWithoutFeedback
-                onPress={() => {
-                  props.navigation.navigate("Profile");
+              <Avatar.Image
+                source={{
+                  uri: "https://reactnavigation.org/img/spiro.svg",
                 }}
-              >
-                <Avatar.Image
-                  source={{
-                    uri: "https://reactnavigation.org/img/spiro.svg",
-                  }}
-                  size={50}
-                />
-                <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                  <Title style={styles.title}>{props.user.name}</Title>
-                  <Caption style={styles.caption}>{props.user.role}</Caption>
-                </View>
-              </TouchableWithoutFeedback>
-            </View>
+                size={50}
+              />
+              <View style={{ marginLeft: 15, flexDirection: "column" }}>
+                <Title style={styles.title}>{props.user.name}</Title>
+                <Caption style={styles.caption}>{props.user.role}</Caption>
+              </View>
+            </TouchableWithoutFeedback>
           </View>
 
           <Drawer.Section style={styles.drawerSection}>
@@ -165,14 +157,6 @@ export function DrawerContent(props) {
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>
-
-      <Drawer.Section style={styles.bottomDrawerSection}>
-        <DrawerItem
-          label="Developed by SDS COEP"
-          labelStyle={{ fontSize: 16 }}
-          onPress={() => {}}
-        />
-      </Drawer.Section>
     </View>
   );
 }
@@ -182,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   userInfoSection: {
-    paddingLeft: 20,
+    marginLeft: 20,
   },
   title: {
     fontSize: 16,

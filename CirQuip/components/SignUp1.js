@@ -5,7 +5,7 @@ import {
   StyleSheet,
   View,
   Text,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 
 export default function SignUp1() {
@@ -16,7 +16,6 @@ export default function SignUp1() {
           style={styles.logo}
           source={require("../assets/asset1.png")}
         ></Image>
-        <Text style={styles.title}>CirQuip</Text>
       </View>
     </SafeAreaView>
   );
@@ -25,21 +24,13 @@ export default function SignUp1() {
 const styles = StyleSheet.create({
   container: {
     // height: Dimensions.get('window').height,
-    // flexDirection: 'column',
-    marginTop: 80,
-    justifyContent: "center",
-    alignItems: "center",
+    // flexDirection: "column",
+    marginTop: "45%",
   },
   logo: {
-    //height: 200,
-    //width: 200,
-  },
-  title: {
-    color: "rgba(54, 181, 165, 1)",
-    fontSize: 34,
-    fontWeight: "400",
-    // fontFamily: "Baskerville Old Face",
-    marginBottom: 30,
+    height: 200,
+    width: 220,
+    resizeMode: "cover",
+    marginLeft: 45,
   },
 });
-
