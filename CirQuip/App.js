@@ -22,7 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppNavigator from "./screens/AppNavigator";
 import { DrawerContent } from "./screens/DrawerContent";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-
+import * as SplashScreen from "expo-splash-screen";
 import SavedPosts from "./screens/SavedPosts";
 import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
@@ -59,9 +59,13 @@ export default function App() {
 
   React.useEffect(() => {
     checkJWT();
-    setTimeout(() => toggleSplash(!splash), 800);
+    handleSplash();
   }, []);
 
+  const handleSplash = async () => {
+    await SplashScreen.preventAutoHideAsync().then(setTimeout(() => {}, 2000));
+    await SplashScreen.hideAsync();
+  };
   const handleLogout = async () => {
     await AsyncStorage.clear();
     //await AsyncStorage.removeItem("user");
