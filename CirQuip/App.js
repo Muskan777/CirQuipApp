@@ -14,7 +14,7 @@ import {
 } from "react-native-paper";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
-//import Profile2 from "./screens/Profile2.jsx";
+import Profile2 from "./screens/Profile2.jsx";
 import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
@@ -40,6 +40,7 @@ const SellProductsStack = createStackNavigator();
 const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
 const ShopProductsStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -59,7 +60,11 @@ export default function App() {
 
   React.useEffect(() => {
     checkJWT();
+<<<<<<< HEAD
     handleSplash();
+=======
+    setTimeout(() => toggleSplash(!splash), 10000);
+>>>>>>> a5af189a88c189c6b6eb950ef4b514284db92215
   }, []);
 
   const handleSplash = async () => {
@@ -400,6 +405,47 @@ export default function App() {
     </BuyRequests.Navigator>
   );
 
+  const ProfileScreen = ({ navigation }) => (
+    <ProfileStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(54, 181, 165, 1)",
+        },
+      }}
+    >
+      <ProfileStack.Screen
+        name="ProfileScreen"
+        component={Profile2}
+        initialParams={{ _id: user._id, myself: true }}
+        options={{
+          title: "Your Profile",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ProfileStack.Navigator>
+  );
+
   const ChatScreen = ({ navigation }) => (
     <ChatStack.Navigator
       screenOptions={{
@@ -514,6 +560,7 @@ export default function App() {
           <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
           <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
+          <Drawer.Screen name="Profile" component={ProfileScreen} />
           <Drawer.Screen
             name="OTP"
             component={OTP}

@@ -211,7 +211,11 @@ class Profile2 extends Component {
 
     switch (key) {
       case "1":
-        return <PersonalInfo user={this.state.user} />;
+        if (this.props.route.params.myself) {
+          return <PersonalInfo user={this.state.user} myself={true} />;
+        } else {
+          return <PersonalInfo user={this.state.user} myself={false} />;
+        }
       case "2":
         return <Posts containerStyle={styles.sceneContainer} posts={posts} />;
       default:
