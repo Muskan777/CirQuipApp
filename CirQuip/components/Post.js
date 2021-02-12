@@ -298,7 +298,6 @@ const styles = StyleSheet.create({
   postImageContainer: {
     justifyContent: "center",
     marginTop: 10,
-    width: "100%",
     borderRadius: 20,
   },
   postImage: {
