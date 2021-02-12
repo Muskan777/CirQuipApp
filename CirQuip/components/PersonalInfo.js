@@ -242,24 +242,27 @@ export default class PersonalInfo extends Component {
             );
           }}
         />
-
-        <Button
-          style={{
-            width: "40%",
-            margin: 20,
-            marginHorizontal: 30,
-            backgroundColor: "#287ec1",
-            alignSelf: "center",
-          }}
-          onPress={() => {
-            axios.patch(`${global.config.host}/user/updateUserData`, {
-              user: this.state.user,
-            });
-            console.log("Pressed", this.state.user);
-          }}
-        >
-          OK
-        </Button>
+        {this.props.myself ? (
+          <Button
+            style={{
+              width: "40%",
+              margin: 20,
+              marginHorizontal: 30,
+              backgroundColor: "#287ec1",
+              alignSelf: "center",
+            }}
+            onPress={() => {
+              axios.patch(`${global.config.host}/user/updateUserData`, {
+                user: this.state.user,
+              });
+              console.log("Pressed", this.state.user);
+            }}
+          >
+            OK
+          </Button>
+        ) : (
+          <View />
+        )}
       </SafeAreaView>
     );
   }

@@ -41,6 +41,7 @@ const ChatStack = createStackNavigator();
 const MyProductsStack = createStackNavigator();
 const ShopProductsStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
+const BuyRequests = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -324,6 +325,7 @@ export default function App() {
       <MyProductsStack.Screen
         name="MyProducts"
         component={Shop}
+        initialParams={{ type: "my" }}
         options={{
           title: "My Products",
           headerRight: () => (
@@ -364,6 +366,7 @@ export default function App() {
       <BuyRequests.Screen
         name="BuyRequests"
         component={Shop}
+        initialParams={{ title: "Buy Requests", type: "requests" }}
         options={{
           title: "Buy Requests",
           headerRight: () => (
@@ -531,7 +534,6 @@ export default function App() {
               verified: verified,
             }}
           />
-          <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
           <Drawer.Screen
             name="SellProducts"
             component={SellProductsStackScreen}
@@ -546,6 +548,7 @@ export default function App() {
           <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
           <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
           <Drawer.Screen name="Profile" component={ProfileScreen} />
+          <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
           <Drawer.Screen
             name="OTP"
             component={OTP}

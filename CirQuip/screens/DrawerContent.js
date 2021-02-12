@@ -97,10 +97,7 @@ export function DrawerContent(props) {
               )}
               label="My Products"
               onPress={() => {
-                props.navigation.navigate({
-                  name: "Shop",
-                  params: { type: "my" },
-                });
+                props.navigation.navigate("MyProducts");
               }}
             />
             <DrawerItem
@@ -108,7 +105,9 @@ export function DrawerContent(props) {
                 <MaterialIcons name="request-page" color={color} size={size} />
               )}
               label="Buy Requests"
-              onPress={() => {}}
+              onPress={() => {
+                props.navigation.navigate("BuyRequests");
+              }}
             />
             {props.user.verified === false ? (
               <DrawerItem

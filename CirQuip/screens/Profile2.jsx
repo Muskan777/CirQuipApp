@@ -208,7 +208,7 @@ class Profile2 extends Component {
 
   renderScene = ({ route: { key } }) => {
     const { posts } = this.props;
-
+    console.log("Posts", this.props.posts);
     switch (key) {
       case "1":
         if (this.props.route.params.myself) {
