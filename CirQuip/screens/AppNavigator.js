@@ -20,7 +20,7 @@ import { setStatusBarBackgroundColor } from "expo-status-bar";
 
 const Tab = createMaterialBottomTabNavigator();
 
-const handleLogout = async () => {
+export const handleLogout = async () => {
   await AsyncStorage.clear();
   //await AsyncStorage.removeItem("user");
   //await AsyncStorage.removeItem("cirquip-auth-token");
