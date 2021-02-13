@@ -7,6 +7,7 @@ import {
   TextInput,
   ScrollView,
   Alert,
+  Text,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import axios from "axios";
@@ -14,18 +15,49 @@ import PostsCarousel from "../components/PostsCarousel";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { IconButton } from "react-native-paper";
+import { handleLogout } from "./AppNavigator";
 import { MaterialIcons } from "@expo/vector-icons";
 export default function Posts({ navigation }) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [CCPIndex, setCCPIndex] = useState(null);
   const [commentText, setCommentText] = useState(null);
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [College, setCollege] = useState("");
+  const [College, setCollege] = useState("")
+  const [users, setUsers] = useState([]);
+  const [requiredusers, setRequiredUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: "row" }}>
+          <IconButton
+            icon="magnify"
+            color="#000"
+            size={30}
+            onPress={() => {
+              setSearchModalOpen(true);
+            }}
+          />
+          <IconButton
+            icon="logout"
+            color="#000"
+            size={30}
+            onPress={() => {
+              handleLogout();
+              route.params.handleStatus(false);
+            }}
+          />
+        </View>
+      ),
+    });
+  }, [navigation]);
 
   useEffect(() => {
     fetchData();
@@ -72,6 +104,14 @@ export default function Posts({ navigation }) {
       .catch(err => {
         console.log(err);
       });
+
+    axios
+      .get(`${global.config.host}/user/getUsers`)
+      .then(res => {
+        setUsers(res.data.users);
+        setRequiredUsers(res.data.users);
+      })
+      .catch(e => console.log(e));
   };
 
   const onCommentClick = (index, postId) => {
@@ -110,9 +150,78 @@ export default function Posts({ navigation }) {
         Alert.alert("Error", err.response.data);
       });
   };
+  const searchFunction = () => {
+    if (searchQuery == "") {
+      setRequiredUsers(users);
+    }
+    setRequiredUsers(
+      users?.filter(user => {
+        return (
+          user.name.includes(searchQuery) || user.role.includes(searchQuery)
+        );
+      })
+    );
+  };
+  useEffect(searchFunction, [searchQuery]);
 
   return (
     <SafeAreaView style={styles.post}>
+      <Modal visible={searchModalOpen} animationType="fade">
+        <View style={styles.SearchContainer}>
+          <MaterialIcons
+            name="arrow-back"
+            style={{ ...styles.Icons, marginTop: 20 }}
+            size={28}
+            onPress={() => {
+              setSearchModalOpen(false);
+            }}
+          />
+          <TextInput
+            style={{
+              flex: 1,
+              margin: 5,
+              fontSize: 20,
+              maxHeight: "100%",
+            }}
+            placeholder="Search"
+            onChangeText={query => {
+              setSearchQuery(query);
+            }}
+            value={searchQuery}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setSearchQuery("");
+            }}
+          >
+            <MaterialIcons
+              name="close"
+              style={{ ...styles.Icons, marginTop: 20 }}
+              size={28}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flex: 0.8 }}>
+          <FlatList
+            data={requiredusers}
+            keyExtractor={item => item._id}
+            renderItem={user => (
+              <TouchableOpacity onPress={() => {}}>
+                <View style={{ ...styles.searchCard }}>
+                  <Image
+                    style={styles.searchImage}
+                    source={require("../assets/ellipse174b251b3.png")}
+                  />
+                  <Text style={{ fontSize: 18 }}>{`${user.item.name}  |`}</Text>
+                  <Text style={{ marginLeft: 8, fontSize: 12 }}>
+                    {user.item.role}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      </Modal>
       {isLoading ? (
         <Loader />
       ) : (
@@ -238,6 +347,18 @@ const styles = StyleSheet.create({
     // marginTop: StatusBar.currentHeight || 0,
     backgroundColor: "#eee",
   },
+  searchCard: {
+    display: "flex",
+    flexDirection: "row",
+    padding: 10,
+    alignItems: "center",
+  },
+  searchImage: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
   Icons: {
     fontSize: 30,
     color: "#4FB5A5",
@@ -269,5 +390,15 @@ const styles = StyleSheet.create({
     borderColor: "#aaa",
     padding: 5,
     flex: 1,
+  },
+  SearchContainer: {
+    display: "flex",
+    flex: 1,
+    flexDirection: "row",
+    paddingHorizontal: 20,
+    maxHeight: 70,
+    justifyContent: "space-between",
+    borderBottomWidth: 1,
+    borderBottomColor: "#aaa",
   },
 });
