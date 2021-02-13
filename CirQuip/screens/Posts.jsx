@@ -25,6 +25,7 @@ export default function Posts({ navigation }) {
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
+  const [College, setCollege] = useState("");
 
   useEffect(() => {
     fetchData();
@@ -37,6 +38,18 @@ export default function Posts({ navigation }) {
   };
 
   const fetchData = async () => {
+    let user = await AsyncStorage.getItem("user");
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          setCollege(res.data.college);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
+          console.log(err);
+        });
+    }
     await AsyncStorage.getItem("cirquip-auth-token")
       .then(async token => {
         await axios
@@ -46,7 +59,12 @@ export default function Posts({ navigation }) {
             },
           })
           .then(res => {
-            setData(res.data.post);
+            res.data.post = res.data.post.reverse();
+            let data = res.data.post.filter(post => {
+              return post.userCollege === College;
+            });
+            console.log("Data", data);
+            setData(data);
             setLoading(false);
           })
           .catch(e => console.log(e));
