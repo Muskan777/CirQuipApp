@@ -231,6 +231,20 @@ router.route("/updateUser").patch(auth, async (req, res) => {
   }
 });
 
+// @route post /api/user/resendOtp
+router.route("/resendOtp").post(auth, async (req, res) => {
+  let { email, otp } = req.body;
+  try {
+    if (email) {
+      emailHandler.email(email, otp);
+      return res.status(200).send("Resent successfully!");
+    } else {
+      return res.status(400).send("Invalid body!");
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
 // @route GET /api/user/getLikedPosts
 // @desc Gets posts liked by user
 
