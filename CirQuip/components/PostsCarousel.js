@@ -7,6 +7,8 @@ import {
   TouchableHighlight,
   TouchableOpacity,
   Dimensions,
+  Share,
+  Linking,
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
@@ -66,6 +68,7 @@ export default function PostCarousel({
   const [saved, setSaved] = useState(false);
   const [activeSlide, setActiveSlide] = useState(0);
   const [shared, setShared] = useState(false);
+  const [URL, setURL] = useState(null);
   let usersTagged = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
@@ -76,6 +79,8 @@ export default function PostCarousel({
 
   const fetchLikedPosts = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    const initialUrl = await Linking.getInitialURL();
+    setURL(initialUrl);
     axios
       .get(`${global.config.host}/user/getLikedPosts`, {
         headers: {
@@ -161,26 +166,44 @@ export default function PostCarousel({
       })
       .catch(e => console.log(e));
   };
+  // const handleShare = async () => {
+  //   let token = await AsyncStorage.getItem("cirquip-auth-token");
+  //   axios
+  //     .patch(
+  //       `${global.config.host}/post/sharePost`,
+  //       {
+  //         id: postId,
+  //         shared: shared,
+  //       },
+  //       {
+  //         headers: {
+  //           "cirquip-auth-token": token,
+  //         },
+  //       }
+  //     )
+  //     .then(res => {
+  //       setCurrentShares(res.data.shares);
+  //       setShared(res.data.shared);
+  //     })
+  //     .catch(e => console.log(e));
+  // };
   const handleShare = async () => {
-    let token = await AsyncStorage.getItem("cirquip-auth-token");
-    axios
-      .patch(
-        `${global.config.host}/post/sharePost`,
-        {
-          id: postId,
-          shared: shared,
-        },
-        {
-          headers: {
-            "cirquip-auth-token": token,
-          },
+    try {
+      const result = await Share.share({
+        message: `Check out ${name}'s post! \n${caption}\n${URL}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
         }
-      )
-      .then(res => {
-        setCurrentShares(res.data.shares);
-        setShared(res.data.shared);
-      })
-      .catch(e => console.log(e));
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   function renderImage({ item }) {
@@ -311,7 +334,7 @@ export default function PostCarousel({
               />
             )}
           </TouchableOpacity>
-          <Text style={styles.TextStyle}>{currentShares}</Text>
+          {/* <Text style={styles.TextStyle}>{currentShares}</Text> */}
         </View>
       </View>
     </Card>
