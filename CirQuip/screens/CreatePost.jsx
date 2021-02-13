@@ -43,6 +43,7 @@ export default function CreatePost(props) {
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
   const [user, setUser] = React.useState("");
+  const [College, setCollege] = React.useState("");
 
   const handleDialog = () => setVisible(!visible);
 
@@ -54,6 +55,7 @@ export default function CreatePost(props) {
           .get(`${global.config.host}/user/getUserWithId/${user}`)
           .then(res => {
             setUser(res.data.name);
+            setCollege(res.data.college);
           })
           .catch(err => {
             Alert.alert("Error", "Something Went Wrong");
@@ -80,7 +82,6 @@ export default function CreatePost(props) {
     } else {
       content = videoSource.base64;
     }
-
     let group = [];
     if (checkedA) {
       group.push("Alumni");
@@ -99,6 +100,7 @@ export default function CreatePost(props) {
           caption: postText,
           taggedUsers: taggedList,
           group: group,
+          userCollege: College,
         },
         {
           headers: {

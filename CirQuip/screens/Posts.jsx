@@ -18,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { handleLogout } from "./AppNavigator";
 import { MaterialIcons } from "@expo/vector-icons";
+import { Col } from "native-base";
 export default function Posts({ navigation }) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -77,11 +78,28 @@ export default function Posts({ navigation }) {
               "cirquip-auth-token": token,
             },
           })
-          .then(res => {
-            setData(res.data.post);
-            setLoading(false);
+          .then(async res => {
+            res.data.post = res.data.post.reverse();
+            let user = await AsyncStorage.getItem("user");
+            if (user) {
+              axios
+                .get(`${global.config.host}/user/getUserWithId/${user}`)
+                .then(response => {
+                  let College = response.data.college;
+                  let data = res.data.post.filter(post => {
+                    return post.userCollege === College;
+                  });
+                  console.log("Data", data);
+                  setData(data);
+                  setLoading(false);
+                })
+                .catch(e => console.log(e));
+            }
           })
-          .catch(e => console.log(e));
+          .catch(err => {
+            Alert.alert("Error", "Something Went Wrong");
+            console.log(err);
+          });
       })
       .catch(err => {
         console.log(err);
@@ -188,7 +206,11 @@ export default function Posts({ navigation }) {
             data={requiredusers}
             keyExtractor={item => item._id}
             renderItem={user => (
-              <TouchableOpacity onPress={() => {}}>
+              <TouchableOpacity
+                onPress={() => {
+                  console.log(user);
+                }}
+              >
                 <View style={{ ...styles.searchCard }}>
                   <Image
                     style={styles.searchImage}
