@@ -319,13 +319,16 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 // @route DELETE /api/post/deletePost
 // @desc Deletes existing post
 
-router.route("/deletePost").delete(auth, async (req, res) => {
+router.route("/deletePost").post(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     let user = await User.findById(ObjectId(post._doc.userId));
     if (!user) throw "User not found";
     let admin = await User.find({ email: "admin@coep.ac.in" });
-    let adminId = admin[0]._id;
+    let adminId;
+    if (admin) {
+      adminId = admin._id;
+    }
     if (!post) {
       return res.status(400).send("Post with id not found");
     }

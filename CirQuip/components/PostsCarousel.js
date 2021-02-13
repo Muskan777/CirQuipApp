@@ -9,17 +9,19 @@ import {
   Dimensions,
   Share,
   Linking,
+  Alert,
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Dialog, Portal, Button } from "react-native-paper";
 import {
   FontAwesome,
   MaterialCommunityIcons,
   Entypo,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-
+import Loader from "../screens/Loader";
 import Carousel, { Pagination } from "react-native-snap-carousel"; // Version can be specified in package.json
 const SLIDER_WIDTH = (Dimensions.get("window").width * 9.2) / 10;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
@@ -39,6 +41,7 @@ export default function PostCarousel({
   onCommentClick,
   taggedUsers,
   id,
+  onRefresh,
 }) {
   const date =
     createdAt.substr(8, 2) +
@@ -71,18 +74,28 @@ export default function PostCarousel({
   const [activeSlide, setActiveSlide] = useState(0);
   const [shared, setShared] = useState(false);
   const [URL, setURL] = useState(null);
+  const [allowDelete, setAllowDelete] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   let usersTagged = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
   });
+
+  const handleDialog = () => setVisible(!visible);
   useEffect(() => {
     fetchLikedPosts();
   }, []);
 
   const fetchLikedPosts = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    let userId = await AsyncStorage.getItem("user");
     const initialUrl = await Linking.getInitialURL();
     setURL(initialUrl);
+    if (userId === id) {
+      setAllowDelete(true);
+    }
     axios
       .get(`${global.config.host}/user/getLikedPosts`, {
         headers: {
@@ -208,6 +221,29 @@ export default function PostCarousel({
     }
   };
 
+  const handleDelete = async () => {
+    setLoading(true);
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(
+        `${global.config.host}/post/deletePost`,
+        {
+          id: postId,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        onRefresh(true);
+        setDeleted(true);
+        setLoading(false);
+      })
+      .catch(e => console.log(e));
+  };
+
   function renderImage({ item }) {
     return <Image style={styles.postImage} source={{ uri: `${item}` }}></Image>;
   }
@@ -270,6 +306,14 @@ export default function PostCarousel({
             </Text>
           )}
         </View>
+        {allowDelete ? (
+          <FontAwesome
+            name="close"
+            size={30}
+            style={styles.closeIcon}
+            onPress={handleDialog}
+          />
+        ) : null}
       </View>
       <View style={styles.postCaption}>
         <Text> {caption}</Text>
@@ -372,6 +416,61 @@ export default function PostCarousel({
           {/* <Text style={styles.TextStyle}>{currentShares}</Text> */}
         </View>
       </View>
+      <View>
+        <Portal>
+          <Dialog visible={visible} onDismiss={handleDialog}>
+            <Dialog.Title
+              style={{
+                ...styles.checkBoxTxt,
+                color: "#B11B1B",
+                fontWeight: "bold",
+              }}
+            >
+              Confirm deletion
+            </Dialog.Title>
+            {loading ? (
+              <Loader />
+            ) : (
+              <Dialog.Content>
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 15,
+                      color: "gray",
+                    }}
+                  >
+                    {!deleted
+                      ? "Are you sure you want to delete this post?"
+                      : "Post deleted"}
+                  </Text>
+                </View>
+              </Dialog.Content>
+            )}
+            <Dialog.Actions>
+              {!deleted ? (
+                <Button onPress={handleDialog} color="gray" fontSize="15">
+                  Back
+                </Button>
+              ) : (
+                <Button
+                  onPress={() => onRefresh(true)}
+                  color="gray"
+                  fontSize="15"
+                >
+                  Ok
+                </Button>
+              )}
+
+              {!deleted ? (
+                <Button onPress={handleDelete} color="#B11B1B" fontSize="15">
+                  Delete
+                </Button>
+              ) : null}
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </View>
     </Card>
   );
 }
@@ -398,7 +497,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginTop: 5,
   },
-
+  headerContainer: {
+    justifyContent: "space-between",
+  },
   postCaption: {
     padding: 10,
   },
@@ -407,11 +508,17 @@ const styles = StyleSheet.create({
     color: "#4FB5A5",
     paddingHorizontal: 10,
   },
+  closeIcon: {
+    fontSize: 25,
+    color: "#4FB5A5",
+    paddingHorizontal: 10,
+    position: "absolute",
+    right: 0,
+  },
   postImageContainer: {
     width: "100%",
     borderRadius: 20,
   },
-
   postImage: {
     alignSelf: "center",
     height: ITEM_WIDTH,
