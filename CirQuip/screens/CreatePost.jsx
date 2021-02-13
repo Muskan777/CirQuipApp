@@ -75,10 +75,9 @@ export default function CreatePost(props) {
 
   const handleSubmit = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
-    //console.log(token);
     // console.log(videoSource);
     let content;
-    if (photos.length !== 0) {
+    if (photos && photos.length !== 0) {
       content = photos;
     } else {
       content = videoSource.base64;
@@ -133,6 +132,7 @@ export default function CreatePost(props) {
             props.navigation.goBack();
             setPhotos(null);
             setPostHasImage(false);
+            setVideoSource(null);
           }}
         />
       ),
@@ -173,11 +173,17 @@ export default function CreatePost(props) {
   async function pickDocument() {
     const doc = await DocumentPicker.getDocumentAsync({ type: "video/*" });
     if (doc.type === "success") {
-      const docBase64 = await FileSystem.readAsStringAsync(doc.uri, {
-        encoding: FileSystem.EncodingType.Base64,
-      });
-      doc["base64"] = docBase64;
-      setVideoSource(doc);
+      console.log(doc.size);
+      if (doc.size < 10000000) {
+        // 10mb limit
+        const docBase64 = await FileSystem.readAsStringAsync(doc.uri, {
+          encoding: FileSystem.EncodingType.Base64,
+        });
+        doc["base64"] = docBase64;
+        setVideoSource(doc);
+      } else {
+        Alert.alert("Video size too large");
+      }
       // console.log("loged", videoSource["base64"]);
     } else {
       Alert.alert("Something went wrong in Picking Video");
@@ -218,6 +224,7 @@ export default function CreatePost(props) {
             setPostText(null);
             setPostHasImage(false);
             setPhotos(null);
+            setVideoSource(null);
           }}
         />
         <FontAwesome
@@ -289,7 +296,7 @@ export default function CreatePost(props) {
                   volume={1.0}
                   isMuted={true}
                   resizeMode="cover"
-                  // shouldPlay
+                  shouldPlay={false}
                   // isLooping
                   style={{
                     ...styles.video,
