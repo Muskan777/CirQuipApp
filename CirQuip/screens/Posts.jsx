@@ -19,7 +19,7 @@ import { IconButton } from "react-native-paper";
 import { handleLogout } from "./AppNavigator";
 import { MaterialIcons } from "@expo/vector-icons";
 import { Col } from "native-base";
-export default function Posts({ navigation }) {
+export default function Posts({ navigation, route }) {
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -33,8 +33,8 @@ export default function Posts({ navigation }) {
   const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
+  React.useEffect(() => {
+    navigation?.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
           <IconButton
