@@ -25,7 +25,8 @@ const styles = StyleSheet.create({
   container: {
     // height: Dimensions.get('window').height,
     // flexDirection: "column",
-    marginTop: "45%",
+    marginTop: "35%",
+    paddingBottom: 30,
   },
   logo: {
     height: 200,
