@@ -280,13 +280,13 @@ export default function CreatePost(props) {
               <View>
                 <Video
                   source={{
-                    uri: `data:video/mp4;base64,${videoSource.uri}`,
+                    uri: videoSource.uri,
                   }}
                   rate={1.0}
                   volume={1.0}
                   isMuted={true}
                   resizeMode="cover"
-                  shouldPlay
+                  // shouldPlay
                   // isLooping
                   style={{
                     ...styles.video,
