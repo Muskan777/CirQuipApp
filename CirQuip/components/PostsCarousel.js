@@ -16,6 +16,8 @@ import {
   MaterialCommunityIcons,
   Entypo,
 } from "@expo/vector-icons";
+import { Video } from "expo-av";
+
 import Carousel, { Pagination } from "react-native-snap-carousel"; // Version can be specified in package.json
 const SLIDER_WIDTH = (Dimensions.get("window").width * 9.2) / 10;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
@@ -207,6 +209,7 @@ export default function PostCarousel({
       />
     );
   }
+
   return (
     <Card style={styles.PostContainer}>
       <View style={styles.topContainer}>
@@ -249,15 +252,47 @@ export default function PostCarousel({
         <Text> {caption}</Text>
       </View>
       <View style={styles.postImageContainer}>
-        <Carousel
-          data={content}
-          renderItem={renderImage}
-          sliderWidth={SLIDER_WIDTH}
-          itemWidth={ITEM_WIDTH}
-          inactiveSlideShift={0}
-          onSnapToItem={index => setActiveSlide(index)}
-          useScrollView={false}
-        />
+        {content[0]?.substring(content[0].length - 3) !== "mp4" ? (
+          <Carousel
+            data={content}
+            renderItem={renderImage}
+            sliderWidth={SLIDER_WIDTH}
+            itemWidth={ITEM_WIDTH}
+            inactiveSlideShift={0}
+            onSnapToItem={index => setActiveSlide(index)}
+            useScrollView={false}
+          />
+        ) : (
+          <Video
+            source={{
+              uri: content[0],
+            }}
+            rate={1.0}
+            volume={1.0}
+            isMuted={false}
+            resizeMode="cover"
+            // isLooping
+            usePoster
+            posterStyle={{
+              width: 60,
+              marginLeft: Dimensions.get("window").width / 2 - 60,
+              justifyContent: "center",
+            }}
+            posterSource={{
+              uri:
+                "https://cutewallpaper.org/21/loading-gif-transparent-background/My-Principal-Lifestyle.gif",
+            }}
+            shouldPlay={false}
+            useNativeControls
+            style={{
+              ...styles.video,
+              width: (Dimensions.get("window").width * 9) / 10,
+              height: (Dimensions.get("window").width * 9) / 10,
+              display: "flex",
+              alignSelf: "center",
+            }}
+          />
+        )}
         {content.length > 0 && pagination()}
       </View>
       <View style={styles.datetime}>
@@ -383,5 +418,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+  },
+  video: {
+    margin: 10,
+    alignItems: "center",
+    // maxHeight: 40,
   },
 });
