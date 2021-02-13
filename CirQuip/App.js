@@ -62,7 +62,7 @@ export default function App() {
 
   React.useEffect(() => {
     checkJWT();
-    setTimeout(() => toggleSplash(!splash), 10000);
+    setTimeout(() => toggleSplash(!splash), 2000);
   }, []);
 
   const handleLogout = async () => {
@@ -519,62 +519,69 @@ export default function App() {
   };
   const handleStatus = param => setStatus(param);
 
-  return status ? (
-    <PaperProvider theme={theme}>
-      <NavigationContainer>
-        <Drawer.Navigator
-          drawerContent={props => <DrawerContent {...props} user={user} />}
-          initialRouteName={verified ? "HomeDrawer" : "OTP"}
-        >
-          <Drawer.Screen
-            name="HomeDrawer"
-            component={AppNavigator}
-            initialParams={{
-              handleStatus: handleStatus,
-              verified: verified,
-            }}
-          />
-          <Drawer.Screen
-            name="SellProducts"
-            component={SellProductsStackScreen}
-          />
-          <Drawer.Screen
-            name="SellProductsCamera"
-            component={SellProductsCamera}
-          />
-          <Drawer.Screen name="Product" component={ShopProductsStackScreen} />
-          <Drawer.Screen name="Published" component={PublishedProduct} />
-          <Drawer.Screen name="MyProducts" component={MyProductsStackScreen} />
-          <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
-          <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
-          <Drawer.Screen name="Profile" component={ProfileScreen} />
-          <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
-          <Drawer.Screen
-            name="OTP"
-            component={OTP}
-            initialParams={{ email: user.email }}
-          />
-          <Drawer.Screen name="ChatUser" component={ChatUser} />
-        </Drawer.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+  return splash === false ? (
+    status ? (
+      <PaperProvider theme={theme}>
+        <NavigationContainer>
+          <Drawer.Navigator
+            drawerContent={props => <DrawerContent {...props} user={user} />}
+            initialRouteName={verified ? "HomeDrawer" : "OTP"}
+          >
+            <Drawer.Screen
+              name="HomeDrawer"
+              component={AppNavigator}
+              initialParams={{
+                handleStatus: handleStatus,
+                verified: verified,
+              }}
+            />
+            <Drawer.Screen
+              name="SellProducts"
+              component={SellProductsStackScreen}
+            />
+            <Drawer.Screen
+              name="SellProductsCamera"
+              component={SellProductsCamera}
+            />
+            <Drawer.Screen name="Product" component={ShopProductsStackScreen} />
+            <Drawer.Screen name="Published" component={PublishedProduct} />
+            <Drawer.Screen
+              name="MyProducts"
+              component={MyProductsStackScreen}
+            />
+            <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
+            <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
+            <Drawer.Screen name="Profile" component={ProfileScreen} />
+            <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
+            <Drawer.Screen
+              name="OTP"
+              component={OTP}
+              initialParams={{ email: user.email }}
+            />
+            <Drawer.Screen name="ChatUser" component={ChatUser} />
+          </Drawer.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    ) : (
+      <PaperProvider>
+        <NavigationContainer>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Login">
+              {props => (
+                <Login
+                  {...props}
+                  handleStatus={handleStatus}
+                  setUser={setUser}
+                  setVerified={setVerified}
+                />
+              )}
+            </Stack.Screen>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PaperProvider>
+    )
   ) : (
-    <PaperProvider>
-      <NavigationContainer>
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="Login">
-            {props => (
-              <Login
-                {...props}
-                handleStatus={handleStatus}
-                setUser={setUser}
-                setVerified={setVerified}
-              />
-            )}
-          </Stack.Screen>
-        </Stack.Navigator>
-      </NavigationContainer>
-    </PaperProvider>
+    <Splash />
   );
 }
 

@@ -11,23 +11,20 @@ import {
 } from "react-native";
 
 const height = Dimensions.get("screen").height;
-import logo from "../assets/asset1.png";
+import screen from "../assets/splash.png";
 export default class Splash extends Component {
   render() {
     return (
       <View style={styles.SplashScreen_RootView}>
         <View style={styles.SplashScreen_ChildView}>
           <Image
-            source={logo}
+            source={screen}
             style={{
-              width: "50%",
-              height: "50%",
+              width: "100%",
+              height: "100%",
               resizeMode: "contain",
             }}
           />
-          <Text style={{ marginTop: 10, fontSize: 18 }}>
-            Developed By SDS COEP
-          </Text>
         </View>
       </View>
     );

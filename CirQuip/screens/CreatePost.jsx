@@ -633,9 +633,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   PostAreaImage: {
-    width: 62,
-    height: 62,
-    borderRadius: 31,
+    width: 35,
+    height: 35,
   },
   Icons: {
     fontSize: 30,

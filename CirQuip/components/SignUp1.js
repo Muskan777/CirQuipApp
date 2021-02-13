@@ -14,7 +14,7 @@ export default function SignUp1() {
       <View style={styles.container}>
         <Image
           style={styles.logo}
-          source={require("../assets/asset1.png")}
+          source={require("../assets/asset2.png")}
         ></Image>
       </View>
     </SafeAreaView>
@@ -25,13 +25,11 @@ const styles = StyleSheet.create({
   container: {
     // height: Dimensions.get('window').height,
     // flexDirection: "column",
-    marginTop: "35%",
-    paddingBottom: 30,
+    marginTop: "60%",
   },
   logo: {
-    height: 200,
-    width: 220,
+    height: 150,
+    width: 200,
     resizeMode: "cover",
-    marginLeft: 45,
   },
 });
