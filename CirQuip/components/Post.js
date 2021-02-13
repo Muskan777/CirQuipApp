@@ -181,6 +181,7 @@ export default function Post({
         <View>
           <TouchableOpacity
             onPress={() => {
+              console.log("id", id);
               navigation.navigate("Profile", { _id: id });
             }}
             style={{ backgroundColor: "transparent" }}

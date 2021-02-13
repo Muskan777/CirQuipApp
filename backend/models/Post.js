@@ -37,6 +37,9 @@ const PostSchema = mongoose.Schema(
     taggedUsers: {
       type: Array,
     },
+    college: {
+      type: String,
+    },
     comments: [
       {
         type: mongoose.Schema.Types.ObjectId,
