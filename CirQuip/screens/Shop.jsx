@@ -158,7 +158,7 @@ export default class Shop extends React.Component {
       .get(`${global.config.host}/user/getUserWithId/${sellerId}`)
       .then(res => {
         Linking.openURL(
-          `whatsapp://send?phone=${res.data.phone}&text=${this.whatsappMsg(
+          `whatsapp://send?phone=+91${res.data.phone}&text=${this.whatsappMsg(
             res.data.name
           )}`
         );
@@ -427,7 +427,7 @@ export default class Shop extends React.Component {
               //ItemSeparatorComponent={this.ItemSeparator}
               refreshing={this.state.refreshing}
               onRefresh={this.handleRefresh}
-              style={{ marginBottom: 5 }}
+              style={{ marginBottom: "25%" }}
             />
           ) : this.state.refreshing ? (
             <></>

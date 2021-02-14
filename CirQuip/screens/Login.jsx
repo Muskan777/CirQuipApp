@@ -26,7 +26,7 @@ export default class Login extends React.Component {
       role: "Student",
       toggleSignUp: false,
       otp: "0000",
-      currentPosition: 0,
+      currentPosition: false,
     };
   }
   async handleLogin() {
@@ -61,11 +61,11 @@ export default class Login extends React.Component {
   }
   toggleSignUp() {
     this.setState({ toggleSignUp: !this.state.toggleSignUp });
-    this.setState({currentPosition: 0});
+    this.setState({ currentPosition: false });
   }
 
   onPageChange() {
-    this.setState({ currentPosition: 1 });
+    this.setState({ currentPosition: !this.state.currentPosition });
   }
 
   handleSignUp() {
@@ -159,156 +159,159 @@ export default class Login extends React.Component {
           <SignUp1 />
           {this.state.toggleSignUp ? (
             <>
-            {this.state.currentPosition === 0 ? (
-            <>
-              {console.log(this.state)}
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.name}
-                  style={styles.inputText}
-                  placeholder="Name..."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ name: text })}
-                />
-              </View>
-
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.email}
-                  style={styles.inputText}
-                  textContentType={"emailAddress"}
-                  placeholder="Email..."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ email: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              
-              <View style={styles.inputView}>
-                <TextInput
-                  maxLength={10}
-                  value={this.state.phone}
-                  textContentType={"telephoneNumber"}
-                  keyboardType={"phone-pad"}
-                  style={styles.inputText}
-                  placeholder="Mobile Number"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ phone: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.password}
-                  secureTextEntry
-                  style={styles.inputText}
-                  placeholder="Password"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ password: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.password2}
-                  secureTextEntry
-                  style={styles.inputText}
-                  placeholder="Confirm Password"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ password2: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={() => this.onPageChange()}
-              >
-                <Text style={styles.loginText}>Next</Text>
-              </TouchableOpacity>
-              </>
-            ) : (
+              {this.state.currentPosition === false ? (
                 <>
-                <View style={styles.drops}>
-                <DropDownPicker
-                  items={[
-                    { label: "COEP", value: "COEP" },
-                    { label: "VJTI", value: "VJTI" },
-                    { label: "VIT", value: "VIT" },
-                    { label: "DY", value: "DY" },
-                    { label: "PICT", value: "PICT" },
-                    { label: "PCCOE", value: "PCCOE" },
-                    { label: "MIT", value: "MIT" },
-                    { label: "VIIT", value: "VIIT" },
-                    {
-                      label: "Sandeep University",
-                      value: "Sandeep University",
-                    },
-                    { label: "VU", value: "VU" },
-                    { label: "IIIT Pune", value: "IIIT Pune" },
-                  ]}
-                  defaultNull
-                  placeholder="Select College"
-                  dropDownMaxHeight={130}
-                  selectedLabelStyle={{
-                    color: "#fff",
-                  }}
-                  containerStyle={styles.dropContainer}
-                  placeholderStyle={styles.placeholder}
-                  dropDownStyle={styles.dropDown}
-                  activeLabelStyle={styles.activeLabel}
-                  activeItemStyle={styles.activeItem}
-                  style={styles.picker}
-                  labelStyle={styles.label}
-                  arrowColor="white"
-                  arrowSize={30}
-                  onChangeItem={item => {
-                    this.setState({ college: item.value });
-                  }}
-                />
-                <DropDownPicker
-                  items={[
-                    { label: "Student", value: "Student" },
-                    { label: "Faculty", value: "Faculty" },
-                    { label: "Alumni", value: "Alumni" },
-                  ]}
-                  defaultNull
-                  placeholder="Select Role"
-                  dropDownMaxHeight={130}
-                  selectedLabelStyle={{
-                    color: "#fff",
-                  }}
-                  containerStyle={styles.dropContainer}
-                  placeholderStyle={styles.placeholder}
-                  dropDownStyle={styles.dropDown}
-                  activeLabelStyle={styles.activeLabel}
-                  activeItemStyle={styles.activeItem}
-                  style={styles.picker}
-                  labelStyle={styles.label}
-                  arrowColor="white"
-                  arrowSize={30}
-                  onChangeItem={item => {
-                    this.setState({ role: item.value });
-                  }}
-                />
-              </View>
-              <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={() => this.handleSignUp()}
-              >
-                <Text style={styles.loginText}>Sign Up</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                <Text style={styles.loginText}>Sign In</Text>
-              </TouchableOpacity>
-              <View style={styles.already1}>
-                <Text style={styles.already}>Already have an account?</Text>
-                <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                  <Text style={styles.already}> Sign In</Text>
-                </TouchableOpacity>
-              </View>
-              </>
-            )}
+                  {console.log(this.state)}
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.name}
+                      style={styles.inputText}
+                      placeholder="Name..."
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ name: text })}
+                    />
+                  </View>
+
+                  <View style={styles.line}></View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.email}
+                      style={styles.inputText}
+                      textContentType={"emailAddress"}
+                      placeholder="Email..."
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ email: text })}
+                    />
+                  </View>
+                  <View style={styles.line}></View>
+
+                  <View style={styles.inputView}>
+                    <TextInput
+                      maxLength={10}
+                      value={this.state.phone}
+                      textContentType={"telephoneNumber"}
+                      keyboardType={"phone-pad"}
+                      style={styles.inputText}
+                      placeholder="Mobile Number"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ phone: text })}
+                    />
+                  </View>
+                  <View style={styles.line}></View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.password}
+                      secureTextEntry
+                      style={styles.inputText}
+                      placeholder="Password"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ password: text })}
+                    />
+                  </View>
+                  <View style={styles.line}></View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.password2}
+                      secureTextEntry
+                      style={styles.inputText}
+                      placeholder="Confirm Password"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ password2: text })}
+                    />
+                  </View>
+                  <View style={styles.line}></View>
+                  <TouchableOpacity
+                    style={[styles.loginBtn, { marginBottom: 20 }]}
+                    onPress={() => this.onPageChange()}
+                  >
+                    <Text style={styles.loginText}>Next</Text>
+                  </TouchableOpacity>
+                </>
+              ) : (
+                <>
+                  <View style={styles.drops}>
+                    <DropDownPicker
+                      items={[
+                        { label: "COEP", value: "COEP" },
+                        { label: "VJTI", value: "VJTI" },
+                        { label: "VIT", value: "VIT" },
+                        { label: "DY", value: "DY" },
+                        { label: "PICT", value: "PICT" },
+                        { label: "PCCOE", value: "PCCOE" },
+                        { label: "MIT", value: "MIT" },
+                        { label: "VIIT", value: "VIIT" },
+                        {
+                          label: "Sandeep University",
+                          value: "Sandeep University",
+                        },
+                        { label: "VU", value: "VU" },
+                        { label: "IIIT Pune", value: "IIIT Pune" },
+                      ]}
+                      defaultNull
+                      placeholder="Select College"
+                      dropDownMaxHeight={130}
+                      selectedLabelStyle={{
+                        color: "grey",
+                      }}
+                      containerStyle={styles.dropContainer}
+                      placeholderStyle={styles.placeholder}
+                      dropDownStyle={styles.dropDown}
+                      activeLabelStyle={styles.activeLabel}
+                      activeItemStyle={styles.activeItem}
+                      style={styles.picker}
+                      labelStyle={styles.label}
+                      arrowColor="white"
+                      arrowSize={30}
+                      onChangeItem={item => {
+                        this.setState({ college: item.value });
+                      }}
+                    />
+                    <DropDownPicker
+                      items={[
+                        { label: "Student", value: "Student" },
+                        { label: "Faculty", value: "Faculty" },
+                        { label: "Alumni", value: "Alumni" },
+                      ]}
+                      defaultNull
+                      placeholder="Select Role"
+                      dropDownMaxHeight={130}
+                      selectedLabelStyle={{
+                        color: "grey",
+                      }}
+                      containerStyle={styles.dropContainer}
+                      placeholderStyle={styles.placeholder}
+                      dropDownStyle={styles.dropDown}
+                      activeLabelStyle={styles.activeLabel}
+                      activeItemStyle={styles.activeItem}
+                      style={styles.picker}
+                      labelStyle={styles.label}
+                      arrowColor="white"
+                      arrowSize={30}
+                      onChangeItem={item => {
+                        this.setState({ role: item.value });
+                      }}
+                    />
+                  </View>
+                  <TouchableOpacity onPress={() => this.onPageChange()}>
+                    <Text style={{ fontSize: 16, color: "grey" }}>Go Back</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.loginBtn}
+                    onPress={() => this.handleSignUp()}
+                  >
+                    <Text style={styles.loginText}>Sign Up</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                    <Text style={styles.loginText}>Sign In</Text>
+                  </TouchableOpacity>
+                  <View style={styles.already1}>
+                    <Text style={styles.already}>Already have an account?</Text>
+                    <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                      <Text style={styles.already}> Sign In</Text>
+                    </TouchableOpacity>
+                  </View>
+                </>
+              )}
             </>
           ) : (
             <>
@@ -371,9 +374,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").height,
+    height: "100%",
     // width: Dimensions.get("window").width,
-
   },
   logo: {
     fontWeight: "bold",
@@ -386,37 +388,39 @@ const styles = StyleSheet.create({
   },
   dropContainer: {
     marginHorizontal: 65,
-    height: 50,
+    height: 40,
     width: 265,
     marginBottom: 10,
     alignItems: "center",
   },
   placeholder: {
-    color: "#fff",
+    color: "grey",
     fontSize: 20,
     lineHeight: 28,
   },
   dropDown: {
     width: 265,
     backgroundColor: "#fff",
+    color: "grey",
   },
   activeItem: {
     fontWeight: "bold",
-    backgroundColor: "rgba(54, 181, 165, 1)",
+    backgroundColor: "transparent",
+    color: "grey",
   },
   activeLabel: {
-    color: "#fff",
+    color: "grey",
   },
   label: {
-    color: "rgba(44, 101, 109, 1)",
+    color: "grey",
     fontSize: 18,
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 18,
   },
   picker: {
-    backgroundColor: "rgba(44, 101, 109, 0.9)",
-    color: "#fff",
+    backgroundColor: "transparent",
+    color: "rgba(43, 164, 219, 0.6313725490196078)",
   },
   inputView: {
     color: "rgba(159,159,159,1)",
@@ -452,7 +456,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
-    marginBottom: 0,
+    marginBottom: 5,
   },
   loginText: {
     color: "white",

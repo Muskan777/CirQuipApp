@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import axios from "axios";
-import { Button } from "react-native-paper";
+import { Button, Switch } from "react-native-paper";
 
 export default class PersonalInfo extends Component {
   constructor(props) {
@@ -21,21 +21,40 @@ export default class PersonalInfo extends Component {
     console.log(this.props);
     let user = this.props.user;
     if (user) {
-      this.state = {
-        user: user,
-        data: [
-          { title: "Skills", data: user.skills },
-          { title: "Clubs", data: user.clubs },
-          { title: "Contact Info", data: [user.phone, user.email] },
-        ],
-        modalSkills: false,
-        modalClubs: false,
-        modalContactInfo: false,
-        newSkill: "",
-        newClub: "",
-        newPhonenum: "",
-        newemail: "",
-      };
+      if (this.props.myself || user.contactInfoVisible) {
+        this.state = {
+          user: user,
+          data: [
+            { title: "Skills", data: user.skills },
+            { title: "Clubs", data: user.clubs },
+            { title: "Contact Info", data: [user.phone, user.email] },
+          ],
+          modalSkills: false,
+          modalClubs: false,
+          modalContactInfo: false,
+          newSkill: "",
+          newClub: "",
+          newPhonenum: "",
+          newemail: "",
+          contactInfoVisible: false,
+        };
+      } else {
+        this.state = {
+          user: user,
+          data: [
+            { title: "Skills", data: user.skills },
+            { title: "Clubs", data: user.clubs },
+          ],
+          modalSkills: false,
+          modalClubs: false,
+          modalContactInfo: false,
+          newSkill: "",
+          newClub: "",
+          newPhonenum: "",
+          newemail: "",
+          contactInfoVisible: false,
+        };
+      }
     } else {
       Alert.alert("Error", "Error fetching user information");
     }
@@ -54,22 +73,39 @@ export default class PersonalInfo extends Component {
             return (
               <View style={styles.titleContainer}>
                 <Text style={styles.title}>{section.title}</Text>
-                {this.props.myself && section.title != "Contact Info" ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      if (section.title === "Skills") {
-                        this.setState({ modalSkills: true });
-                      } else if (section.title === "Clubs") {
-                        this.setState({ modalClubs: true });
-                      }
-                    }}
-                  >
-                    <MaterialCommunityIcons
-                      name="plus"
-                      size={30}
-                      style={styles.Icons}
+                {this.props.myself ? (
+                  section.title != "Contact Info" ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        if (section.title === "Skills") {
+                          this.setState({ modalSkills: true });
+                        } else if (section.title === "Clubs") {
+                          this.setState({ modalClubs: true });
+                        }
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="plus"
+                        size={30}
+                        style={styles.Icons}
+                      />
+                    </TouchableOpacity>
+                  ) : (
+                    <Switch
+                      value={this.state.contactInfoVisible}
+                      color="#2ea5dd"
+                      onValueChange={val => {
+                        let user = this.state.user;
+                        if (user.contactInfoVisible) {
+                          user.contactInfoVisible = !user.contactInfoVisible;
+                        } else {
+                          user.contactInfoVisible = val;
+                        }
+                        this.setState({ contactInfoVisible: val });
+                        console.log(this.state.user);
+                      }}
                     />
-                  </TouchableOpacity>
+                  )
                 ) : (
                   <View />
                 )}
@@ -248,7 +284,7 @@ export default class PersonalInfo extends Component {
               width: "40%",
               margin: 20,
               marginHorizontal: 30,
-              backgroundColor: "#287ec1",
+              backgroundColor: "#2ea5dd",
               alignSelf: "center",
             }}
             onPress={() => {
