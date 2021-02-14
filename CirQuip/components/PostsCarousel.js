@@ -14,7 +14,7 @@ import {
 import { Card } from "react-native-material-cards";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Dialog, Portal, Button } from "react-native-paper";
+import { Dialog, Portal, Button, Menu } from "react-native-paper";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -76,14 +76,24 @@ export default function PostCarousel({
   const [URL, setURL] = useState(null);
   const [allowDelete, setAllowDelete] = useState(null);
   const [visible, setVisible] = useState(false);
+  const [visibleReport, setVisibleReport] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [visibleMenu, setVisibleMenu] = React.useState(false);
   let usersTagged = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
   });
 
-  const handleDialog = () => setVisible(!visible);
+  const handleDialog = () => {
+    setVisibleMenu(false);
+    setVisible(!visible);
+  };
+  const handleReportDialog = () => {
+    setVisibleMenu(false);
+    setVisibleReport(!visibleReport);
+  };
+  const handleMenu = () => setVisibleMenu(!visibleMenu);
   useEffect(() => {
     fetchLikedPosts();
   }, []);
@@ -91,9 +101,10 @@ export default function PostCarousel({
   const fetchLikedPosts = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
     let userId = await AsyncStorage.getItem("user");
+    let userEmail = await AsyncStorage.getItem("email");
     const initialUrl = await Linking.getInitialURL();
     setURL(initialUrl);
-    if (userId === id) {
+    if (userId === id || userEmail === "admin@coep.ac.in") {
       setAllowDelete(true);
     }
     axios
@@ -311,15 +322,25 @@ export default function PostCarousel({
             </Text>
           )}
         </View>
-        {allowDelete ? (
-          <FontAwesome
-            name="close"
-            size={30}
-            style={styles.closeIcon}
-            onPress={handleDialog}
-          />
-        ) : null}
+        <View style={styles.closeIcon}>
+          <Menu
+            visible={visibleMenu}
+            onDismiss={handleMenu}
+            anchor={
+              <TouchableOpacity onPress={handleMenu}>
+                <FontAwesome name="ellipsis-v" style={styles.Icons} />
+              </TouchableOpacity>
+            }
+          >
+            {allowDelete ? (
+              <Menu.Item onPress={handleDialog} title="Delete Post" />
+            ) : (
+              <Menu.Item onPress={handleReportDialog} title="Report Post" />
+            )}
+          </Menu>
+        </View>
       </View>
+
       <View style={styles.postCaption}>
         <Text> {caption}</Text>
       </View>
@@ -423,7 +444,7 @@ export default function PostCarousel({
       </View>
       <View>
         <Portal>
-          <Dialog visible={visible} onDismiss={handleDialog}>
+          <Dialog visible={visible} onDismiss={handleReportDialog}>
             <Dialog.Title
               style={{
                 ...styles.checkBoxTxt,
@@ -472,6 +493,46 @@ export default function PostCarousel({
                   Delete
                 </Button>
               ) : null}
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </View>
+      <View>
+        <Portal>
+          <Dialog visible={visibleReport} onDismiss={handleReportDialog}>
+            <Dialog.Title
+              style={{
+                ...styles.checkBoxTxt,
+                color: "#B11B1B",
+                fontWeight: "bold",
+              }}
+            >
+              Report Post
+            </Dialog.Title>
+            <Dialog.Content>
+              <View>
+                <Text
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: 15,
+                    color: "gray",
+                  }}
+                >
+                  Are you sure you want to report this post?
+                </Text>
+              </View>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={handleReportDialog} color="gray" fontSize="15">
+                Back
+              </Button>
+              <Button
+                onPress={handleReportDialog}
+                color="#B11B1B"
+                fontSize="15"
+              >
+                Report
+              </Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
