@@ -213,7 +213,13 @@ export default function CreatePost(props) {
 
   return (
     // <View>
-    <SafeAreaView style={styles.mainContent}>
+    <SafeAreaView
+      style={
+        visible
+          ? { backgroundColor: "#bbb", ...styles.mainContent }
+          : { backgroundColor: "#fff", ...styles.mainContent }
+      }
+    >
       <View style={styles.topContainer}>
         <MaterialIcons
           name="close"
@@ -323,22 +329,35 @@ export default function CreatePost(props) {
           </View>
         </View>
         <View>
-          <Portal>
-            <Dialog
-              visible={visible}
-              onDismiss={handleDialog}
-              style={styles.dialog}
+          <Modal animationType="slide" transparent={true} visible={visible}>
+            <View
+              style={{
+                height: "50%",
+                marginTop: "auto",
+                backgroundColor: "white",
+                borderTopLeftRadius: 80,
+                borderTopRightRadius: 80,
+              }}
             >
-              <Dialog.Title
+              <View
                 style={{
-                  ...styles.checkBoxTxt,
-                  color: "#4FB5A5",
-                  fontWeight: "bold",
+                  display: "flex",
+                  flexDirection: "column",
+                  // marginTop: 30,
+                  padding: 20,
+                  flex: 1,
                 }}
               >
-                Send post to
-              </Dialog.Title>
-              <Dialog.Content>
+                <Text
+                  style={{
+                    fontSize: 30,
+                    marginVertical: 20,
+                    color: "#888",
+                    textAlign: "center",
+                  }}
+                >
+                  Send post to
+                </Text>
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedA}
@@ -391,17 +410,24 @@ export default function CreatePost(props) {
                     Students
                   </Text>
                 </View>
-              </Dialog.Content>
-              <Dialog.Actions>
-                <Button onPress={handleDialog} color="gray" fontSize="15">
-                  Back
-                </Button>
-                <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
-                  Send
-                </Button>
-              </Dialog.Actions>
-            </Dialog>
-          </Portal>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginTop: 10,
+                  }}
+                >
+                  <Button onPress={handleDialog} color="gray" fontSize="15">
+                    Back
+                  </Button>
+                  <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
+                    Send
+                  </Button>
+                </View>
+              </View>
+            </View>
+          </Modal>
         </View>
       </KeyboardAvoidingView>
       <View style={styles.bottomContainer}>
