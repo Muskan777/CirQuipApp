@@ -40,6 +40,28 @@ export default function OTP({ email, navigation }) {
       });
   }
 
+  const resend = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(
+        `${global.config.host}/user/resendOtp`,
+        {
+          email: mailId,
+          otp: validOTP,
+        },
+        {
+          headers: { "cirquip-auth-token": token },
+        }
+      )
+      .then(res => {
+        if (res.status === 200) {
+          Alert.alert("OTP Resent!");
+        } else {
+          Alert.alert("Something went wrong!");
+        }
+      })
+      .catch(e => console.log(e));
+  };
   const verifyOtp = () => {
     if (otp === validOTP) {
       axios
@@ -71,6 +93,9 @@ export default function OTP({ email, navigation }) {
         maxLength={4}
         keyboardType="phone-pad"
       ></TextInput>
+      <TouchableOpacity style={styles.reset} onPress={resend}>
+        <Text style={{ color: "#2ea5dd" }}>Didn't receive OTP? Resend</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginBtn}
         onPress={() => {
@@ -131,6 +156,11 @@ const styles = StyleSheet.create({
   forgot: {
     color: "white",
     fontSize: 11,
+  },
+  reset: {
+    alignItems: "center",
+    fontSize: 14,
+    marginTop: 20,
   },
   loginBtn: {
     width: "40%",
