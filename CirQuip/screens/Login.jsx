@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
@@ -25,6 +26,7 @@ export default class Login extends React.Component {
       role: "Student",
       toggleSignUp: false,
       otp: "0000",
+      currentPosition: 0,
     };
   }
   async handleLogin() {
@@ -58,6 +60,11 @@ export default class Login extends React.Component {
   }
   toggleSignUp() {
     this.setState({ toggleSignUp: !this.state.toggleSignUp });
+    this.setState({currentPosition: 0});
+  }
+
+  onPageChange() {
+    this.setState({ currentPosition: 1 });
   }
 
   handleSignUp() {
@@ -151,6 +158,8 @@ export default class Login extends React.Component {
           <SignUp1 />
           {this.state.toggleSignUp ? (
             <>
+            {this.state.currentPosition === 0 ? (
+            <>
               {console.log(this.state)}
               <View style={styles.inputView}>
                 <TextInput
@@ -174,7 +183,52 @@ export default class Login extends React.Component {
                 />
               </View>
               <View style={styles.line}></View>
-              <View style={styles.drops}>
+              
+              <View style={styles.inputView}>
+                <TextInput
+                  maxLength={10}
+                  value={this.state.phone}
+                  textContentType={"telephoneNumber"}
+                  keyboardType={"phone-pad"}
+                  style={styles.inputText}
+                  placeholder="Mobile Number"
+                  placeholderTextColor="grey"
+                  onChangeText={text => this.setState({ phone: text })}
+                />
+              </View>
+              <View style={styles.line}></View>
+              <View style={styles.inputView}>
+                <TextInput
+                  value={this.state.password}
+                  secureTextEntry
+                  style={styles.inputText}
+                  placeholder="Password"
+                  placeholderTextColor="grey"
+                  onChangeText={text => this.setState({ password: text })}
+                />
+              </View>
+              <View style={styles.line}></View>
+              <View style={styles.inputView}>
+                <TextInput
+                  value={this.state.password2}
+                  secureTextEntry
+                  style={styles.inputText}
+                  placeholder="Confirm Password"
+                  placeholderTextColor="grey"
+                  onChangeText={text => this.setState({ password2: text })}
+                />
+              </View>
+              <View style={styles.line}></View>
+              <TouchableOpacity
+                style={styles.loginBtn}
+                onPress={() => this.onPageChange()}
+              >
+                <Text style={styles.loginText}>Next</Text>
+              </TouchableOpacity>
+              </>
+            ) : (
+                <>
+                <View style={styles.drops}>
                 <DropDownPicker
                   items={[
                     { label: "COEP", value: "COEP" },
@@ -211,21 +265,6 @@ export default class Login extends React.Component {
                     this.setState({ college: item.value });
                   }}
                 />
-              </View>
-              <View style={styles.inputView}>
-                <TextInput
-                  maxLength={10}
-                  value={this.state.phone}
-                  textContentType={"telephoneNumber"}
-                  keyboardType={"phone-pad"}
-                  style={styles.inputText}
-                  placeholder="Mobile Number"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ phone: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              <View style={styles.drops}>
                 <DropDownPicker
                   items={[
                     { label: "Student", value: "Student" },
@@ -252,28 +291,6 @@ export default class Login extends React.Component {
                   }}
                 />
               </View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.password}
-                  secureTextEntry
-                  style={styles.inputText}
-                  placeholder="Password"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ password: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.password2}
-                  secureTextEntry
-                  style={styles.inputText}
-                  placeholder="Confirm Password"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ password2: text })}
-                />
-              </View>
-              <View style={styles.line}></View>
               <TouchableOpacity
                 style={styles.loginBtn}
                 onPress={() => this.handleSignUp()}
@@ -289,6 +306,8 @@ export default class Login extends React.Component {
                   <Text style={styles.already}> Sign In</Text>
                 </TouchableOpacity>
               </View>
+              </>
+            )}
             </>
           ) : (
             <>
@@ -351,6 +370,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
+    height: Dimensions.get("window").height,
+    // width: Dimensions.get("window").width,
+
   },
   logo: {
     fontWeight: "bold",
@@ -435,6 +457,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "700",
+    zIndex: 0,
     // marginBottom: 100,
   },
   signUpText: {
