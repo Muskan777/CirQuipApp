@@ -63,10 +63,12 @@ export default function Posts({ navigation, route }) {
     fetchData();
   }, []);
 
-  const onRefresh = () => {
-    setIsRefreshing(true);
-    fetchData();
-    setIsRefreshing(false);
+  const onRefresh = refresh => {
+    if (refresh) {
+      setIsRefreshing(true);
+      fetchData();
+      setIsRefreshing(false);
+    }
   };
 
   const fetchData = async () => {
@@ -249,10 +251,11 @@ export default function Posts({ navigation, route }) {
               taggedUsers={item.taggedUsers}
               postIndex={index}
               id={item.userId}
+              onRefresh={onRefresh}
             />
           )}
           keyExtractor={item => item._id}
-          onRefresh={() => onRefresh()}
+          onRefresh={() => onRefresh(true)}
           refreshing={isRefreshing}
         />
       )}

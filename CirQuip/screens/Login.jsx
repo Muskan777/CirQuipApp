@@ -43,6 +43,7 @@ export default class Login extends React.Component {
           this.props.setVerified(res.data.verified);
           await AsyncStorage.setItem("cirquip-auth-token", res.data.token);
           await AsyncStorage.setItem("user", res.data._id);
+          await AsyncStorage.setItem("email", res.data.email);
           let info = { likes: res.data.likes ? res.data.likes : [] };
           await AsyncStorage.setItem("info", JSON.stringify(info));
           this.props.handleStatus(true);
