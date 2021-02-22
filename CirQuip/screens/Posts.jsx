@@ -210,7 +210,8 @@ export default function Posts({ navigation, route }) {
             renderItem={user => (
               <TouchableOpacity
                 onPress={() => {
-                  console.log(user);
+                  setSearchModalOpen(false);
+                  navigation.navigate("Profile", { _id: user.item._id });
                 }}
               >
                 <View style={{ ...styles.searchCard }}>

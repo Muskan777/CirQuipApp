@@ -33,8 +33,13 @@ export default function SavedPosts({ navigation }) {
   };
 
   const fetchData = async () => {
-    axios
-      .get(`${global.config.host}/post/getPosts`)
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    await axios
+      .get(`${global.config.host}/post/getPosts`, {
+        headers: {
+          "cirquip-auth-token": token,
+        },
+      })
       .then(res => {
         res.data.post.map(post => {
           postData.push(post);
@@ -59,7 +64,6 @@ export default function SavedPosts({ navigation }) {
           .catch(e => console.log(e));
       })
       .catch(e => console.log(e));
-    let token = await AsyncStorage.getItem("cirquip-auth-token");
   };
 
   return (

@@ -52,9 +52,10 @@ export default function Post({
   const [saved, setSaved] = useState(false);
   const [shared, setShared] = useState(false);
   let usersTagged = [];
-  taggedUsers.map(user => {
-    usersTagged.push(user.name);
-  });
+  taggedUsers &&
+    taggedUsers.map(user => {
+      usersTagged.push(user.name);
+    });
 
   useEffect(() => {
     fetchLikedPosts();
