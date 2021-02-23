@@ -5,6 +5,7 @@ let Comment = require("../models/Comments");
 const auth = require("../middlewares/auth");
 const { s3 } = require("../config/config");
 const ObjectId = require("mongodb").ObjectId;
+const notifUtils = require("./notifUtils");
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
 
@@ -169,6 +170,9 @@ router.route("/updatePost").patch(async (req, res) => {
 router.route("/likePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
+    console.log(Object.keys(post));
+    const userId = post._doc.userId;
+    const title = post._doc.caption;
     if (!post) {
       return res.status(400).send("Post with id not found");
     }
@@ -199,13 +203,20 @@ router.route("/likePost").patch(auth, async (req, res) => {
           await User.findOneAndUpdate(
             { _id: req.payload.id },
             { $push: { likedPosts: req.body.id } }
-          ),
-            res.status(200).send({
-              msg: "Post liked",
-              post: post,
-              likes: post.likes + 1,
-              liked: true,
-            });
+          )
+            .then(() => {
+              notifUtils.sendNotifications(userId, {
+                title: "Post Liked",
+                message: `Your post ${title} was liked`,
+              });
+              res.status(200).send({
+                msg: "Post liked",
+                post: post,
+                likes: post.likes + 1,
+                liked: true,
+              });
+            })
+            .catch(err => res.status(400).send("Error: " + err));
         })
         .catch(err => res.status(400).send("Error: " + err));
     }

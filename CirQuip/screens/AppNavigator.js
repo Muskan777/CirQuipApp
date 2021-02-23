@@ -33,6 +33,7 @@ const ShopStack = createStackNavigator();
 const AppNavigator = ({ route, verified }) => {
   const [ver, setVer] = React.useState(false);
   React.useEffect(() => {
+    console.log(route.params);
     if (verified) {
       setVer(true);
       console.log(ver);

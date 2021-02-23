@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
 const emailHandler = require("./email");
+const notifUtils = require("./notifUtils");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -61,8 +62,9 @@ router.post("/register", (req, res) => {
 // @desc user login for existing user
 
 router.post("/login", (req, res) => {
-  let { email, password } = req.body;
-  console.log(email, password);
+  let { email, password, notifToken: token = null } = req.body;
+
+  console.log(email, password, token);
   try {
     User.findOne({ email }).then(user => {
       if (!user) {
@@ -82,6 +84,7 @@ router.post("/login", (req, res) => {
             savedPosts: user.savedPosts,
             sharedPosts: user.sharedPosts,
           };
+          if (token) notifUtils.addNotificationToken(token, user.id);
           jwt.sign(
             payload,
             keys.jwtSecretKey,
@@ -307,5 +310,37 @@ router.route("/deleteUser").delete(auth, async (req, res) => {
     console.log(e);
   }
 });
-
+//to be tested !!
+router.post("/removeNotificationId", async (req, res) => {
+  const { id: username, notifToken: notification_id } = req.body;
+  // console.log(username, notification_id);
+  if (!username || !notification_id) {
+    return res.status(400).json("parameters missing");
+  }
+  try {
+    await User.findById(username, async (err, resp) => {
+      if (
+        resp._doc.notification_id &&
+        resp._doc.notification_id.includes(notification_id)
+      ) {
+        // console.log("ITS HERE");
+        var idx = resp._doc.notification_id.indexOf(notification_id);
+        resp._doc.notification_id.splice(idx, 1);
+        // console.log(resp);
+        resp.markModified("notification_id");
+        resp.save(function (err) {
+          if (err) {
+            return res.status(400).json(err);
+          } else {
+            console.log("SUCCESS");
+          }
+        });
+      }
+      return res.status(200);
+    });
+  } catch (err) {
+    console.log(err);
+    return res.status(200).json(err);
+  }
+});
 module.exports = router;

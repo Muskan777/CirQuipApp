@@ -13,6 +13,8 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
 import DropDownPicker from "react-native-dropdown-picker";
+import * as Notifications from "expo-notifications";
+import Constants from "expo-constants";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -27,7 +29,42 @@ export default class Login extends React.Component {
       toggleSignUp: false,
       otp: "0000",
       currentPosition: false,
+      notifToken: null,
     };
+  }
+
+  registerForPushNotificationsAsync = async () => {
+    //if (Constants.isDevice) {
+    const {
+      status: existingStatus,
+    } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+    if (existingStatus !== "granted") {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
+    }
+    if (finalStatus !== "granted") {
+      alert("Failed to get push token for push notification!");
+      return;
+    }
+    const token = (await Notifications.getExpoPushTokenAsync()).data;
+    console.log(token);
+    this.setState({ notifToken: token });
+    //} else {
+    //alert("Must use physical device for Push Notifications");
+    //}
+
+    if (Platform.OS === "android") {
+      Notifications.setNotificationChannelAsync("default", {
+        name: "default",
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: "#FF231F7C",
+      });
+    }
+  };
+  componentDidMount() {
+    this.registerForPushNotificationsAsync();
   }
   async handleLogin() {
     if (this.state.password === "") {
@@ -46,6 +83,7 @@ export default class Login extends React.Component {
           await AsyncStorage.setItem("email", res.data.email);
           let info = { likes: res.data.likes ? res.data.likes : [] };
           await AsyncStorage.setItem("info", JSON.stringify(info));
+          await AsyncStorage.setItem("notifToken", this.state.notifToken);
           this.props.handleStatus(true);
         } catch (err) {
           console.log(err);

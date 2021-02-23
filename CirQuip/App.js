@@ -32,7 +32,16 @@ import CreatePostCamera from "./screens/CreatePostCamera";
 import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
+import Constants from "expo-constants";
+import * as Notifications from "expo-notifications";
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const SavedStack = createStackNavigator();
@@ -59,10 +68,29 @@ export default function App() {
   const [user, setUser] = React.useState({});
   const [verified, setVerified] = React.useState(false);
   const [splash, toggleSplash] = React.useState(true);
-
+  const [notification, setNotification] = React.useState(false);
+  const notificationListener = React.useRef();
+  const responseListener = React.useRef();
   React.useEffect(() => {
+    //AsyncStorage.clear();
+    notificationListener.current = Notifications.addNotificationReceivedListener(
+      notification => {
+        setNotification(notification);
+      }
+    );
+
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+      response => {
+        console.log(response);
+      }
+    );
+
     checkJWT();
     setTimeout(() => toggleSplash(!splash), 2000);
+    //return () => {
+    //Notifications.removeNotificationSubscription(notificationListener);
+    //Notifications.removeNotificationSubscription(responseListener);
+    //};
   }, []);
 
   const handleLogout = async () => {

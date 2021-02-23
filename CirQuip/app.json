@@ -18,6 +18,8 @@
       "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true,
       "package": "com.cirquip.cirquip",
       "versionCode": 1
     }
