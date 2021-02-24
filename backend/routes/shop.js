@@ -7,6 +7,7 @@ const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 const { s3 } = require("../config/config");
 const auth = require("../middlewares/auth");
+const notifUtils = require("./notifUtils");
 //const ObjectId = require("mongodb").ObjectID;
 
 /*
@@ -157,7 +158,18 @@ router.put("/like", async (req, resp) => {
   const { user, productId } = req.body;
   console.log(user, productId);
   try {
-    await User.findOneAndUpdate({ _id: user }, { $push: { likes: productId } });
+    await User.findOneAndUpdate(
+      { _id: user },
+      { $push: { likes: productId } }
+    ).then(async user => {
+      const product = await Shop.findById(productId);
+      console.log(product);
+      notifUtils.sendNotifications(product._doc.seller, {
+        title: "Product Liked ❤️ ",
+        message: `${user._doc.name} liked your product ${product._doc.name}`,
+      });
+    });
+
     return resp.status(200).json("Success");
   } catch (err) {
     console.log(err);

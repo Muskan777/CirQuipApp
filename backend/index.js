@@ -37,6 +37,7 @@ io.on("connection", socket => {
   });
 
   socket.on("send message", msg => {
+    console.log(msg);
     delete msg["_id"];
     if (users[msg.to]) {
       users[msg.to].emit("new message", msg);
