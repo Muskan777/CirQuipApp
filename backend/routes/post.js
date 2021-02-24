@@ -200,14 +200,16 @@ router.route("/likePost").patch(auth, async (req, res) => {
         { $set: { likes: post.likes + 1 } }
       )
         .then(async post => {
+          //replace it by fetching and then updating and saving for optimization
           await User.findOneAndUpdate(
             { _id: req.payload.id },
-            { $push: { likedPosts: req.body.id } }
+            { $push: { likedPosts: req.body.id } },
+            { new: true }
           )
-            .then(() => {
+            .then(user => {
               notifUtils.sendNotifications(userId, {
-                title: "Post Liked",
-                message: `Your post ${title} was liked`,
+                title: "Post Liked ❤️",
+                message: `${user._doc.name} liked your post ${title}`,
               });
               res.status(200).send({
                 msg: "Post liked",

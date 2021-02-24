@@ -43,23 +43,28 @@ const sendNotifications = async (
   if (!tokens || !tokens.length) return;
 
   let users = Array.from(new Set(tokens.filter(Boolean)));
-  let payload = {
-    to: users,
-    title: dataPayload.title,
-    body: dataPayload.message,
-  };
-  await axios
-    .post("https://exp.host/--/api/v2/push/send", payload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    });
+  users.forEach(async token => {
+    await axios
+      .post(
+        "https://exp.host/--/api/v2/push/send",
+        {
+          to: token,
+          title: dataPayload.title,
+          body: dataPayload.message,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  });
 };
 
 module.exports = {

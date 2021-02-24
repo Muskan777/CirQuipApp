@@ -2,7 +2,7 @@ const router = require("express").Router();
 let Comment = require("../models/Comments");
 let Post = require("../models/Post");
 const auth = require("../middlewares/auth");
-
+const notifUtils = require("./notifUtils");
 // @route POST /api/comment/createComment
 // @desc Creates new comment
 
@@ -26,10 +26,17 @@ router.route("/createComment").post(auth, async (req, res) => {
         await Post.findOneAndUpdate(
           { _id: newcomment.postId },
           { $push: { comments: newcomment._id } }
-        ),
-          res
-            .status(200)
-            .send({ msg: "New comment created", comment: newComment });
+        )
+          .then(post => {
+            notifUtils.sendNotifications(post._doc.userId, {
+              title: `${req.payload.name} commented on your post ${post._doc.caption}`,
+              message: `${comment}`,
+            });
+            res
+              .status(200)
+              .send({ msg: "New comment created", comment: newComment });
+          })
+          .catch(err => res.status(400).send("Error:" + err));
       })
       .catch(err => res.status(400).send("Error:" + err));
   } catch (e) {
@@ -83,7 +90,13 @@ router.route("/likeComment").patch(auth, async (req, res) => {
         { _id: req.body.id },
         { $push: { likes: req.payload.id } }
       )
-        .then(() => {
+        .then(async comment => {
+          let post = await Post.findById(comment._doc.postId);
+          notifUtils.sendNotifications(post._doc.userId, {
+            title: `You received a like ❤️  on your comment`,
+            message: `${req.payload.name} liked your comment "${comment.comment}"`,
+          });
+
           res.status(200).send({
             msg: "Comment liked",
             liked: true,
