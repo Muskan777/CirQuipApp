@@ -571,12 +571,12 @@ const styles = StyleSheet.create({
   },
   Icons: {
     fontSize: 30,
-    color: "#4FB5A5",
+    color: "#2ba4db",
     paddingHorizontal: 10,
   },
   closeIcon: {
     fontSize: 25,
-    color: "#4FB5A5",
+    color: "#2ba4db",
     paddingHorizontal: 10,
     position: "absolute",
     right: 0,

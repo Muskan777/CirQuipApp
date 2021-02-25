@@ -19,7 +19,6 @@ import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import AppNavigator from "./screens/AppNavigator";
 import { DrawerContent } from "./screens/DrawerContent";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import * as SplashScreen from "expo-splash-screen";
@@ -34,6 +33,9 @@ import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
+import CreatePost from "./screens/CreatePost";
+import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
+import Posts from "./screens/Posts";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -51,6 +53,9 @@ const MyProductsStack = createStackNavigator();
 const ShopProductsStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const BuyRequests = createStackNavigator();
+const HomeStack = createStackNavigator();
+const CreatePostStack = createStackNavigator();
+const ShopStack = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -63,6 +68,7 @@ const theme = {
     text: "#000",
   },
 };
+
 export default function App() {
   const [status, setStatus] = React.useState(false);
   const [user, setUser] = React.useState({});
@@ -462,6 +468,205 @@ export default function App() {
     </ProfileStack.Navigator>
   );
 
+  const HomeStackScreen = ({ navigation, route }) => (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(43, 164, 219, 1)",
+        },
+      }}
+    >
+      <HomeStack.Screen
+        name="Posts"
+        component={Posts}
+        options={{
+          title: "Posts",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+      <HomeStack.Screen
+        name="Profile"
+        component={Profile2}
+        options={{
+          title: "Posts",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </HomeStack.Navigator>
+  );
+
+  const CreatePostStackScreen = ({ navigation, route }) => (
+    <CreatePostStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(43, 164, 219, 1)",
+        },
+      }}
+    >
+      <CreatePostStack.Screen
+        name="CreatePost"
+        component={CreatePost}
+        options={{
+          title: "Create Post",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+      <CreatePostStack.Screen
+        name="CreatePostImageBrowser"
+        component={CreatePostImageBrowser}
+        options={{
+          title: "Select Items",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+      <CreatePostStack.Screen
+        name="Camera"
+        component={CreatePostCamera}
+        options={{
+          title: "Create Post",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </CreatePostStack.Navigator>
+  );
+
+  const ShopStackScreen = ({ navigation, route }) => (
+    <ShopStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(43, 164, 219, 1)",
+        },
+      }}
+    >
+      <ShopStack.Screen
+        name="Shop"
+        component={Shop}
+        initialParams={{ type: "all" }}
+        options={{
+          title: "Shop",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ShopStack.Navigator>
+  );
+
   const ChatScreen = ({ navigation }) => (
     <ChatStack.Navigator
       screenOptions={{
@@ -553,16 +758,8 @@ export default function App() {
         <NavigationContainer>
           <Drawer.Navigator
             drawerContent={props => <DrawerContent {...props} user={user} />}
-            initialRouteName={verified ? "HomeDrawer" : "OTP"}
+            initialRouteName={verified ? "Home" : "OTP"}
           >
-            <Drawer.Screen
-              name="HomeDrawer"
-              component={AppNavigator}
-              initialParams={{
-                handleStatus: handleStatus,
-                verified: verified,
-              }}
-            />
             <Drawer.Screen
               name="SellProducts"
               component={SellProductsStackScreen}
@@ -587,6 +784,19 @@ export default function App() {
               initialParams={{ email: user.email }}
             />
             <Drawer.Screen name="ChatUser" component={ChatUser} />
+            <Drawer.Screen
+              name="CreatePost"
+              component={CreatePostStackScreen}
+            />
+            <Drawer.Screen name="Shop" component={ShopStackScreen} />
+            <Drawer.Screen
+              name="Home"
+              component={HomeStackScreen}
+              initialParams={{
+                handleStatus: handleStatus,
+                verified: verified,
+              }}
+            />
           </Drawer.Navigator>
         </NavigationContainer>
       </PaperProvider>
