@@ -290,6 +290,9 @@ export default function Posts({ navigation, route }) {
               taggedUsers={item.taggedUsers}
               postIndex={index}
               id={item.userId}
+              skill={item.userSkill}
+              club={item.userClub}
+              interest={item.userInterest}
               onRefresh={onRefresh}
             />
           )}

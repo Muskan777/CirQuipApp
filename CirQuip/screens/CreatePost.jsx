@@ -44,6 +44,9 @@ export default function CreatePost(props) {
   const [checkedC, setCheckedC] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [College, setCollege] = React.useState("");
+  const [Skill, setSkill] = React.useState("");
+  const [Club, setClubs] = React.useState("");
+  const [Interest, setInterest] = React.useState("");
 
   const handleDialog = () => setVisible(!visible);
 
@@ -56,6 +59,9 @@ export default function CreatePost(props) {
           .then(res => {
             setUser(res.data.name);
             setCollege(res.data.college);
+            res.data.skills && setSkill(res.data.skills[0]);
+            res.data.Interest && setInterest(res.data.Interest[0]);
+            res.data.clubs && setClubs(res.data.clubs[0]);
           })
           .catch(err => {
             Alert.alert("Error", "Something Went Wrong");
@@ -101,6 +107,9 @@ export default function CreatePost(props) {
           taggedUsers: taggedList,
           group: group,
           userCollege: College,
+          userSkill: Skill,
+          userInterest: Interest,
+          userClub: Club,
         },
         {
           headers: {
