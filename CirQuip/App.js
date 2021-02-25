@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
-import { Alert } from "react-native";
+import { Alert, AppState } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
@@ -34,14 +34,17 @@ import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
 import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
-
+import * as RootNavigation from "./RootNavigation";
 Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: true,
-  }),
+  handleNotification: async notification => {
+    return {
+      shouldShowAlert: true,
+      shouldPlaySound: true,
+      shouldSetBadge: true,
+    };
+  },
 });
+
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const SavedStack = createStackNavigator();
@@ -69,25 +72,52 @@ export default function App() {
   const [verified, setVerified] = React.useState(false);
   const [splash, toggleSplash] = React.useState(true);
   const [notification, setNotification] = React.useState(false);
+  const [appState, setAppState] = React.useState("active");
   const notificationListener = React.useRef();
   const responseListener = React.useRef();
+  const handleStateChange = nextAppState => {
+    if (appState.match(/inactive|background/) && nextAppState === "active") {
+      console.log("App has come to the foreground!");
+    }
+    setAppState(nextAppState);
+  };
+
   React.useEffect(() => {
-    //AsyncStorage.clear();
+    setTimeout(() => toggleSplash(!splash), 0);
+
+    AppState.addEventListener("change", handleStateChange);
     notificationListener.current = Notifications.addNotificationReceivedListener(
       notification => {
+        console.log("received");
         setNotification(notification);
       }
     );
 
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
       response => {
-        console.log(response);
+        let data = response.notification.request.content.data;
+        console.log(data);
+        switch (data.type) {
+          case "post": {
+            console.log("I am here");
+            let check = setInterval(() => {
+              if (appState.match(/active/)) {
+                console.log("navigating");
+                RootNavigation.navigate("Profile", {
+                  notification: data.uid,
+                });
+                clearInterval(check);
+              }
+            }, 100);
+            break;
+          }
+        }
       }
     );
 
     checkJWT();
-    setTimeout(() => toggleSplash(!splash), 2000);
     //return () => {
+    //AppState.removeEventListener("change", handleStateChange);
     //Notifications.removeNotificationSubscription(notificationListener);
     //Notifications.removeNotificationSubscription(responseListener);
     //};
@@ -550,7 +580,7 @@ export default function App() {
   return splash === false ? (
     status ? (
       <PaperProvider theme={theme}>
-        <NavigationContainer>
+        <NavigationContainer ref={RootNavigation.navigationRef}>
           <Drawer.Navigator
             drawerContent={props => <DrawerContent {...props} user={user} />}
             initialRouteName={verified ? "HomeDrawer" : "OTP"}

@@ -34,6 +34,8 @@ export default function Posts({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState("");
 
   React.useEffect(() => {
+    Alert.alert("hey I am in posts");
+    console.log(navigation.params);
     navigation?.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
