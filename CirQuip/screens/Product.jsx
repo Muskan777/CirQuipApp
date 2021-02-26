@@ -28,48 +28,70 @@ import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as RootNavigation from "../RootNavigation.js";
 export default class Product extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      ...this.props.route.params,
-      user: { likes: [] },
-      type: this.props.route.params.type,
-    };
+    this.state =
+      this.props.from === "notification"
+        ? {
+            ...this.props,
+            user: { likes: [] },
+            type: "my",
+          }
+        : {
+            ...RootNavigation.productState.current,
+            user: { likes: [] },
+            type: this.props.route.params.type,
+          };
+
+    //this.state = {
+    //...this.props?.route?.params,
+    //user: { likes: [] },
+    //type: this.props.route.params.type,
+    //};
   }
-  componentDidMount() {
-    this.props.navigation.setOptions({
-      headerLeft: () => (
-        <IconButton
-          icon="arrow-left"
-          color="#000"
-          size={30}
-          onPress={() => {
-            this.props.route.params.onGoBack();
-            this.props.navigation.goBack();
-          }}
-        />
-      ),
-    });
-    axios
-      .get(
-        `${global.config.host}/user/getUserWithId/${
-          this.props.route.params.type === "requests"
-            ? this.state.reserved
-            : this.state.seller
-        }`
-      )
-      .then(res => {
-        this.setState({ seller: { ...res.data } });
-      })
-      .catch(err => {
-        Alert.alert("Error", "Something Went Wrong In Fetching Seller");
-        console.log(err);
+  doAllTasks = async () => {
+    console.log(this.state);
+    if (this.state.from !== "notification")
+      this.props.navigation.setOptions({
+        headerLeft: () => (
+          <IconButton
+            icon="arrow-left"
+            color="#000"
+            size={30}
+            onPress={() => {
+              this.props.route.params.onGoBack();
+              this.props.navigation.goBack();
+            }}
+          />
+        ),
       });
+    await AsyncStorage.getItem("user").then(userId => {
+      if (!userId) return;
+      if (this.state?.from === "notification") {
+        this.setState({ seller: userId });
+        console.log("I used this", userId);
+      }
+      axios
+        .get(
+          `${global.config.host}/user/getUserWithId/${
+            this.state?.type === "requests"
+              ? this.state?.reserved
+              : this.state?.seller
+          }`
+        )
+        .then(res => {
+          this.setState({ seller: { ...res.data } });
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong In Fetching Seller");
+          console.log(err);
+        });
+    });
 
     this.props.navigation.setOptions({
-      title: this.state.type == "requests" ? "Buy Request" : this.state.name,
+      title: this.state?.type == "requests" ? "Buy Request" : this.state.name,
     });
 
     (async () => {
@@ -93,6 +115,24 @@ export default class Product extends React.Component {
         Alert.alert("Cirquip", "Something went wrong");
       }
     })();
+  };
+  componentDidMount() {
+    this.doAllTasks();
+  }
+  async componentDidUpdate(prevProps, prevState) {
+    if (this.state?.from === "notification") return;
+    //if (
+    //prevState === this.state ||
+    //JSON.stringify(prevState) === JSON.stringify(this.state)
+    //)
+    //return;
+
+    if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
+      this.setState(
+        { ...this.state, ...RootNavigation.productState.current },
+        () => this.doAllTasks()
+      );
+    }
   }
   buyProduct = () => {
     console.log(`${global.config.host}/shop/buy`);
@@ -200,7 +240,7 @@ export default class Product extends React.Component {
       .catch(err => console.log(err));
   };
   whatsappMsg =
-    this.props.route.params.type === "requests"
+    this.state?.type === "requests"
       ? `Hey I received your request for buying ${this.state?.name}. Let's talk....`
       : `Hi, I am interested to buy ${this.state?.name} posted by you on CirQuip`;
   onShare = async () => {
@@ -283,8 +323,7 @@ export default class Product extends React.Component {
             marginRight: 10,
             scaleX: 1.5,
             scaleY: 1.5,
-            display:
-              this.props.route.params.type === "requests" ? "none" : "flex",
+            display: this.state?.type === "requests" ? "none" : "flex",
           }}
         />
       </TouchableOpacity>
@@ -296,9 +335,7 @@ export default class Product extends React.Component {
           <Card style={{ elevation: 4 }}>
             <Card.Title
               title={
-                this.props.route.params.type === "my"
-                  ? "You"
-                  : this.state.seller?.name
+                this.state?.type === "my" ? "You" : this.state.seller?.name
               }
               subtitle={this.state.seller?.email}
               left={LeftContent}
@@ -310,7 +347,7 @@ export default class Product extends React.Component {
               source={{ uri: `${this.state.image}` }}
               style={{ height: 450, padding: 5 }}
             />
-            {this.props.route.params.type === "my" ? (
+            {this.state?.type === "my" ? (
               <></>
             ) : (
               <TouchableOpacity
@@ -336,8 +373,8 @@ export default class Product extends React.Component {
                   style={{
                     ...styles.like,
                     display:
-                      this.props.route.params.type === "my" ||
-                      this.props.route.params.type === "requests"
+                      this.state?.type === "my" ||
+                      this.state?.type === "requests"
                         ? "none"
                         : "flex",
                   }}
@@ -369,7 +406,7 @@ export default class Product extends React.Component {
           </Card>
           <Card>
             <Card.Actions style={{ justifyContent: "space-around" }}>
-              {this.props.route.params.type === "my" ? (
+              {this.state?.type === "my" ? (
                 <Button
                   mode="contained"
                   icon="delete"
@@ -378,7 +415,7 @@ export default class Product extends React.Component {
                 >
                   <Text style={{ fontSize: 20 }}>Delete</Text>
                 </Button>
-              ) : this.state.type === "requests" ? (
+              ) : this.state?.type === "requests" ? (
                 <>
                   <View style={{ display: "flex", justifyContent: "center" }}>
                     <Button
@@ -412,7 +449,7 @@ export default class Product extends React.Component {
             </Card.Actions>
           </Card>
         </ScrollView>
-        {this.props.route.params.type === "my" ? (
+        {this.state?.type === "my" ? (
           <></>
         ) : (
           <>

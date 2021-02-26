@@ -87,9 +87,6 @@ export default function App() {
   };
 
   React.useEffect(() => {
-    setInterval(() =>
-      console.log("current", RootNavigation.navigationRef.current)
-    );
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
     checkJWT();

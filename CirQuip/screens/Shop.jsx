@@ -24,6 +24,7 @@ import {
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as RootNavigation from "../RootNavigation.js";
 export default class Shop extends React.Component {
   constructor(props) {
     super(props);
@@ -237,7 +238,8 @@ export default class Shop extends React.Component {
         <View style={{ flexDirection: "column" }}>
           <TouchableOpacity
             key={this.state.user.likes}
-            onPress={() =>
+            onPress={() => {
+              RootNavigation.productState.current = { ...data };
               this.props.navigation.navigate("Product", {
                 screen: "Product",
                 params: {
@@ -245,8 +247,8 @@ export default class Shop extends React.Component {
                   onGoBack: async () => await this.refresh(),
                   type: this.props.route.params.type,
                 },
-              })
-            }
+              });
+            }}
             style={{
               ...styles.container,
               borderColor: "white",

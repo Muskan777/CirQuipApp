@@ -8,19 +8,24 @@ import Product from "./Product";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { IconButton } from "react-native-paper";
 import * as RootNavigation from "../RootNavigation.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const NotificationStack = createStackNavigator();
 
 export default class NotifScreen extends React.Component {
   constructor(props) {
     super(props);
     console.log(this.props);
-    let data = { ...this.props.route.params.data, from: "notification" };
+    let data = {
+      ...this.props.route.params.data,
+      from: "notification",
+    };
     this.state = {
       data: data,
       component: {
         post: () => <Posts {...data} />,
         comment: () => <CommentWrapper {...data} />,
-        product: () => <Product {...data} />,
+        "comment-like": () => <CommentWrapper {...data} />,
+        product: props => <Product {...data} {...props} />,
       },
     };
   }
