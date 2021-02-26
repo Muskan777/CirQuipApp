@@ -94,7 +94,8 @@ export default function OTP({ email, navigation }) {
         keyboardType="phone-pad"
       ></TextInput>
       <TouchableOpacity style={styles.reset} onPress={resend}>
-        <Text style={{ color: "#2ea5dd" }}>Didn't receive OTP? Resend</Text>
+        <Text style={{ color: "grey" }}>Didn't receive OTP?</Text>
+        <Text style={{ color: "#2ea5dd" }}>Request new code.</Text>
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.loginBtn}
@@ -104,13 +105,13 @@ export default function OTP({ email, navigation }) {
       >
         <Text style={styles.loginText}>Verify</Text>
       </TouchableOpacity>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         onPress={() => {
           navigation.navigate("Home");
         }}
       >
         <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </View>
   );
 }
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginBtn: {
-    width: "40%",
+    width: "60%",
     backgroundColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderRadius: 25,
     height: 50,
