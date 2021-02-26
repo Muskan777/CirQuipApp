@@ -69,7 +69,7 @@ export default function OTP({ email, navigation }) {
         .then(res => {
           if (res.status === 200) {
             Alert.alert("CirQuip", "Successfully Verified");
-            navigation.navigate("HomeDrawer");
+            navigation.navigate("Home");
           } else {
             Alert.alert("Error", "Verification failed");
             navigation.closeDrawer();
@@ -106,7 +106,7 @@ export default function OTP({ email, navigation }) {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("HomeDrawer");
+          navigation.navigate("Home");
         }}
       >
         <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
