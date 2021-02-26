@@ -3,7 +3,7 @@ import * as Notifications from "expo-notifications";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import Posts from "./Posts";
-import Comment from "../components/Comment.js";
+import CommentWrapper from "./CommentWrapper";
 import Product from "./Product";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { IconButton } from "react-native-paper";
@@ -19,7 +19,7 @@ export default class NotifScreen extends React.Component {
       data: data,
       component: {
         post: () => <Posts {...data} />,
-        comment: () => <Comment {...data} />,
+        comment: () => <CommentWrapper {...data} />,
         product: () => <Product {...data} />,
       },
     };

@@ -2,7 +2,7 @@ import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
 import { Alert, AppState } from "react-native";
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
   DefaultTheme,
@@ -87,6 +87,9 @@ export default function App() {
   };
 
   React.useEffect(() => {
+    setInterval(() =>
+      console.log("current", RootNavigation.navigationRef.current)
+    );
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
     checkJWT();
@@ -103,8 +106,14 @@ export default function App() {
     RootNavigation.responseListener.current = Notifications.addNotificationResponseReceivedListener(
       response => {
         let data = response.notification.request.content.data;
+        console.log("data-received", data);
         RootNavigation.notificationClicked.current = true;
         handleNotificationClicked(true);
+
+        RootNavigation.navigationRef.current.reset({
+          index: 0,
+          routes: [{ name: "HomeDrawer" }],
+        });
         RootNavigation.navigate("notificationStack", { data: data });
       }
     );

@@ -400,6 +400,25 @@ router.route("/getComments").post(async (req, res) => {
   }
 });
 
+// @route POST /api/post/getComments
+// @desc Get comments for post
+
+router.route("/getPostWithComment/:commentId").get(async (req, res) => {
+  await Comment.findById(req.params.commentId)
+    .then(async comment => {
+      await Post.findById(comment._doc.postId)
+        .then(post => {
+          res.status(200).json({ post: post._doc, comment: comment });
+        })
+        .catch(err => {
+          res.status(400).send("Error fetching post");
+        });
+    })
+    .catch(err => {
+      res.status(400).send("Error fetching comment");
+    });
+});
+
 router.get("/getPostWithId/:id", auth, async (req, res) => {
   try {
     let post = await Post.findById(req.params.id);

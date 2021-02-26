@@ -31,6 +31,8 @@ router.route("/createComment").post(auth, async (req, res) => {
             notifUtils.sendNotifications(post._doc.userId, {
               title: `${req.payload.name} commented on your post ${post._doc.caption}`,
               message: `${comment}`,
+              type: "comment",
+              uid: newcomment._doc._id,
             });
             res
               .status(200)
