@@ -22,6 +22,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import AppNavigator from "./screens/AppNavigator";
 import { DrawerContent } from "./screens/DrawerContent";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import NotifScreen from "./screens/NotifScreen.jsx";
 import * as SplashScreen from "expo-splash-screen";
 import SavedPosts from "./screens/SavedPosts";
 import OTP from "./screens/OTP";
@@ -54,7 +55,6 @@ const MyProductsStack = createStackNavigator();
 const ShopProductsStack = createStackNavigator();
 const ProfileStack = createStackNavigator();
 const BuyRequests = createStackNavigator();
-
 const theme = {
   ...DefaultTheme,
   dark: true,
@@ -72,50 +72,42 @@ export default function App() {
   const [verified, setVerified] = React.useState(false);
   const [splash, toggleSplash] = React.useState(true);
   const [notification, setNotification] = React.useState(false);
-  const [appState, setAppState] = React.useState("active");
-  const notificationListener = React.useRef();
-  const responseListener = React.useRef();
+  const [notificationClicked, setNotificationClicked] = React.useState(false);
+  const handleNotificationClicked = state => {
+    setNotificationClicked(state);
+  };
   const handleStateChange = nextAppState => {
-    if (appState.match(/inactive|background/) && nextAppState === "active") {
+    if (
+      RootNavigation.appState.current.match(/inactive|background/) &&
+      nextAppState === "active"
+    ) {
       console.log("App has come to the foreground!");
     }
-    setAppState(nextAppState);
+    RootNavigation.appState.current = nextAppState;
   };
 
   React.useEffect(() => {
+    RootNavigation.notificationClicked.current = false;
+    RootNavigation.appState.current = "active";
+    checkJWT();
     setTimeout(() => toggleSplash(!splash), 0);
 
     AppState.addEventListener("change", handleStateChange);
-    notificationListener.current = Notifications.addNotificationReceivedListener(
+    RootNavigation.notificationListener.current = Notifications.addNotificationReceivedListener(
       notification => {
         console.log("received");
         setNotification(notification);
       }
     );
 
-    responseListener.current = Notifications.addNotificationResponseReceivedListener(
+    RootNavigation.responseListener.current = Notifications.addNotificationResponseReceivedListener(
       response => {
         let data = response.notification.request.content.data;
-        console.log(data);
-        switch (data.type) {
-          case "post": {
-            console.log("I am here");
-            let check = setInterval(() => {
-              if (appState.match(/active/)) {
-                console.log("navigating");
-                RootNavigation.navigate("Profile", {
-                  notification: data.uid,
-                });
-                clearInterval(check);
-              }
-            }, 100);
-            break;
-          }
-        }
+        RootNavigation.notificationClicked.current = true;
+        handleNotificationClicked(true);
+        RootNavigation.navigate("notificationStack", { data: data });
       }
     );
-
-    checkJWT();
     //return () => {
     //AppState.removeEventListener("change", handleStateChange);
     //Notifications.removeNotificationSubscription(notificationListener);
@@ -135,10 +127,10 @@ export default function App() {
     setVerified(data.verified);
   };
   const checkJWT = async () => {
-    await AsyncStorage.getItem("cirquip-auth-token").then(jwt => {
+    await AsyncStorage.getItem("cirquip-auth-token").then(async jwt => {
       if (global.config.debug) console.log("jwt", jwt);
       if (jwt) {
-        axios
+        await axios
           .post(
             `${global.config.host}/user/verifyJWT`,
             {},
@@ -150,6 +142,7 @@ export default function App() {
           )
           .then(async res => {
             console.log("data", res.data);
+            setStatus(true);
             try {
               await AsyncStorage.setItem("user", res.data);
             } catch {}
@@ -617,6 +610,10 @@ export default function App() {
               initialParams={{ email: user.email }}
             />
             <Drawer.Screen name="ChatUser" component={ChatUser} />
+            <Drawer.Screen
+              name="notificationStack"
+              component={props => <NotifScreen {...props} />}
+            />
           </Drawer.Navigator>
         </NavigationContainer>
       </PaperProvider>

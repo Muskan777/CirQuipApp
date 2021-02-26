@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   FlatList,
   Image,
@@ -18,8 +18,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { handleLogout } from "./AppNavigator";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Col } from "native-base";
-export default function Posts({ navigation, route }) {
+import * as RootNavigation from "../RootNavigation";
+import * as Notifications from "expo-notifications";
+import { useRoute } from "@react-navigation/native";
+export default function Posts(props) {
+  const { navigation, route } = props;
+  const routeState = useRoute();
   const [data, setData] = useState([]);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
@@ -32,10 +36,9 @@ export default function Posts({ navigation, route }) {
   const [users, setUsers] = useState([]);
   const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
-
+  const responseListener = useRef();
   React.useEffect(() => {
-    Alert.alert("hey I am in posts");
-    console.log(navigation.params);
+    console.log(props);
     navigation?.setOptions({
       headerRight: () => (
         <View style={{ flexDirection: "row" }}>
@@ -59,6 +62,9 @@ export default function Posts({ navigation, route }) {
         </View>
       ),
     });
+    //return () => {
+    //Notifications.removeNotificationSubscription(responseListener);
+    //};
   }, [navigation]);
 
   useEffect(() => {
@@ -74,10 +80,14 @@ export default function Posts({ navigation, route }) {
   };
 
   const fetchData = async () => {
+    let url =
+      props?.from === "notification"
+        ? `${global.config.host}/post/getPostWithId/${props?.uid}`
+        : `${global.config.host}/post/getPosts`;
     await AsyncStorage.getItem("cirquip-auth-token")
       .then(async token => {
         await axios
-          .get(`${global.config.host}/post/getPosts`, {
+          .get(url, {
             headers: {
               "cirquip-auth-token": token,
             },
@@ -93,7 +103,7 @@ export default function Posts({ navigation, route }) {
                   let data = res.data.post.filter(post => {
                     return post.userCollege === College;
                   });
-                  console.log("Data", data);
+                  //console.log("Data", data);
                   setData(data);
                   setLoading(false);
                 })

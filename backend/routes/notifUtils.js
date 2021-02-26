@@ -1,7 +1,5 @@
 const User = require("../models/user");
 const axios = require("axios");
-const config = require("config");
-const admin = require("firebase-admin");
 /*
  * firebase account for notification
  * email - testingotp712@gmail.com
@@ -9,11 +7,6 @@ const admin = require("firebase-admin");
  * project - criquip-test
  */
 var serviceAccount = require("../config/firebase-keys.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
-const messaging = admin.messaging();
 const addNotificationToken = async (token, userId) => {
   try {
     await User.findByIdAndUpdate(userId, { $addToSet: { notifTokens: token } });
@@ -24,7 +17,7 @@ const addNotificationToken = async (token, userId) => {
 };
 const sendNotifications = async (
   authPayload,
-  dataPayload = { title: "", message: "" },
+  dataPayload = { title: "", message: "", type: "", uid: "" },
   access = true
 ) => {
   if (!authPayload) return;
@@ -49,6 +42,10 @@ const sendNotifications = async (
         "https://exp.host/--/api/v2/push/send",
         {
           to: token,
+          data: {
+            type: dataPayload.type,
+            uid: dataPayload.uid,
+          },
           title: dataPayload.title,
           body: dataPayload.message,
         },

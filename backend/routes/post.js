@@ -210,6 +210,8 @@ router.route("/likePost").patch(auth, async (req, res) => {
               notifUtils.sendNotifications(userId, {
                 title: "Post Liked ❤️",
                 message: `${user._doc.name} liked your post ${title}`,
+                type: "post",
+                uid: req.body.id,
               });
               res.status(200).send({
                 msg: "Post liked",
@@ -395,6 +397,15 @@ router.route("/getComments").post(async (req, res) => {
     res.status(200).send({ comments: arr });
   } catch (e) {
     console.log(e);
+  }
+});
+
+router.get("/getPostWithId/:id", auth, async (req, res) => {
+  try {
+    let post = await Post.findById(req.params.id);
+    return res.status(200).json({ post: [post] });
+  } catch (err) {
+    return res.status(400).json(err);
   }
 });
 
