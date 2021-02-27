@@ -24,7 +24,11 @@ import {
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import * as RootNavigation from "../RootNavigation.js";
+
+import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
+
 export default class Shop extends React.Component {
   constructor(props) {
     super(props);
@@ -33,6 +37,7 @@ export default class Shop extends React.Component {
       refreshing: true,
       searchQuery: "",
       user: { likes: [] },
+      email: "",
     };
   }
   callNumber = phone => {
@@ -109,6 +114,8 @@ export default class Shop extends React.Component {
           console.log(e);
         });
     });
+    let email = await AsyncStorage.getItem("email");
+    this.setState({ email: email });
   }
   handleLike = async id => {
     //console.log("inside like");
@@ -442,6 +449,55 @@ export default class Shop extends React.Component {
               </View>
             </>
           )}
+          <View style={styles.bottom}>
+            <View style={styles.container1}>
+              <MaterialIcons
+                name="home"
+                style={{ ...styles.cart }}
+                onPress={() => {
+                  this.props.navigation.navigate("Home");
+                }}
+              />
+            </View>
+            <View style={styles.container2}>
+              <AntDesign
+                name="plus"
+                style={{ ...styles.create }}
+                onPress={() => {
+                  this.props.navigation.navigate("CreatePost");
+                }}
+              />
+            </View>
+            <View style={styles.container3}>
+              {this.state.email == global.config.admin ? (
+                <Ionicons
+                  name="md-chatbubble-ellipses"
+                  style={{ ...styles.chat }}
+                  onPress={() => {
+                    this.props.navigation.navigate("ChatUser", {
+                      screen: "Chat With User",
+                      params: {
+                        email: this.state.email,
+                      },
+                    });
+                  }}
+                />
+              ) : (
+                <Ionicons
+                  name="md-chatbubble-ellipses"
+                  style={{ ...styles.chat }}
+                  onPress={() => {
+                    this.props.navigation.navigate("ChatAdmin", {
+                      screen: "Chat with Admin",
+                      params: {
+                        email: this.state.email,
+                      },
+                    });
+                  }}
+                />
+              )}
+            </View>
+          </View>
         </SafeAreaView>
       </>
     );
@@ -493,5 +549,76 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     fontSize: 15,
     fontFamily: "sans-serif",
+  },
+  bottom: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 98,
+  },
+  cart: {
+    alignSelf: "center",
+    fontSize: 40,
+    marginTop: 5,
+    color: "#2ba4db",
+  },
+  chat: {
+    alignSelf: "center",
+    fontSize: 40,
+    marginTop: 2,
+    marginLeft: 2,
+    color: "#2ba4db",
+  },
+  create: {
+    alignSelf: "center",
+    fontSize: 80,
+    marginTop: 5,
+    color: "#2ba4db",
+  },
+
+  container1: {
+    width: 70,
+    height: 70,
+    padding: 10,
+    margin: 10,
+    // borderRadius:40,
+    position: "absolute",
+    left: 10,
+    bottom: 5,
+    borderRadius: 35,
+    backgroundColor: "white",
+    shadowColor: "#36b5a5",
+    shadowOpacity: 1,
+    elevation: 6,
+  },
+  container2: {
+    height: 90,
+    width: 90,
+    borderRadius: 45,
+    backgroundColor: "white",
+    position: "absolute",
+    alignSelf: "center",
+    left: 160,
+    bottom: 55,
+    paddingBottom: 40,
+    shadowColor: "#36b5a5",
+    shadowOpacity: 1,
+    elevation: 6,
+  },
+  container3: {
+    width: 70,
+    height: 70,
+    padding: 10,
+    margin: 10,
+    // borderRadius:40,
+    position: "absolute",
+    right: 10,
+    bottom: 5,
+    borderRadius: 35,
+    backgroundColor: "white",
+    shadowColor: "#36b5a5",
+    shadowOpacity: 1,
+    elevation: 6,
   },
 });

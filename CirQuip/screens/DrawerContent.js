@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet, Alert } from "react-native";
+import { View, StyleSheet, Alert, Image } from "react-native";
 import {
   Avatar,
   Title,
@@ -19,6 +19,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
+import { Linking } from "react-native";
+import screen from "../assets/cirquip.png";
 
 export function DrawerContent(props) {
   const findEmail = async () => {
@@ -49,6 +51,7 @@ export function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate("Profile");
               }}
+              style={{ flexDirection: "row" }}
             >
               <Avatar.Image
                 source={{
@@ -156,6 +159,38 @@ export function DrawerContent(props) {
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>
+      <View
+        style={{
+          marginLeft: 15,
+          flexDirection: "row",
+          justifyContent: "flex-start",
+          marginBottom: 15,
+          marginTop: 15,
+          borderTopColor: "#f4f4f4",
+          borderTopWidth: 1,
+        }}
+      >
+        <Avatar.Image source={screen} size={50} />
+        <View
+          style={{
+            marginLeft: 15,
+            flexDirection: "column",
+          }}
+        >
+          <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
+            SignOut
+          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
+            }}
+          >
+            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
+              Help & FeedBack
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </View>
     </View>
   );
 }

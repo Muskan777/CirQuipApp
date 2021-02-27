@@ -106,7 +106,16 @@ const uploadImages = async (content, id) => {
 // @desc Creates new post
 
 router.route("/createPost").post(auth, async (req, res) => {
-  let { content, caption, group, taggedUsers, userCollege } = req.body;
+  let {
+    content,
+    caption,
+    group,
+    taggedUsers,
+    userCollege,
+    userSkill,
+    userInterest,
+    userClub,
+  } = req.body;
   await uploadImages(content, req.payload.email)
     .then(images => {
       const createdAt = Date.now();
@@ -116,6 +125,9 @@ router.route("/createPost").post(auth, async (req, res) => {
         userRole: req.payload.role,
         group,
         userCollege,
+        userInterest,
+        userSkill,
+        userClub,
         content: images,
         caption,
         taggedUsers,

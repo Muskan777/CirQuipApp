@@ -23,6 +23,7 @@ import {
 import { Video } from "expo-av";
 import Loader from "../screens/Loader";
 import Carousel, { Pagination } from "react-native-snap-carousel"; // Version can be specified in package.json
+import { TouchableWithoutFeedback } from "react-native-gesture-handler";
 const SLIDER_WIDTH = (Dimensions.get("window").width * 9.2) / 10;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
 export default function PostCarousel({
@@ -42,6 +43,9 @@ export default function PostCarousel({
   taggedUsers,
   id,
   onRefresh,
+  skill,
+  club,
+  interest,
 }) {
   const date =
     createdAt.substr(8, 2) +
@@ -284,6 +288,16 @@ export default function PostCarousel({
       />
     );
   }
+  const [textShown, setTextShown] = useState(false); //To show ur remaining Text
+  const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
+  const toggleNumberOfLines = () => {
+    //To toggle the show text or hide it
+    setTextShown(!textShown);
+  };
+  const onTextLayout = React.useCallback(e => {
+    setLengthMore(e.nativeEvent.lines.length >= 4); //to check the text is more than 4 lines or not
+    // console.log(e.nativeEvent);
+  }, []);
 
   return (
     <Card style={styles.PostContainer}>
@@ -293,7 +307,8 @@ export default function PostCarousel({
           source={require("../assets/ellipse1adfd341c.png")}
         />
         <View>
-          <TouchableHighlight
+          <TouchableWithoutFeedback
+            style={{ flexDirection: "row" }}
             onPress={() => {
               navigation.navigate("Profile", { _id: id });
             }}
@@ -305,10 +320,15 @@ export default function PostCarousel({
               }}
             >
               {name}
+              <Entypo style={styles.TextStyle} name="dot-single" color="grey" />
+              <Text style={styles.TextStyle}>{role}</Text>
             </Text>
-          </TouchableHighlight>
-          <Text style={styles.TextStyle}>{role}</Text>
-
+          </TouchableWithoutFeedback>
+          <Text style={styles.TextStyle}>
+            {skill ? skill : ""}
+            {skill && club ? <Text> | </Text> : ""}
+            {club ? club : ""}
+          </Text>
           {usersTagged.length > 0 && (
             <Text style={{ fontWeight: "bold", width: "100%" }}>
               {usersTagged?.length != 0 && <Text>with </Text>}
@@ -328,7 +348,7 @@ export default function PostCarousel({
             onDismiss={handleMenu}
             anchor={
               <TouchableOpacity onPress={handleMenu}>
-                <FontAwesome name="ellipsis-v" style={styles.Icons} />
+                <FontAwesome name="ellipsis-v" style={styles.threedots} />
               </TouchableOpacity>
             }
           >
@@ -342,7 +362,24 @@ export default function PostCarousel({
       </View>
 
       <View style={styles.postCaption}>
-        <Text> {caption}</Text>
+        <View style={styles.mainContainer}>
+          <Text
+            onTextLayout={onTextLayout}
+            numberOfLines={textShown ? undefined : 4}
+            style={{ lineHeight: 21 }}
+          >
+            {caption}
+          </Text>
+
+          {lengthMore ? (
+            <Text
+              onPress={toggleNumberOfLines}
+              style={{ lineHeight: 21, marginTop: 10 }}
+            >
+              {textShown ? "Read less..." : "Read more..."}
+            </Text>
+          ) : null}
+        </View>
       </View>
       <View style={styles.postImageContainer}>
         {content[0]?.substring(content[0].length - 3) !== "mp4" ? (
@@ -425,7 +462,6 @@ export default function PostCarousel({
               <FontAwesome name="bookmark-o" size={30} style={styles.Icons} />
             )}
           </TouchableOpacity>
-          <Text style={styles.TextStyle}>{currentSaves}</Text>
         </View>
         <View style={styles.IconContainer}>
           <TouchableOpacity onPress={handleShare}>
@@ -556,6 +592,7 @@ const styles = StyleSheet.create({
   },
   TextStyle: {
     color: "#888",
+    fontSize: 15,
   },
   topContainer: {
     width: "100%",
@@ -570,13 +607,13 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   Icons: {
-    fontSize: 30,
-    color: "#4FB5A5",
+    fontSize: 25,
+    color: "#2EA5DD",
     paddingHorizontal: 10,
   },
   closeIcon: {
     fontSize: 25,
-    color: "#4FB5A5",
+    color: "#2ba4db",
     paddingHorizontal: 10,
     position: "absolute",
     right: 0,
@@ -584,6 +621,11 @@ const styles = StyleSheet.create({
   postImageContainer: {
     width: "100%",
     borderRadius: 20,
+  },
+  threedots: {
+    fontSize: 23,
+    color: "#888",
+    paddingHorizontal: 10,
   },
   postImage: {
     alignSelf: "center",
