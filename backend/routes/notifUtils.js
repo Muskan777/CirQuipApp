@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const axios = require("axios");
+const config = require("config");
 /*
  * firebase account for notification
  * email - testingotp712@gmail.com
@@ -43,8 +44,7 @@ const sendNotifications = async (
         {
           to: token,
           data: {
-            type: dataPayload.type,
-            uid: dataPayload.uid,
+            ...dataPayload,
           },
           title: dataPayload.title,
           body: dataPayload.message,
@@ -56,7 +56,7 @@ const sendNotifications = async (
         }
       )
       .then(res => {
-        console.log(res);
+        console.log(res.data);
       })
       .catch(err => {
         console.log(err);
@@ -64,7 +64,26 @@ const sendNotifications = async (
   });
 };
 
+const sendChatNotification = async msg => {
+  console.log(msg.to === "Admin", msg.to);
+  console.log(msg.user._id === "Admin", msg.user._id);
+  const userTo = await User.findOne({
+    email: msg.to === "Admin" ? config.get("admin") : msg.to,
+  });
+  const userFrom = await User.findOne({
+    email: msg.user._id === "Admin" ? config.get("admin") : msg.user._id,
+  });
+  //console.log(userTo, userFrom);
+  sendNotifications(userTo._doc._id, {
+    title: `${userFrom._doc.name} ${msg.user._id === "Admin" ? "| Admin" : ""}`,
+    message: `${msg.text}`,
+    type: `${msg.to === "Admin" ? "chat-user" : "chat-admin"}`,
+    email: userTo._doc.email,
+  });
+};
+
 module.exports = {
   addNotificationToken,
   sendNotifications,
+  sendChatNotification,
 };

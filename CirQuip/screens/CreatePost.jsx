@@ -80,7 +80,7 @@ export default function CreatePost(props) {
     if (photos && photos.length !== 0) {
       content = photos;
     } else {
-      content = videoSource.base64;
+      content = videoSource?.base64;
     }
     let group = [];
     if (checkedA) {

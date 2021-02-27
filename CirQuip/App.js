@@ -73,6 +73,7 @@ export default function App() {
   const [splash, toggleSplash] = React.useState(true);
   const [notification, setNotification] = React.useState(false);
   const [notificationClicked, setNotificationClicked] = React.useState(false);
+  const chatUserRef = React.useRef();
   const handleNotificationClicked = state => {
     setNotificationClicked(state);
   };
@@ -93,25 +94,55 @@ export default function App() {
     setTimeout(() => toggleSplash(!splash), 0);
 
     AppState.addEventListener("change", handleStateChange);
-    RootNavigation.notificationListener.current = Notifications.addNotificationReceivedListener(
-      notification => {
-        console.log("received");
-        setNotification(notification);
-      }
-    );
+    //RootNavigation.notificationListener.current = Notifications.addNotificationReceivedListener(
+    //notification => {
+    //console.log("received");
+    //}
+    //);
 
     RootNavigation.responseListener.current = Notifications.addNotificationResponseReceivedListener(
       response => {
+        console.log(response, response.origin);
         let data = response.notification.request.content.data;
+        console.log(data);
+        let target = "notificationStack";
+        let propsData = { data: data };
+        if (data.type === "chat-admin") {
+          target = "ChatAdmin";
+          propsData = { email: user.email };
+          RootNavigation.navigationRef.current.navigate("ChatAdmin", {
+            screen: "Chat With Admin",
+            params: {
+              admin: false,
+              email: data.email,
+            },
+          });
+          return;
+        }
+        if (data.type === "chat-user") {
+          target = "ChatUser";
+          propsData = { email: user.email };
+
+          RootNavigation.navigationRef.current.navigate("ChatUser", {
+            screen: "Chat With User",
+            params: {
+              admin: true,
+              email: data.email,
+              from: "notification",
+            },
+          });
+          return;
+        }
+
         console.log("data-received", data);
-        RootNavigation.notificationClicked.current = true;
-        handleNotificationClicked(true);
+        //RootNavigation.notificationClicked.current = true;
+        //handleNotificationClicked(true);
 
         RootNavigation.navigationRef.current.reset({
           index: 0,
           routes: [{ name: "HomeDrawer" }],
         });
-        RootNavigation.navigate("notificationStack", { data: data });
+        RootNavigation.navigate(target, propsData);
       }
     );
     //return () => {

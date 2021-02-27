@@ -36,7 +36,8 @@ router.route("/getPosts").get(auth, (req, res) => {
 const uploadImages = async (content, id) => {
   let promises = [];
   if (typeof content !== "string") {
-    content.forEach((image, index) => {
+    content?.forEach((image, index) => {
+      if (!image) return;
       promises.push(
         new Promise((resolve, reject) => {
           const buf = Buffer.from(
@@ -124,13 +125,21 @@ router.route("/createPost").post(auth, async (req, res) => {
         createdAt,
         comments: [],
       });
-
+      console.log("tagged", taggedUsers);
       try {
         newPost
           .save()
-          .then(() =>
-            res.status(200).send({ msg: "New post created", post: newPost })
-          )
+          .then(post => {
+            taggedUsers.forEach(user => {
+              notifUtils.sendNotifications(user._id, {
+                title: `${req.payload.name} tagged you in a post`,
+                message: caption,
+                uid: post._doc._id,
+                type: "post",
+              });
+            });
+            res.status(200).send({ msg: "New post created", post: newPost });
+          })
           .catch(err => res.status(400).send("Error:" + err));
       } catch (e) {
         console.log(e);

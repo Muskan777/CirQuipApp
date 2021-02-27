@@ -167,6 +167,9 @@ router.put("/like", async (req, resp) => {
       notifUtils.sendNotifications(product._doc.seller, {
         title: "Product Liked ❤️ ",
         message: `${user._doc.name} liked your product ${product._doc.name}`,
+        uid: productId,
+        type: "product",
+        ...product._doc,
       });
     });
 

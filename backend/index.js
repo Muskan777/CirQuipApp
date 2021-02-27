@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyparser = require("body-parser");
 const cookieparser = require("cookie-parser");
+const config = require("config");
 const { connectDB } = require("./config/config");
 const Message = require("./models/message");
+const NotificationActions = require("./routes/notifUtils");
 const users = {};
 
 const app = express();
@@ -51,7 +53,10 @@ io.on("connection", socket => {
     });
     try {
       NewMessage.save()
-        .then(() => console.log("Successful"))
+        .then(() => {
+          NotificationActions.sendChatNotification(msg);
+          console.log("Successful");
+        })
         .catch(err => console.log("Error:", err));
     } catch (e) {
       console.log("Error", e);

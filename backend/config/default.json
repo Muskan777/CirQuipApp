@@ -6,5 +6,6 @@
   "awsAcccessKey": "AKIAY3PMMCO5VJ37HNNY",
   "awsSecretAccessKey": "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",
   "region": "ap-south-1",
-  "firebase-server-key": "AAAAyfFaGaA:APA91bGdvWBiRBG4XNdLdDnQvhLdvt8eFum97VMPOQz6rskHYd0neH36xHIR8-ZUl_L16VjF39n3m2-jR0kTb4WCw4U-3018JyuY6UReKd3H7dspADABDjkfpUM3Ab9VSpleDdy3PMN2"
+  "firebase-server-key": "AAAAyfFaGaA:APA91bGdvWBiRBG4XNdLdDnQvhLdvt8eFum97VMPOQz6rskHYd0neH36xHIR8-ZUl_L16VjF39n3m2-jR0kTb4WCw4U-3018JyuY6UReKd3H7dspADABDjkfpUM3Ab9VSpleDdy3PMN2",
+  "admin": "aniketj18.instru@coep.ac.in"
 }

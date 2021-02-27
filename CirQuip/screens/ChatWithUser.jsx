@@ -16,7 +16,6 @@ import { List, Divider, Button } from "react-native-paper";
 import Loader from "./Loader";
 import "../config";
 
-import { NetInfoCellularGeneration } from "@react-native-community/netinfo";
 import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 export function ChatWithUser(props) {
   const [threads, setThreads] = useState([]);
@@ -32,7 +31,7 @@ export function ChatWithUser(props) {
   const [Alumni, setAlumni] = React.useState(false);
   const [Faculty, setFaculty] = React.useState(false);
   const [socket, setSocket] = React.useState(() => {
-    return io(`http://15.207.85.98:3000`);
+    return io(`http://192.168.43.140:3000`);
   });
   let message = {};
 
@@ -96,11 +95,11 @@ export function ChatWithUser(props) {
 
   useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
-      console.log("Working Fine!");
+      console.log("Working Fine!", props.route);
       axios
         .get(`${global.config.host}/user/getUsers`)
         .then(res => {
-          if (props.route.params.email == global.config.admin) {
+          if (props.route?.params?.email == global.config.admin) {
             let Users = res.data.users.filter(user => {
               return user.email != global.config.admin;
             });
