@@ -163,17 +163,16 @@ const Comment = ({
       <Modal animationType="fade" transparent={true} visible={visible}>
         <View
           style={{
-            height: "20%",
-            width: "80%",
+            height: 175,
+            width: 350,
             alignContent: "center",
             position: "absolute",
-            bottom: 340,
-            left: 45,
-            right: 10,
+            alignSelf: "center",
             backgroundColor: "#ffff",
             borderRadius: 10,
             shadowOpacity: 1,
             elevation: 6,
+            top: 350,
           }}
         >
           <View
