@@ -1,13 +1,29 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, Touchable, View, Image } from "react-native";
+import { StyleSheet, Text, Touchable, View, Image, Modal } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Button } from "react-native-paper";
 import axios from "axios";
+import Loader from "../screens/Loader";
 
-const Comment = ({ id, comment, name, time, role, likes }) => {
+const Comment = ({
+  id,
+  comment,
+  name,
+  time,
+  role,
+  likes,
+  userId,
+  onRefresh,
+  setModalOpen,
+}) => {
   const [commentLiked, setCommentLiked] = useState(false);
   const [currlikes, setcurrlikes] = useState(likes.length);
+  const [user, setUser] = useState("");
+  const [deleted, setDeleted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   var date =
     time.substr(8, 2) + "-" + time.substr(5, 2) + "-" + time.substr(0, 4);
   var localhour = parseInt(time.substr(11, 2));
@@ -32,12 +48,17 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
   }, []);
   const handleCommentLiked = async () => {
     let userId = await AsyncStorage.getItem("user");
+    setUser(userId);
     let temp = likes.findIndex(id => id === userId);
     if (temp === -1) {
       setCommentLiked(false);
     } else {
       setCommentLiked(true);
     }
+  };
+  const handleExit = () => {
+    onRefresh(true);
+    setModalOpen(false);
   };
   const handleCommentLikes = async () => {
     let nlikes;
@@ -65,6 +86,31 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
       .then(res => {
         setCommentLiked(res.data.liked);
       });
+  };
+  const handleDialog = () => {
+    setVisible(!visible);
+  };
+  const handleDelete = async () => {
+    setLoading(true);
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+    axios
+      .post(
+        `${global.config.host}/comment/deleteComment`,
+        {
+          id: id,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        onRefresh(true);
+        setDeleted(true);
+        setLoading(false);
+      })
+      .catch(e => console.log(e));
   };
   return (
     <View style={styles.CommentContainer}>
@@ -100,10 +146,111 @@ const Comment = ({ id, comment, name, time, role, likes }) => {
               )}
             </TouchableOpacity>
             <Text style={styles.TextStyle}>{currlikes}</Text>
+            {user == userId ? (
+              <TouchableOpacity>
+                <FontAwesome
+                  name="trash"
+                  size={20}
+                  style={styles.deleteIcon}
+                  onPress={handleDialog}
+                />
+              </TouchableOpacity>
+            ) : null}
           </View>
           <Text style={styles.SecondaryText}>{commentTime}</Text>
         </View>
       </View>
+      <Modal animationType="fade" transparent={true} visible={visible}>
+        <View
+          style={{
+            height: 175,
+            width: 350,
+            alignContent: "center",
+            position: "absolute",
+            alignSelf: "center",
+            backgroundColor: "#ffff",
+            borderRadius: 10,
+            shadowOpacity: 1,
+            elevation: 6,
+            top: 350,
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: 20,
+              flex: 1,
+            }}
+          >
+            <Text
+              style={{
+                fontWeight: "bold",
+                fontSize: 20,
+                color: "#B11B1B",
+                alignSelf: "center",
+                marginBottom: 10,
+              }}
+            >
+              Confirm Deletion
+            </Text>
+
+            {loading ? (
+              <Loader />
+            ) : (
+              <View>
+                {!deleted ? (
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      color: "gray",
+                      alignSelf: "center",
+                      margin: 10,
+                    }}
+                  >
+                    Are you sure you want to delete this comment?
+                  </Text>
+                ) : (
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      color: "gray",
+                      alignSelf: "center",
+                      margin: 21,
+                    }}
+                  >
+                    Comment deleted
+                  </Text>
+                )}
+              </View>
+            )}
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
+              {!deleted ? (
+                <Button onPress={handleDialog} color="gray" fontSize="15">
+                  Back
+                </Button>
+              ) : (
+                <Button onPress={handleExit} color="gray" fontSize="15">
+                  Ok
+                </Button>
+              )}
+
+              {!deleted ? (
+                <Button onPress={handleDelete} color="#B11B1B" fontSize="15">
+                  Delete
+                </Button>
+              ) : null}
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -165,7 +312,12 @@ const styles = StyleSheet.create({
   },
   Icons: {
     fontSize: 20,
-    color: "#4FB5A5",
+    color: "#2ba4db",
     paddingHorizontal: 10,
+  },
+  deleteIcon: {
+    fontSize: 20,
+    color: "#2ba4db",
+    marginLeft: 20,
   },
 });

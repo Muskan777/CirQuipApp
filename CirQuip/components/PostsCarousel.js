@@ -9,12 +9,14 @@ import {
   Dimensions,
   Share,
   Linking,
+  Modal,
   Alert,
 } from "react-native";
 import { Card } from "react-native-material-cards";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dialog, Portal, Button, Menu } from "react-native-paper";
+
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -478,38 +480,78 @@ export default function PostCarousel({
           {/* <Text style={styles.TextStyle}>{currentShares}</Text> */}
         </View>
       </View>
-      <View>
-        <Portal>
-          <Dialog visible={visible} onDismiss={handleReportDialog}>
-            <Dialog.Title
+      <Modal animationType="fade" transparent={true} visible={visible}>
+        <View
+          style={{
+            height: 175,
+            width: 350,
+            alignContent: "center",
+            position: "absolute",
+            alignSelf: "center",
+            backgroundColor: "#ffff",
+            borderRadius: 10,
+            shadowOpacity: 1,
+            elevation: 6,
+            top: 350,
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: 20,
+              flex: 1,
+            }}
+          >
+            <Text
               style={{
-                ...styles.checkBoxTxt,
-                color: "#B11B1B",
                 fontWeight: "bold",
+                fontSize: 20,
+                color: "#B11B1B",
+                alignSelf: "center",
+                marginBottom: 10,
               }}
             >
-              Confirm deletion
-            </Dialog.Title>
+              Confirm Deletion
+            </Text>
+
             {loading ? (
               <Loader />
             ) : (
-              <Dialog.Content>
-                <View>
+              <View>
+                {!deleted ? (
                   <Text
                     style={{
                       fontWeight: "bold",
-                      fontSize: 15,
+                      fontSize: 18,
                       color: "gray",
+                      alignSelf: "center",
+                      margin: 10,
                     }}
                   >
-                    {!deleted
-                      ? "Are you sure you want to delete this post?"
-                      : "Post deleted"}
+                    Are you sure you want to delete this post?
                   </Text>
-                </View>
-              </Dialog.Content>
+                ) : (
+                  <Text
+                    style={{
+                      fontWeight: "bold",
+                      fontSize: 18,
+                      color: "gray",
+                      alignSelf: "center",
+                      margin: 21,
+                    }}
+                  >
+                    Post deleted
+                  </Text>
+                )}
+              </View>
             )}
-            <Dialog.Actions>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
               {!deleted ? (
                 <Button onPress={handleDialog} color="gray" fontSize="15">
                   Back
@@ -529,36 +571,63 @@ export default function PostCarousel({
                   Delete
                 </Button>
               ) : null}
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      </View>
-      <View>
-        <Portal>
-          <Dialog visible={visibleReport} onDismiss={handleReportDialog}>
-            <Dialog.Title
+            </View>
+          </View>
+        </View>
+      </Modal>
+      <Modal animationType="fade" transparent={true} visible={visibleReport}>
+        <View
+          style={{
+            height: 175,
+            width: 350,
+            alignContent: "center",
+            position: "absolute",
+            alignSelf: "center",
+            backgroundColor: "#ffff",
+            borderRadius: 10,
+            shadowOpacity: 1,
+            elevation: 6,
+            top: 350,
+          }}
+        >
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              padding: 20,
+              flex: 1,
+            }}
+          >
+            <Text
               style={{
-                ...styles.checkBoxTxt,
-                color: "#B11B1B",
                 fontWeight: "bold",
+                fontSize: 20,
+                color: "#B11B1B",
+                alignSelf: "center",
+                marginBottom: 10,
               }}
             >
               Report Post
-            </Dialog.Title>
-            <Dialog.Content>
-              <View>
-                <Text
-                  style={{
-                    fontWeight: "bold",
-                    fontSize: 15,
-                    color: "gray",
-                  }}
-                >
-                  Are you sure you want to report this post?
-                </Text>
-              </View>
-            </Dialog.Content>
-            <Dialog.Actions>
+            </Text>
+            <View>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  color: "gray",
+                  alignSelf: "center",
+                  margin: 10,
+                }}
+              >
+                Are you sure you want to report this post?
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "flex-end",
+              }}
+            >
               <Button onPress={handleReportDialog} color="gray" fontSize="15">
                 Back
               </Button>
@@ -569,10 +638,10 @@ export default function PostCarousel({
               >
                 Report
               </Button>
-            </Dialog.Actions>
-          </Dialog>
-        </Portal>
-      </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </Card>
   );
 }
