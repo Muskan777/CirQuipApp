@@ -1,6 +1,7 @@
 const router = require("express").Router();
 let Comment = require("../models/Comments");
 let Post = require("../models/Post");
+let User = require("../models/user");
 const auth = require("../middlewares/auth");
 const notifUtils = require("./notifUtils");
 // @route POST /api/comment/createComment
@@ -113,26 +114,38 @@ router.route("/likeComment").patch(auth, async (req, res) => {
   }
 });
 
-// @route DELETE /api/comment/deleteComment
+// @route POST /api/comment/deleteComment
 // @desc Deletes existing comment
 
-router.route("/deleteComment").delete(async (req, res) => {
+router.route("/deleteComment").post(auth, async (req, res) => {
   try {
-    let comments = await Comment.findById(req.body.id);
-    if (!comments) {
-      res.status(400).send("Comment with id not found");
+    let comment = await Comment.findById(req.body.id);
+    let user = await User.findById(comment._doc.userId);
+    if (!user) throw "User not found";
+    let admin = await User.find({ email: "admin@coep.ac.in" });
+    let adminId;
+    if (admin) {
+      adminId = admin._id;
     }
-    Comment.findByIdAndDelete(req.body.id)
-      .then(async () => {
-        await Post.findOneAndUpdate(
-          { _id: comments.postId },
-          { $pull: { comments: req.body.id } }
-        ),
-          res.status(200).send("Comment deleted");
-      })
-      .catch(err => res.status(400).send("Error:" + err));
+    if (!comment) {
+      return res.status(404).send("Comment with id not found");
+    }
+    if (req.payload.id === comment._doc.userId || req.payload.id === adminId) {
+      Comment.findByIdAndDelete(req.body.id)
+        .then(async () => {
+          await Post.findOneAndUpdate(
+            { _id: comment.postId },
+            { $pull: { comments: req.body.id } }
+          ),
+            res.status(200).send("Comment deleted");
+        })
+        .catch(err => res.status(400).send("Error:" + err));
+    } else {
+      return res.status(400).send("Unauthorized deletion requested");
+    }
   } catch (e) {
     console.log(e);
+    return res.status(400).json(e);
   }
 });
 

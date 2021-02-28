@@ -18,7 +18,6 @@ import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { handleLogout } from "./AppNavigator";
-import { MaterialIcons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import { Col } from "native-base";
@@ -390,6 +389,9 @@ export default function Posts(props) {
                   role={item.userRole}
                   time={item.createdAt}
                   likes={item.likes}
+                  userId={item.userId}
+                  onRefresh={onRefresh}
+                  setModalOpen={setModalOpen}
                 />
               );
             })
