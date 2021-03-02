@@ -40,6 +40,7 @@ io.on("connection", socket => {
 
   socket.on("send message", msg => {
     console.log(msg);
+    NotificationActions.sendChatNotification(msg);
     delete msg["_id"];
     if (users[msg.to]) {
       users[msg.to].emit("new message", msg);
@@ -54,7 +55,6 @@ io.on("connection", socket => {
     try {
       NewMessage.save()
         .then(() => {
-          NotificationActions.sendChatNotification(msg);
           console.log("Successful");
         })
         .catch(err => console.log("Error:", err));

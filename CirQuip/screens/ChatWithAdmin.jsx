@@ -93,8 +93,7 @@ function renderBubble(props) {
 export class ChatWithAdmin extends React.Component {
   constructor(props) {
     super(props);
-    console.log(RootNavigation.navigationRef.current.getCurrentRoute());
-
+    console.log(this.props.route, this.props.route.params);
     this.state = {
       messages: [],
       socket: io(`http://15.207.85.98:3000`),
@@ -155,7 +154,7 @@ export class ChatWithAdmin extends React.Component {
     this._blurevent = this.props.navigation.addListener("blur", () => {
       console.log("blurevent");
       //check on this -- even when user goes to notifications shade, it become offline and get kicked out of the online array
-      //this.state.socket.disconnect();
+      this.state.socket.disconnect();
     });
   }
 

@@ -131,30 +131,28 @@ export default function App() {
           propsData = { email: user.email };
           RootNavigation.navigationRef.current.navigate("ChatAdmin", {
             screen: "Chat With Admin",
-            admin: false,
-            email: data.email,
-            thread: {
-              _id: data.email,
-              name: data.name,
-              role: data.role,
-            },
-          });
-          return;
-        }
-        if (data.type === "chat-user") {
-          target = "ChatUser";
-          propsData = { email: user.email };
-
-          RootNavigation.navigationRef.current.navigate("ChatUser", {
-            screen: "Chat With User",
             params: {
-              admin: true,
+              admin: data.type === "chat-user",
               email: data.email,
-              from: "notification",
+              thread: data.thread,
             },
           });
           return;
         }
+        //if (data.type === "chat-user") {
+        //target = "ChatUser";
+        //propsData = { email: user.email };
+
+        //RootNavigation.navigationRef.current.navigate("ChatUser", {
+        //screen: "Chat With User",
+        //params: {
+        //admin: true,
+        //email: data.email,
+        //from: "notification",
+        //},
+        //});
+        //return;
+        //}
 
         console.log("data-received", data);
         //RootNavigation.notificationClicked.current = true;
