@@ -53,6 +53,9 @@ export default class Product extends React.Component {
   }
   doAllTasks = async () => {
     console.log(this.state);
+    this.props.navigation.setOptions({
+      headerRight: () => <></>,
+    });
     if (this.state.from !== "notification")
       this.props.navigation.setOptions({
         headerLeft: () => (

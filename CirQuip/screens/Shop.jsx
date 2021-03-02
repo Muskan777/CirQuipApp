@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Alert,
   Linking,
+  TextInput,
 } from "react-native";
 import {
   IconButton,
@@ -21,14 +22,20 @@ import {
   FAB,
   Avatar,
 } from "react-native-paper";
+import Loader from "./Loader";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-
+import ShadowView from "react-native-simple-shadow-view";
 import * as RootNavigation from "../RootNavigation.js";
-
-import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import {
+  FontAwesome,
+  MaterialIcons,
+  Ionicons,
+  AntDesign,
+} from "@expo/vector-icons";
 
 export default class Shop extends React.Component {
   constructor(props) {
@@ -408,18 +415,29 @@ export default class Shop extends React.Component {
             paddingTop: Platform.OS === "android" ? 25 : 0,
           }}
         >
-          <Searchbar
-            onSubmitEditing={() => this.performSearch()}
-            returnKeyType="search"
-            style={{ margin: 5 }}
-            placeholder="Search"
-            onChangeText={this.onChangeSearch}
-            value={this.state.searchQuery}
-            icon={() => (
-              <MaterialCommunityIcons name="menu" size={30} color="#2ba4db" />
-            )}
-            onIconPress={() => this.props.navigation.openDrawer()}
-          />
+          <View style={styles.searchContainer}>
+            <IconButton
+              icon="menu"
+              onPress={() => this.props.navigation.openDrawer()}
+              color="#2ba4db"
+              size={25}
+              style={{ margin: 0 }}
+            />
+            <TextInput
+              style={{
+                flex: 1,
+                fontSize: 18,
+                maxHeight: "100%",
+              }}
+              onSubmitEditing={() => this.performSearch()}
+              placeholder="Search"
+              onChangeText={query => {
+                // console.log(users);
+                this.setState({ searchQuery: query });
+              }}
+              value={this.state.searchQuery}
+            />
+          </View>
           <Title
             style={{
               textAlign: "left",
@@ -450,7 +468,7 @@ export default class Shop extends React.Component {
               style={{ marginBottom: "25%" }}
             />
           ) : this.state.refreshing ? (
-            <></>
+            <Loader />
           ) : (
             <>
               <View style={{ justifyContent: "center" }}>
@@ -515,7 +533,36 @@ export default class Shop extends React.Component {
   }
 }
 
+//<Searchbar
+//onSubmitEditing={() => this.performSearch()}
+//returnKeyType="search"
+//style={{ margin: 5 }}
+//placeholder="Search"
+//onChangeText={this.onChangeSearch}
+//value={this.state.searchQuery}
+//icon={() => (
+//<MaterialCommunityIcons name="menu" size={30} color="#2ba4db" />
+//)}
+//onIconPress={() => this.props.navigation.openDrawer()}
+///>
 const styles = StyleSheet.create({
+  searchContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    margin: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderBottomEndRadius: 10,
+    borderBottomStartRadius: 10,
+    shadowOpacity: 0.3,
+    shadowOffset: {
+      width: 0,
+      height: 3,
+    },
+    shadowRadius: 6,
+    shadowColor: "#ff0000",
+    elevation: 3,
+  },
   title: {
     textAlign: "center",
     fontSize: 20,

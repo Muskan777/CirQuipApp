@@ -35,7 +35,7 @@ router.post("/products/:type/:query", async (req, resp) => {
   if (req.header("search")) regex = new RegExp(query, "i");
   else regex = new RegExp(".*");
 
-  console.log(type);
+  console.log(type, regex);
   switch (type) {
     case "my": {
       try {

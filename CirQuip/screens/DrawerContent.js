@@ -86,7 +86,9 @@ export function DrawerContent(props) {
                 )}
                 label="My Products"
                 onPress={() => {
-                  props.navigation.navigate("MyProducts");
+                  props.navigation.navigate("MyProducts", {
+                    params: { type: "my" },
+                  });
                 }}
               />
               <DrawerItem
@@ -100,7 +102,9 @@ export function DrawerContent(props) {
                 )}
                 label="Buy Requests"
                 onPress={() => {
-                  props.navigation.navigate("BuyRequests");
+                  props.navigation.navigate("BuyRequests", {
+                    params: { type: "requests" },
+                  });
                 }}
               />
               <DrawerItem
@@ -109,7 +113,9 @@ export function DrawerContent(props) {
                 )}
                 label="Wishlist"
                 onPress={() => {
-                  props.navigation.navigate("ShopLiked");
+                  props.navigation.navigate("ShopLiked", {
+                    params: { type: "liked" },
+                  });
                 }}
               />
               {props.user.verified === false ? (
