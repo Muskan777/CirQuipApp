@@ -11,6 +11,7 @@ import Loader from "./Loader";
 import axios from "axios";
 import "../config";
 import { IconButton } from "react-native-paper";
+import * as RootNavigation from "../RootNavigation";
 const customtInputToolbar = props => {
   return (
     <InputToolbar
@@ -92,6 +93,8 @@ function renderBubble(props) {
 export class ChatWithAdmin extends React.Component {
   constructor(props) {
     super(props);
+    console.log(RootNavigation.navigationRef.current.getCurrentRoute());
+
     this.state = {
       messages: [],
       socket: io(`http://15.207.85.98:3000`),

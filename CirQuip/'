@@ -41,9 +41,11 @@ import Posts from "./screens/Posts";
 
 const checkNotif = notification => {
   const type = notification.request.content.data.type;
+  console.log(type);
   if (type == "chat-admin" || type == "chat-user") {
     const route = RootNavigation.navigationRef.current.getCurrentRoute();
-    if (route.name === "Chat with Admin") return false;
+    console.log(route.name, route.name === "Chat With Admin");
+    if (route.name === "Chat With Admin") return false;
   }
   return true;
 };

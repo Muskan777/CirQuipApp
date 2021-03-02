@@ -79,6 +79,11 @@ const sendChatNotification = async msg => {
     message: `${msg.text}`,
     type: `${msg.to === "Admin" ? "chat-user" : "chat-admin"}`,
     email: userTo._doc.email,
+    thread: {
+      _id: userTo._doc.email,
+      name: userTo._doc.name,
+      role: userTo._doc.role,
+    },
   });
 };
 
