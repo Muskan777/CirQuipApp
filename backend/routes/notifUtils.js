@@ -80,9 +80,9 @@ const sendChatNotification = async msg => {
     type: `${msg.to === "Admin" ? "chat-user" : "chat-admin"}`,
     email: userTo._doc.email,
     thread: {
-      _id: userTo._doc.email,
-      name: userTo._doc.name,
-      role: userTo._doc.role,
+      _id: userFrom._doc.email,
+      name: userFrom._doc.name,
+      role: userFrom._doc.role,
     },
   });
 };

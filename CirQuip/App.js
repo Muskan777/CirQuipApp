@@ -130,7 +130,7 @@ export default function App() {
           target = "ChatAdmin";
           propsData = { email: user.email };
           RootNavigation.navigationRef.current.navigate("ChatAdmin", {
-            screen: "Chat With Admin",
+            screen: "Chat with Admin",
             params: {
               admin: data.type === "chat-user",
               email: data.email,

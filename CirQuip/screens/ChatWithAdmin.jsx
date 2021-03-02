@@ -93,7 +93,7 @@ function renderBubble(props) {
 export class ChatWithAdmin extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props.route, this.props.route.params);
+    console.log("chat with admin", this.props.route, this.props.route.params);
     this.state = {
       messages: [],
       socket: io(`http://15.207.85.98:3000`),
@@ -212,9 +212,9 @@ export class ChatWithAdmin extends React.Component {
         scrollToBottomComponent={scrollToBottomComponent}
         scrollToBottom
         user={{
-          _id: this.props.route.params.admin
+          _id: this.props?.route?.params?.admin
             ? "Admin"
-            : this.props.route.params.email,
+            : this.props?.route?.params?.email,
         }}
       />
     ) : (
