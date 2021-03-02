@@ -46,6 +46,7 @@ export default class Shop extends React.Component {
       searchQuery: "",
       user: { likes: [] },
       email: "",
+      isLoading: true,
     };
   }
   callNumber = phone => {
@@ -115,6 +116,7 @@ export default class Shop extends React.Component {
         .then(res => {
           this.setState({ data: res.data });
           this.setState({ refreshing: false });
+          this.setState({ isLoading: false });
         })
         .catch(e => {
           this.setState({ refreshing: false });
@@ -411,7 +413,7 @@ export default class Shop extends React.Component {
         <SafeAreaView
           style={{
             backgroundColor: "#fff",
-            marginBottom: 10,
+            flex: 1,
             paddingTop: Platform.OS === "android" ? 25 : 0,
           }}
         >
@@ -456,28 +458,35 @@ export default class Shop extends React.Component {
               ? "Buy Requests"
               : "New Recommendations"}
           </Title>
-          {this.state.data && this.state.data.length !== 0 ? (
-            <FlatList
-              numColumns={2}
-              data={this.state.data}
-              renderItem={item => this.renderItemComponent(item)}
-              keyExtractor={item => item._id}
-              //ItemSeparatorComponent={this.ItemSeparator}
-              refreshing={this.state.refreshing}
-              onRefresh={this.handleRefresh}
-              style={{ marginBottom: "25%" }}
-            />
-          ) : this.state.refreshing ? (
+          {this.state.isLoading ? (
             <Loader />
           ) : (
-            <>
-              <View style={{ justifyContent: "center" }}>
-                <Title style={{ width: width, textAlign: "center" }}>
-                  Could not find any products :({" "}
-                </Title>
-              </View>
-            </>
+            <View>
+              {this.state.data && this.state.data.length !== 0 ? (
+                <FlatList
+                  numColumns={2}
+                  data={this.state.data}
+                  renderItem={item => this.renderItemComponent(item)}
+                  keyExtractor={item => item._id}
+                  //ItemSeparatorComponent={this.ItemSeparator}
+                  refreshing={this.state.refreshing}
+                  onRefresh={this.handleRefresh}
+                  style={{ marginBottom: "25%" }}
+                />
+              ) : this.state.refreshing ? (
+                <Loader />
+              ) : (
+                <>
+                  <View style={{ justifyContent: "center" }}>
+                    <Title style={{ width: width, textAlign: "center" }}>
+                      Could not find any products{" "}
+                    </Title>
+                  </View>
+                </>
+              )}
+            </View>
           )}
+
           <View style={styles.bottom}>
             <View style={styles.container1}>
               <MaterialIcons
@@ -610,10 +619,13 @@ const styles = StyleSheet.create({
   },
   bottom: {
     position: "absolute",
+    flex: 0.1,
     left: 0,
     right: 0,
-    top: 0,
-    bottom: 98,
+    bottom: 0,
+    flexDirection: "row",
+    height: 80,
+    alignItems: "center",
   },
   cart: {
     alignSelf: "center",

@@ -16,6 +16,7 @@ import { Card } from "react-native-material-cards";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dialog, Portal, Button, Menu } from "react-native-paper";
+import "../config";
 
 import {
   FontAwesome,
@@ -26,6 +27,7 @@ import { Video } from "expo-av";
 import Loader from "../screens/Loader";
 import Carousel, { Pagination } from "react-native-snap-carousel"; // Version can be specified in package.json
 import { TouchableWithoutFeedback } from "react-native-gesture-handler";
+import Toast from "react-native-simple-toast";
 const SLIDER_WIDTH = (Dimensions.get("window").width * 9.2) / 10;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 1);
 export default function PostCarousel({
@@ -48,6 +50,7 @@ export default function PostCarousel({
   skill,
   club,
   interest,
+  userEmail,
 }) {
   const date =
     createdAt.substr(8, 2) +
@@ -86,6 +89,7 @@ export default function PostCarousel({
   const [loading, setLoading] = useState(false);
   const [deleted, setDeleted] = useState(false);
   const [visibleMenu, setVisibleMenu] = React.useState(false);
+  const [full, setfull] = React.useState(false);
   let usersTagged = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
@@ -95,6 +99,36 @@ export default function PostCarousel({
     setVisibleMenu(false);
     setVisible(!visible);
   };
+
+  const handleReportPost = async () => {
+    let token = await AsyncStorage.getItem("cirquip-auth-token");
+
+    axios
+      .post(
+        `${global.config.host}/post/reportPost`,
+        {
+          URL: URL,
+          email: userEmail,
+          name: name,
+          caption: caption,
+        },
+        {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        }
+      )
+      .then(res => {
+        console.log("Mail Sent!");
+      })
+      .catch(err => {
+        console.log("Error in sending mail");
+      });
+    Toast.show("Post Reported!", Toast.SHORT, ["UIAlertController"]);
+    setVisibleMenu(false);
+    setVisibleReport(!visibleReport);
+  };
+
   const handleReportDialog = () => {
     setVisibleMenu(false);
     setVisibleReport(!visibleReport);
@@ -110,7 +144,7 @@ export default function PostCarousel({
     let userEmail = await AsyncStorage.getItem("email");
     const initialUrl = await Linking.getInitialURL();
     setURL(initialUrl);
-    if (userId === id || userEmail === "admin@coep.ac.in") {
+    if (userId === id || userEmail === global.config.admin) {
       setAllowDelete(true);
     }
     axios
@@ -257,6 +291,8 @@ export default function PostCarousel({
         onRefresh(true);
         setDeleted(true);
         setLoading(false);
+        handleDialog();
+        Toast.show("Post Deleted!", Toast.SHORT, ["UIAlertController"]);
       })
       .catch(e => console.log(e));
   };
@@ -290,6 +326,7 @@ export default function PostCarousel({
       />
     );
   }
+
   const [textShown, setTextShown] = useState(false); //To show ur remaining Text
   const [lengthMore, setLengthMore] = useState(false); //to show the "Read more & Less Line"
   const toggleNumberOfLines = () => {
@@ -531,47 +568,25 @@ export default function PostCarousel({
                   >
                     Are you sure you want to delete this post?
                   </Text>
-                ) : (
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 18,
-                      color: "gray",
-                      alignSelf: "center",
-                      margin: 21,
-                    }}
-                  >
-                    Post deleted
-                  </Text>
-                )}
+                ) : null}
               </View>
             )}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-              }}
-            >
-              {!deleted ? (
+
+            {!deleted ? (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                }}
+              >
                 <Button onPress={handleDialog} color="gray" fontSize="15">
                   Back
                 </Button>
-              ) : (
-                <Button
-                  onPress={() => onRefresh(true)}
-                  color="gray"
-                  fontSize="15"
-                >
-                  Ok
-                </Button>
-              )}
-
-              {!deleted ? (
                 <Button onPress={handleDelete} color="#B11B1B" fontSize="15">
                   Delete
                 </Button>
-              ) : null}
-            </View>
+              </View>
+            ) : null}
           </View>
         </View>
       </Modal>
@@ -631,11 +646,7 @@ export default function PostCarousel({
               <Button onPress={handleReportDialog} color="gray" fontSize="15">
                 Back
               </Button>
-              <Button
-                onPress={handleReportDialog}
-                color="#B11B1B"
-                fontSize="15"
-              >
+              <Button onPress={handleReportPost} color="#B11B1B" fontSize="15">
                 Report
               </Button>
             </View>

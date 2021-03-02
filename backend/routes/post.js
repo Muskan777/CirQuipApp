@@ -6,6 +6,9 @@ const auth = require("../middlewares/auth");
 const { s3 } = require("../config/config");
 const ObjectId = require("mongodb").ObjectId;
 const notifUtils = require("./notifUtils");
+const nodemailer = require("nodemailer");
+const { getMaxListeners } = require("../models/Post");
+
 // @route GET /api/post/getPosts
 // @desc Get all existing posts
 
@@ -29,6 +32,43 @@ router.route("/getPosts").get(auth, (req, res) => {
   } catch (e) {
     console.log(e);
   }
+});
+
+router.route("/reportPost").post(auth, (req, res) => {
+  console.log("Report");
+  console.log(req.body.email);
+  var transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true, // use SSL
+    auth: {
+      user: "testingotp712@gmail.com",
+      pass: "sds@1234",
+    },
+  });
+
+  var mailOptions = {
+    from: '"CirQuip" <testingotp712@gmail.com>', // sender address (who sends)
+    to: "cirquip@gmail.com", // list of receivers (who receives)
+    subject: "Report Post", // Subject line
+    text:
+      "User " +
+      req.body.email +
+      " has reported " +
+      req.body.name +
+      "'s post! \n" +
+      req.body.caption +
+      "\n" +
+      req.body.URL,
+  };
+
+  transporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+    }
+  });
 });
 
 //uploads images to S3 and returns the array of URLs

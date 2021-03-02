@@ -38,6 +38,7 @@ import * as RootNavigation from "./RootNavigation";
 import CreatePost from "./screens/CreatePost";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import Posts from "./screens/Posts";
+import About from "./screens/About";
 
 const checkNotif = notification => {
   const type = notification.request.content.data.type;
@@ -72,6 +73,7 @@ const BuyRequests = createStackNavigator();
 const HomeStack = createStackNavigator();
 const CreatePostStack = createStackNavigator();
 const ShopStack = createStackNavigator();
+const AboutStack = createStackNavigator();
 
 const theme = {
   ...DefaultTheme,
@@ -231,7 +233,7 @@ export default function App() {
     >
       <SavedStack.Screen
         name="SavedPosts"
-        component={SavedPosts}
+        component={Posts}
         options={{
           title: "Saved Posts",
           headerRight: () => (
@@ -253,9 +255,44 @@ export default function App() {
               }}
             />
           ),
+          headerShown: false,
         }}
       />
     </SavedStack.Navigator>
+  );
+
+  const AboutStackScreen = ({ navigation }) => (
+    <AboutStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "#fff",
+        },
+        headerTitleStyle: {
+          color: "#287EC1",
+        },
+      }}
+    >
+      <AboutStack.Screen
+        name="About"
+        component={About}
+        options={{
+          title: "About",
+          headerLeft: () => (
+            <IconButton
+              icon="arrow-left"
+              color="#287EC1"
+              size={30}
+              onPress={() => {
+                navigation.goBack();
+              }}
+            />
+          ),
+        }}
+      />
+    </AboutStack.Navigator>
   );
 
   const ShopProductsStackScreen = ({ navigation }) => (
@@ -951,6 +988,7 @@ export default function App() {
               component={OTP}
               initialParams={{ email: user.email }}
             />
+            <Drawer.Screen name="About" component={AboutStackScreen} />
             <Drawer.Screen name="ChatUser" component={ChatUser} />
             <Drawer.Screen
               name="notificationStack"

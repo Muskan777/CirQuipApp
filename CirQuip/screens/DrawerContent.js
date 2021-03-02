@@ -118,6 +118,15 @@ export function DrawerContent(props) {
                   });
                 }}
               />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <FontAwesome name="info" size={30} style={styles.Icons} />
+                )}
+                label="About"
+                onPress={() => {
+                  props.navigation.navigate("About");
+                }}
+              />
               {props.user.verified === false ? (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -197,6 +206,15 @@ export function DrawerContent(props) {
                 label="Bookmarks"
                 onPress={() => {
                   props.navigation.navigate("SavedScreen");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <FontAwesome name="info" size={30} style={styles.Icons} />
+                )}
+                label="About"
+                onPress={() => {
+                  props.navigation.navigate("About");
                 }}
               />
               {props.user.verified === false ? (

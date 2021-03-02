@@ -28,6 +28,8 @@ export default function Posts(props) {
   const { navigation, route } = props;
   const routeState = useRoute();
   const [data, setData] = useState([]);
+  let savedData = [];
+  let postData = [];
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false);
@@ -80,62 +82,97 @@ export default function Posts(props) {
   };
 
   const fetchData = async () => {
-    let url =
-      props?.from === "notification"
-        ? `${global.config.host}/post/getPostWithId/${props?.uid}`
-        : `${global.config.host}/post/getPosts`;
-
-    let email = await AsyncStorage.getItem("email");
-    setEmail(email);
-    await AsyncStorage.getItem("cirquip-auth-token")
-      .then(async token => {
-        await axios
-          .get(url, {
-            headers: {
-              "cirquip-auth-token": token,
-            },
-          })
-          .then(async res => {
-            res.data.post = res.data.post.reverse();
-            let user = await AsyncStorage.getItem("user");
-            if (user) {
-              axios
-                .get(`${global.config.host}/user/getUserWithId/${user}`)
-                .then(response => {
-                  let College = response.data.college;
-                  let data = res.data.post.filter(post => {
-                    return post.userCollege === College;
-                  });
-                  console.log("Data", data);
-                  if (props.route.prams && props.route.params.type) {
-                    data = data.filter(post => {
-                      return response.data._id === post.userId;
-                    });
-                  }
-                  console.log(response.data);
-                  console.log(data);
-                  setData(data);
-                  setLoading(false);
-                })
-                .catch(e => console.log(e));
-            }
-          })
-          .catch(err => {
-            Alert.alert("Error", "Something Went Wrong");
-            console.log(err);
+    if (props.route.name === "SavedPosts") {
+      let token = await AsyncStorage.getItem("cirquip-auth-token");
+      await axios
+        .get(`${global.config.host}/post/getPosts`, {
+          headers: {
+            "cirquip-auth-token": token,
+          },
+        })
+        .then(res => {
+          res.data.post.map(post => {
+            postData.push(post);
           });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+          axios
+            .get(`${global.config.host}/user/getLikedPosts`, {
+              headers: {
+                "cirquip-auth-token": token,
+              },
+            })
+            .then(res => {
+              for (var i = 0; i < res.data.savedPosts.length; i++) {
+                postData.map(post => {
+                  if (res.data.savedPosts[i] === post._id) {
+                    savedData.push(post);
+                  }
+                });
+              }
+              savedData = savedData.reverse();
+              setData(savedData);
+              setLoading(false);
+            })
+            .catch(e => console.log(e));
+        })
+        .catch(e => console.log(e));
+    } else {
+      let url =
+        props?.from === "notification"
+          ? `${global.config.host}/post/getPostWithId/${props?.uid}`
+          : `${global.config.host}/post/getPosts`;
 
-    axios
-      .get(`${global.config.host}/user/getUsers`)
-      .then(res => {
-        setUsers(res.data.users);
-        setRequiredUsers(res.data.users);
-      })
-      .catch(e => console.log(e));
+      let email = await AsyncStorage.getItem("email");
+      setEmail(email);
+      await AsyncStorage.getItem("cirquip-auth-token")
+        .then(async token => {
+          await axios
+            .get(url, {
+              headers: {
+                "cirquip-auth-token": token,
+              },
+            })
+            .then(async res => {
+              res.data.post = res.data.post.reverse();
+              let user = await AsyncStorage.getItem("user");
+              if (user) {
+                axios
+                  .get(`${global.config.host}/user/getUserWithId/${user}`)
+                  .then(response => {
+                    let College = response.data.college;
+                    let data = res.data.post.filter(post => {
+                      return post.userCollege === College;
+                    });
+                    console.log("Data", data);
+                    if (props.route.prams && props.route.params.type) {
+                      data = data.filter(post => {
+                        return response.data._id === post.userId;
+                      });
+                    }
+                    console.log(response.data);
+                    console.log(data);
+                    setData(data);
+                    setLoading(false);
+                  })
+                  .catch(e => console.log(e));
+              }
+            })
+            .catch(err => {
+              Alert.alert("Error", "Something Went Wrong");
+              console.log(err);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+
+      axios
+        .get(`${global.config.host}/user/getUsers`)
+        .then(res => {
+          setUsers(res.data.users);
+          setRequiredUsers(res.data.users);
+        })
+        .catch(e => console.log(e));
+    }
   };
 
   const onCommentClick = (index, postId) => {
@@ -320,6 +357,7 @@ export default function Posts(props) {
               club={item.userClub}
               interest={item.userInterest}
               onRefresh={onRefresh}
+              userEmail={email}
             />
           )}
           keyExtractor={item => item._id}
