@@ -8,6 +8,7 @@ import {
   Alert,
 } from "react-native";
 import axios from "axios";
+import Toast from "react-native-simple-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function OTP({ email, navigation }) {
@@ -55,7 +56,7 @@ export default function OTP({ email, navigation }) {
       )
       .then(res => {
         if (res.status === 200) {
-          Alert.alert("OTP Resent!");
+          Toast.show("OTP Resent!", Toast.SHORT, ["UIAlertController"]);
         } else {
           Alert.alert("Something went wrong!");
         }
@@ -68,10 +69,14 @@ export default function OTP({ email, navigation }) {
         .patch(`${global.config.host}/user/verify/${mailId}`)
         .then(res => {
           if (res.status === 200) {
-            Alert.alert("CirQuip", "Successfully Verified");
+            Toast.show("Successfuly Verified", Toast.SHORT, [
+              "UIAlertController",
+            ]);
             navigation.navigate("Home");
           } else {
-            Alert.alert("Error", "Verification failed");
+            Toast.show("Verification Failed!", Toast.SHORT, [
+              "UIAlertController",
+            ]);
             navigation.closeDrawer();
           }
         })
@@ -79,7 +84,7 @@ export default function OTP({ email, navigation }) {
           console.log(e);
         });
     } else {
-      Alert.alert("Error", "Verification failed");
+      Toast.show("Verification Failed!", Toast.SHORT, ["UIAlertController"]);
     }
   };
 

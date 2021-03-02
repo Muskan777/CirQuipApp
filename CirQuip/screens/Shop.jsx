@@ -24,6 +24,7 @@ import {
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import * as RootNavigation from "../RootNavigation.js";
 
@@ -400,7 +401,13 @@ export default class Shop extends React.Component {
   render() {
     return (
       <>
-        <SafeAreaView style={{ backgroundColor: "#fff", marginBottom: 10 }}>
+        <SafeAreaView
+          style={{
+            backgroundColor: "#fff",
+            marginBottom: 10,
+            paddingTop: Platform.OS === "android" ? 25 : 0,
+          }}
+        >
           <Searchbar
             onSubmitEditing={() => this.performSearch()}
             returnKeyType="search"
@@ -408,6 +415,10 @@ export default class Shop extends React.Component {
             placeholder="Search"
             onChangeText={this.onChangeSearch}
             value={this.state.searchQuery}
+            icon={() => (
+              <MaterialCommunityIcons name="menu" size={30} color="#2ba4db" />
+            )}
+            onIconPress={() => this.props.navigation.openDrawer()}
           />
           <Title
             style={{
@@ -464,7 +475,7 @@ export default class Shop extends React.Component {
                 name="plus"
                 style={{ ...styles.create }}
                 onPress={() => {
-                  this.props.navigation.navigate("CreatePost");
+                  this.props.navigation.navigate("SellProducts");
                 }}
               />
             </View>

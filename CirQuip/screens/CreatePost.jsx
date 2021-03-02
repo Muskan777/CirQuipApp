@@ -28,6 +28,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
+import Toast from "react-native-simple-toast";
+
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
   const [postHasImage, setPostHasImage] = useState(false);
@@ -118,7 +120,7 @@ export default function CreatePost(props) {
         }
       )
       .then(() => {
-        Alert.alert("CirQuip", "New Post Created");
+        Toast.show("New Post Created", Toast.SHORT, ["UIAlertController"]);
         setPhotos(null);
         setPostHasImage(false);
       })
@@ -225,8 +227,16 @@ export default function CreatePost(props) {
     <SafeAreaView
       style={
         visible
-          ? { backgroundColor: "#bbb", ...styles.mainContent }
-          : { backgroundColor: "#fff", ...styles.mainContent }
+          ? {
+              backgroundColor: "#bbb",
+              ...styles.mainContent,
+              paddingTop: Platform.OS === "android" ? 25 : 0,
+            }
+          : {
+              backgroundColor: "#fff",
+              ...styles.mainContent,
+              paddingTop: Platform.OS === "android" ? 25 : 0,
+            }
       }
     >
       <View style={styles.topContainer}>

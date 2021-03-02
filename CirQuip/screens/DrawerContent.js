@@ -14,6 +14,11 @@ import { DrawerContentScrollView, DrawerItem } from "@react-navigation/drawer";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import {
+  FontAwesome,
+  MaterialCommunityIcons,
+  Entypo,
+} from "@expo/vector-icons";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 import {
   TouchableOpacity,
@@ -44,121 +49,168 @@ export function DrawerContent(props) {
 
   return (
     <View style={{ flex: 1 }}>
-      <DrawerContentScrollView {...props}>
-        <View style={styles.drawerContent}>
-          <View style={styles.userInfoSection}>
-            <TouchableWithoutFeedback
-              onPress={() => {
-                props.navigation.navigate("Profile");
-              }}
-              style={{ flexDirection: "row" }}
-            >
-              <Avatar.Image
-                source={{
-                  uri: "https://reactnavigation.org/img/spiro.svg",
+      {props.state.routeNames[props.state.index] === "MyProducts" ||
+      props.state.routeNames[props.state.index] === "Shop" ||
+      props.state.routeNames[props.state.index] === "ShopLiked" ||
+      props.state.routeNames[props.state.index] === "BuyRequests" ? (
+        <DrawerContentScrollView {...props}>
+          <View style={styles.drawerContent}>
+            <View style={styles.userInfoSection}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate("Profile");
                 }}
-                size={50}
+                style={{ flexDirection: "row" }}
+              >
+                <Avatar.Image
+                  source={{
+                    uri: "https://reactnavigation.org/img/spiro.svg",
+                  }}
+                  size={50}
+                />
+                <View style={{ marginLeft: 15, flexDirection: "column" }}>
+                  <Title style={styles.title}>{props.user.name}</Title>
+                  <Caption style={styles.caption}>{props.user.role}</Caption>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+            <Drawer.Section style={styles.drawerSection}>
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon
+                    name="podcast"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="My Products"
+                onPress={() => {
+                  props.navigation.navigate("MyProducts");
+                }}
               />
-              <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                <Title style={styles.title}>{props.user.name}</Title>
-                <Caption style={styles.caption}>{props.user.role}</Caption>
-              </View>
-            </TouchableWithoutFeedback>
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="request-page"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Buy Requests"
+                onPress={() => {
+                  props.navigation.navigate("BuyRequests");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <FontAwesome name="heart" size={30} style={styles.Icons} />
+                )}
+                label="Wishlist"
+                onPress={() => {
+                  props.navigation.navigate("ShopLiked");
+                }}
+              />
+              {props.user.verified === false ? (
+                <DrawerItem
+                  icon={({ color, size }) => (
+                    <Icon name="pin" color={color} size={size} />
+                  )}
+                  label="Verify Email"
+                  onPress={() => {
+                    props.navigation.navigate("OTP");
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+            </Drawer.Section>
           </View>
+        </DrawerContentScrollView>
+      ) : (
+        <DrawerContentScrollView {...props}>
+          <View style={styles.drawerContent}>
+            <View style={styles.userInfoSection}>
+              <TouchableWithoutFeedback
+                onPress={() => {
+                  props.navigation.navigate("Profile");
+                }}
+                style={{ flexDirection: "row" }}
+              >
+                <Avatar.Image
+                  source={{
+                    uri: "https://reactnavigation.org/img/spiro.svg",
+                  }}
+                  size={50}
+                />
+                <View style={{ marginLeft: 15, flexDirection: "column" }}>
+                  <Title style={styles.title}>{props.user.name}</Title>
+                  <Caption style={styles.caption}>{props.user.role}</Caption>
+                </View>
+              </TouchableWithoutFeedback>
+            </View>
+            <Drawer.Section style={styles.drawerSection}>
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon
+                    name="home-outline"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Home"
+                onPress={() => {
+                  props.navigation.navigate("Home");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon
+                    name="file"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="My Posts"
+                onPress={() => {
+                  props.navigation.navigate("MyPosts");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <Icon
+                    name="bookmark-outline"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Bookmarks"
+                onPress={() => {
+                  props.navigation.navigate("SavedScreen");
+                }}
+              />
+              {props.user.verified === false ? (
+                <DrawerItem
+                  icon={({ color, size }) => (
+                    <Icon name="pin" color={color} size={size} />
+                  )}
+                  label="Verify Email"
+                  onPress={() => {
+                    props.navigation.navigate("OTP");
+                  }}
+                />
+              ) : (
+                <></>
+              )}
+            </Drawer.Section>
+          </View>
+        </DrawerContentScrollView>
+      )}
 
-          <Drawer.Section style={styles.drawerSection}>
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="home-outline" color={color} size={size} />
-              )}
-              label="Home"
-              onPress={() => {
-                props.navigation.navigate("Home");
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="bookmark-outline" color={color} size={size} />
-              )}
-              label="Saved Posts"
-              onPress={() => {
-                props.navigation.navigate("SavedScreen");
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="account-cash-outline" color={color} size={size} />
-              )}
-              label="Sell Products"
-              onPress={() => {
-                props.navigation.navigate("SellProducts");
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <Icon name="podcast" color={color} size={size} />
-              )}
-              label="My Products"
-              onPress={() => {
-                props.navigation.navigate("MyProducts");
-              }}
-            />
-            <DrawerItem
-              icon={({ color, size }) => (
-                <MaterialIcons name="request-page" color={color} size={size} />
-              )}
-              label="Buy Requests"
-              onPress={() => {
-                props.navigation.navigate("BuyRequests");
-              }}
-            />
-            {props.user.verified === false ? (
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <Icon name="pin" color={color} size={size} />
-                )}
-                label="Verify Email"
-                onPress={() => {
-                  props.navigation.navigate("OTP");
-                }}
-              />
-            ) : (
-              <></>
-            )}
-            {email != global.config.admin ? (
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <Icon name="chat" color={color} size={size} />
-                )}
-                label="Chat with Admin"
-                onPress={() => {
-                  props.navigation.navigate("ChatAdmin", {
-                    screen: "Chat with Admin",
-                    params: {
-                      email: email,
-                    },
-                  });
-                }}
-              />
-            ) : (
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <Icon name="chat" color={color} size={size} />
-                )}
-                label="Chat with User"
-                onPress={() => {
-                  props.navigation.navigate("ChatUser", {
-                    screen: "Chat With User",
-                    params: {
-                      email: email,
-                    },
-                  });
-                }}
-              />
-            )}
-          </Drawer.Section>
-        </View>
-      </DrawerContentScrollView>
       <View
         style={{
           marginLeft: 15,
@@ -177,9 +229,16 @@ export function DrawerContent(props) {
             flexDirection: "column",
           }}
         >
-          <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-            SignOut
-          </Text>
+          <TouchableOpacity
+            onPress={() => {
+              props.handleLogout();
+            }}
+          >
+            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
+              SignOut
+            </Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() => {
               Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
@@ -215,6 +274,11 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
+  },
+  Icons: {
+    fontSize: 25,
+    color: "#2EA5DD",
+    paddingHorizontal: 10,
   },
   section: {
     flexDirection: "row",

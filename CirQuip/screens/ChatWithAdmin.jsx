@@ -94,9 +94,10 @@ export class ChatWithAdmin extends React.Component {
     super(props);
     this.state = {
       messages: [],
-      socket: io(`http://192.168.43.140:3000`),
+      socket: io(`http://15.207.85.98:3000`),
     };
   }
+
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener("focus", () => {
       this.state.socket.on("new message", message => {
@@ -114,6 +115,7 @@ export class ChatWithAdmin extends React.Component {
                 this.props.route.params.thread._id === msg.user._id
               );
             });
+
             FilteredMessages = FilteredMessages.reverse();
             this.setState({
               messages: FilteredMessages,
@@ -125,7 +127,17 @@ export class ChatWithAdmin extends React.Component {
                 this.props.route.params.email === msg.user._id
               );
             });
+            let image = msg => {
+              if (msg.user._id === "Admin") {
+                msg.user.name = "adminn";
+                msg.user.avatar = require("../assets/cirquip.png");
+              } else {
+                msg.user.name = "users";
+                msg.user.avatar = "https://placeimg.com/140/140/any";
+              }
+            };
             FilteredMessages = FilteredMessages.reverse();
+            FilteredMessages.forEach(image);
             this.setState({
               messages: FilteredMessages,
             });

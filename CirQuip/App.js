@@ -295,6 +295,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <SellProductsStack.Screen
@@ -402,6 +403,7 @@ export default function App() {
               }}
             />
           ),
+          headerShown: false,
         }}
       />
     </SellProductsStack.Navigator>
@@ -416,6 +418,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <MyProductsStack.Screen
@@ -457,6 +460,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <BuyRequests.Screen
@@ -539,6 +543,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <HomeStack.Screen
@@ -596,6 +601,48 @@ export default function App() {
     </HomeStack.Navigator>
   );
 
+  const MyPostStackScreen = ({ navigation, route }) => (
+    <HomeStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(43, 164, 219, 1)",
+        },
+        headerShown: false,
+      }}
+    >
+      <HomeStack.Screen
+        name="Posts"
+        component={Posts}
+        initialParams={{ type: "my" }}
+        options={{
+          title: "Posts",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </HomeStack.Navigator>
+  );
+
   const CreatePostStackScreen = ({ navigation, route }) => (
     <CreatePostStack.Navigator
       screenOptions={{
@@ -605,6 +652,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <CreatePostStack.Screen
@@ -697,12 +745,55 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <ShopStack.Screen
         name="Shop"
         component={Shop}
         initialParams={{ type: "all" }}
+        options={{
+          title: "Shop",
+          headerRight: () => (
+            <IconButton
+              icon="logout"
+              color="#000"
+              size={30}
+              onPress={() => {
+                handleLogout();
+              }}
+            />
+          ),
+          headerLeft: () => (
+            <MaterialCommunityIcons
+              name="menu"
+              size={26}
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+            />
+          ),
+        }}
+      />
+    </ShopStack.Navigator>
+  );
+
+  const ShopLikedStackScreen = ({ navigation, route }) => (
+    <ShopStack.Navigator
+      screenOptions={{
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          backgroundColor: "rgba(43, 164, 219, 1)",
+        },
+        headerShown: false,
+      }}
+    >
+      <ShopStack.Screen
+        name="Shop"
+        component={Shop}
+        initialParams={{ type: "liked" }}
         options={{
           title: "Shop",
           headerRight: () => (
@@ -736,7 +827,10 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(43, 164, 219, 1)",
+          backgroundColor: "#fff",
+        },
+        headerTitleStyle: {
+          color: "#287EC1",
         },
       }}
     >
@@ -744,14 +838,14 @@ export default function App() {
         name="Chat with Admin"
         component={ChatWithAdmin}
         options={{
-          title: "Chat",
-          headerRight: () => (
+          title: "CirQuip Assistant",
+          headerLeft: () => (
             <IconButton
-              icon="logout"
-              color="#000"
+              icon="arrow-left"
+              color="#287EC1"
               size={30}
               onPress={() => {
-                handleLogout();
+                navigation.goBack();
               }}
             />
           ),
@@ -767,7 +861,10 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(43, 164, 219, 1)",
+          backgroundColor: "#fff",
+        },
+        headerTitleStyle: {
+          color: "#287EC1",
         },
       }}
     >
@@ -775,21 +872,12 @@ export default function App() {
         name="Chat With User"
         component={ChatWithUser}
         options={{
-          title: "Chat",
-          headerRight: () => (
-            <IconButton
-              icon="logout"
-              color="#000"
-              size={30}
-              onPress={() => {
-                handleLogout();
-              }}
-            />
-          ),
+          title: "CirQuip Assistant",
           headerLeft: () => (
             <MaterialCommunityIcons
               name="menu"
-              size={26}
+              size={30}
+              color="#287EC1"
               onPress={() => {
                 navigation.openDrawer();
               }}
@@ -819,7 +907,13 @@ export default function App() {
       <PaperProvider theme={theme}>
         <NavigationContainer ref={RootNavigation.navigationRef}>
           <Drawer.Navigator
-            drawerContent={props => <DrawerContent {...props} user={user} />}
+            drawerContent={props => (
+              <DrawerContent
+                {...props}
+                user={user}
+                handleLogout={handleLogout}
+              />
+            )}
             initialRouteName={verified ? "Home" : "OTP"}
           >
             <Drawer.Screen
@@ -852,7 +946,9 @@ export default function App() {
               name="CreatePost"
               component={CreatePostStackScreen}
             />
+            <Drawer.Screen name="MyPosts" component={MyPostStackScreen} />
             <Drawer.Screen name="Shop" component={ShopStackScreen} />
+            <Drawer.Screen name="ShopLiked" component={ShopLikedStackScreen} />
             <Drawer.Screen
               name="Home"
               component={HomeStackScreen}

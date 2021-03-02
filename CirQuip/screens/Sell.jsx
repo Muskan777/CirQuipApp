@@ -19,6 +19,7 @@ import {
   Card,
   Paragraph,
 } from "react-native-paper";
+import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
 import StepIndicator from "expo-step-indicator";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
@@ -43,15 +44,15 @@ export default class Sell extends React.Component {
     currentStepIndicatorSize: 30,
     separatorStrokeWidth: 2,
     currentStepStrokeWidth: 3,
-    stepStrokeCurrentColor: "rgba(54, 181, 165, 1)",
+    stepStrokeCurrentColor: "#287EC1",
     stepStrokeWidth: 3,
-    stepStrokeFinishedColor: "rgba(54, 181, 165, 1)",
+    stepStrokeFinishedColor: "#287EC1",
     stepStrokeUnFinishedColor: "#aaaaaa",
-    separatorFinishedColor: "rgba(54, 181, 165, 1)",
+    separatorFinishedColor: "#287EC1",
     separatorUnFinishedColor: "#aaaaaa",
-    stepIndicatorFinishedColor: "rgba(54, 181, 165, 1)",
+    stepIndicatorFinishedColor: "#287EC1",
     stepIndicatorUnFinishedColor: "#ffffff",
-    stepIndicatorCurrentColor: "rgba(54, 181, 165, 1)",
+    stepIndicatorCurrentColor: "#287EC1",
     stepIndicatorLabelFontSize: 13,
     currentStepIndicatorLabelFontSize: 13,
     stepIndicatorLabelCurrentColor: "#fff",
@@ -59,7 +60,7 @@ export default class Sell extends React.Component {
     stepIndicatorLabelUnFinishedColor: "#aaaaaa",
     labelColor: "#999999",
     labelSize: 15,
-    currentStepLabelColor: "rgba(54, 181, 165, 1)",
+    currentStepLabelColor: "#287EC1",
   };
   onPageChange(position) {
     this.setState({ currentPosition: position });
@@ -157,8 +158,16 @@ export default class Sell extends React.Component {
               alignItems: "center",
               width: width,
               justifyContent: "center",
+              paddingTop: Platform.OS === "android" ? 25 : 0,
             }}
           >
+            <IconButton
+              icon="arrow-left"
+              color="#2EA5DD"
+              size={30}
+              style={{ alignItems: "flex-start" }}
+              onPress={() => this.props.navigation.goBack()}
+            />
             <Text style={{ ...styles.header }}>
               {this.labels[this.state.currentPosition]}
             </Text>
@@ -234,7 +243,7 @@ export default class Sell extends React.Component {
                   mode="contained"
                   style={{
                     margin: 5,
-                    backgroundColor: "rgba(54, 181, 165, 1)",
+                    backgroundColor: "#2EA5DD",
                     width: "90%",
                     alignSelf: "center",
                     fontSize: 14,
@@ -339,7 +348,7 @@ export default class Sell extends React.Component {
                     mode="contained"
                     style={{
                       margin: 5,
-                      backgroundColor: "rgba(54, 181, 165, 1)",
+                      backgroundColor: "#2EA5DD",
                       justifyContent: "center",
                       width: 125,
                       height: 50,
@@ -487,7 +496,7 @@ export default class Sell extends React.Component {
                     icon="check"
                     style={{
                       margin: 5,
-                      backgroundColor: "rgba(54, 181, 165, 1)",
+                      backgroundColor: "#2EA5DD",
                       justifyContent: "center",
                       width: 125,
                       height: 50,
@@ -517,7 +526,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   header: {
-    color: "rgba(54, 181, 165, 1)",
+    color: "#2EA5DD",
     fontSize: 24,
     fontWeight: "600",
     fontStyle: "normal",

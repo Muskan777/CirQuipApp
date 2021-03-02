@@ -123,7 +123,7 @@ const styles = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 24,
-    color: "rgba(54, 181, 165, 1)",
+    color: "#2EA5DD",
     marginBottom: 40,
     fontWeight: "700",
     fontStyle: "normal",

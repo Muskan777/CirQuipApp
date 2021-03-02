@@ -36,39 +36,41 @@ router.route("/getPosts").get(auth, (req, res) => {
 const uploadImages = async (content, id) => {
   let promises = [];
   if (typeof content !== "string") {
-    content?.forEach((image, index) => {
-      if (!image) return;
-      promises.push(
-        new Promise((resolve, reject) => {
-          const buf = Buffer.from(
-            image.replace(/^data:image\/\w+;base64,/, ""),
-            "base64"
+    content
+      ? content.forEach((image, index) => {
+          if (!image) return;
+          promises.push(
+            new Promise((resolve, reject) => {
+              const buf = Buffer.from(
+                image.replace(/^data:image\/\w+;base64,/, ""),
+                "base64"
+              );
+
+              var params = {
+                Bucket: "cirquip",
+                Body: buf,
+                ContentEncoding: "base64",
+                ContentType: "image/jpeg",
+                Key: `posts/${id}/${Date.now()}_${index}.jpeg`,
+                ACL: "public-read",
+              };
+
+              s3.upload(params, async function (err, data) {
+                //handle error
+                if (err) {
+                  console.log("Error", err);
+                  reject(err);
+                }
+                //success
+                if (data) {
+                  console.log("Uploaded in:", data.Location);
+                  resolve(data.Location);
+                }
+              });
+            })
           );
-
-          var params = {
-            Bucket: "cirquip",
-            Body: buf,
-            ContentEncoding: "base64",
-            ContentType: "image/jpeg",
-            Key: `posts/${id}/${Date.now()}_${index}.jpeg`,
-            ACL: "public-read",
-          };
-
-          s3.upload(params, async function (err, data) {
-            //handle error
-            if (err) {
-              console.log("Error", err);
-              reject(err);
-            }
-            //success
-            if (data) {
-              console.log("Uploaded in:", data.Location);
-              resolve(data.Location);
-            }
-          });
         })
-      );
-    });
+      : "";
   } else {
     // string=> video is stored directly as string
     promises.push(

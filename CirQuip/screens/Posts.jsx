@@ -9,8 +9,11 @@ import {
   Alert,
   Text,
   TouchableHighlight,
+  Button,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
+import Toast from "react-native-simple-toast";
+
 import axios from "axios";
 import PostsCarousel from "../components/PostsCarousel";
 import Comment from "../components/Comment";
@@ -103,7 +106,14 @@ export default function Posts(props) {
                   let data = res.data.post.filter(post => {
                     return post.userCollege === College;
                   });
-                  //console.log("Data", data);
+                  console.log("Data", data);
+                  if (props.route.prams && props.route.params.type) {
+                    data = data.filter(post => {
+                      return response.data._id === post.userId;
+                    });
+                  }
+                  console.log(response.data);
+                  console.log(data);
                   setData(data);
                   setLoading(false);
                 })
@@ -155,7 +165,7 @@ export default function Posts(props) {
         }
       )
       .then(res => {
-        Alert.alert("CirQuip", "New Comment Created");
+        Toast.show("New Comment Created", Toast.SHORT, ["UIAlertController"]);
         setCommentText(null);
         setComments([...comments, res.data.comment]);
       })
@@ -180,14 +190,21 @@ export default function Posts(props) {
 
   return (
     <SafeAreaView style={styles.post}>
-      <TouchableOpacity
-        onPress={() => {
-          setSearchModalOpen(true);
-        }}
-      >
-        <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <IconButton icon="magnify" color="#2ba4db" size={30} />
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBar}>
+          <IconButton
+            icon="menu"
+            onPress={() => {
+              navigation.openDrawer();
+            }}
+            color="#2ba4db"
+            size={30}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              setSearchModalOpen(true);
+            }}
+          >
             <Text
               style={{
                 width: "100%",
@@ -198,10 +215,9 @@ export default function Posts(props) {
             >
               Search
             </Text>
-          </View>
+          </TouchableOpacity>
         </View>
-      </TouchableOpacity>
-
+      </View>
       <Modal visible={searchModalOpen} transparent={true} animationType="slide">
         <View
           style={{
@@ -247,6 +263,7 @@ export default function Posts(props) {
               />
             </TouchableOpacity>
           </View>
+
           <View style={{ flex: 0.8 }}>
             <FlatList
               data={requiredusers}
@@ -456,6 +473,7 @@ const styles = StyleSheet.create({
     flex: 1,
     // marginTop: StatusBar.currentHeight || 0,
     backgroundColor: "#eee",
+    paddingTop: Platform.OS === "android" ? 25 : 0,
   },
   searchCard: {
     display: "flex",
@@ -585,7 +603,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     borderBottomLeftRadius: 20,
     borderBottomRightRadius: 20,
-    shadowColor: "#2ba4db",
+    shadowColor: "#2EA5DD",
     shadowOpacity: 1,
     shadowOffset: {
       width: 0,
@@ -601,6 +619,6 @@ const styles = StyleSheet.create({
   searchContainer: {
     alignItems: "center",
     height: 60,
-    backgroundColor: "transparent",
+    backgroundColor: "#fff",
   },
 });
