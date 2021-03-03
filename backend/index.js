@@ -7,7 +7,6 @@ const { connectDB } = require("./config/config");
 const Message = require("./models/message");
 const NotificationActions = require("./routes/notifUtils");
 const users = {};
-
 const app = express();
 
 const server = require("http").createServer(app);
@@ -35,6 +34,7 @@ routes.forEach(route => app.use(`/api/${route}`, require(`./routes/${route}`)));
 
 io.on("connection", socket => {
   socket.on("new user", function (data) {
+    console.log("new user registered");
     users[data] = socket;
   });
 
@@ -63,7 +63,7 @@ io.on("connection", socket => {
     }
   });
 
-  socket.on("disconnect", () => {
+  socket.on("disconnect", email => {
     delete users[Object.keys(users).find(key => users[key] === socket)];
   });
 });

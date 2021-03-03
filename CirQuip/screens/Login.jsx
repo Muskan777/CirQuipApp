@@ -368,11 +368,18 @@ export default class Login extends React.Component {
                 </>
               ) : this.state.currentPosition === 2 ? (
                 <>
-                  <ScrollView style={{width: '100%'}}>
-                    <View style={styles.container, {marginTop: 100, alignItems: 'center'}}>
+                  <ScrollView style={{ width: "100%" }}>
+                    <View
+                      style={
+                        (styles.container,
+                        { marginTop: 100, alignItems: "center" })
+                      }
+                    >
                       <View style={styles.textContainer}>
                         <Text style={styles.textStyle}>Enter</Text>
-                        <Text style={styles.textStyle}>Your College Email Id</Text>
+                        <Text style={styles.textStyle}>
+                          Your College Email Id
+                        </Text>
                       </View>
                       <View style={styles.inputView}>
                         <TextInput
@@ -384,71 +391,173 @@ export default class Login extends React.Component {
                         />
                       </View>
                       <TouchableOpacity onPress={() => this.onPageChange(1)}>
-                        <Text style={{ fontSize: 16, color: "grey", marginTop: 200 }}>Go Back</Text>
+                        <Text
+                          style={{
+                            fontSize: 16,
+                            color: "grey",
+                            marginTop: 200,
+                          }}
+                        >
+                          Go Back
+                        </Text>
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.nextBtn}
                         onPress={() => this.onPageChange(3)}
                       >
-                          <Text style={styles.loginText}>CONTINUE</Text>
+                        <Text style={styles.loginText}>CONTINUE</Text>
                       </TouchableOpacity>
                     </View>
                   </ScrollView>
                 </>
-              ) : this.state.currentPosition === 3?( 
+              ) : this.state.currentPosition === 3 ? (
                 <>
-                  <ScrollView style={{width: '100%', height: '100%'}}>
-                    <View style={{marginTop: 80}}>
-                    <View style={styles.container}>
-                        <Text style={{color: 'rgba(39, 40, 51, 1)', fontSize: 24, fontWeight: '600'}}>Enter the 4 digit code sent to:</Text>
-                        <Text style={{color: 'rgba(46, 165, 221, 1)', fontSize: 25, fontWeight: '600', marginVertical: 10}}>{this.state.email}</Text>
-                        <Text style={{color: 'rgba(103, 104, 112, 1)', fontSize: 14, fontWeight: '100'}}>We've sent a 4 digit code to your email address.</Text>
-                        <Text style={{color: 'rgba(103, 104, 112, 1)', fontSize: 14, fontWeight: '100'}}>Please enter the verification code.</Text>
-                      <View style={{width: '100%', marginTop: 70, alignItems: 'center'}}>
-                        <View style={{width: '100%'}}>
-                          <OTP/>
+                  <ScrollView style={{ width: "100%", height: "100%" }}>
+                    <View style={{ marginTop: 80 }}>
+                      <View style={styles.container}>
+                        <Text
+                          style={{
+                            color: "rgba(39, 40, 51, 1)",
+                            fontSize: 24,
+                            fontWeight: "600",
+                          }}
+                        >
+                          Enter the 4 digit code sent to:
+                        </Text>
+                        <Text
+                          style={{
+                            color: "rgba(46, 165, 221, 1)",
+                            fontSize: 25,
+                            fontWeight: "600",
+                            marginVertical: 10,
+                          }}
+                        >
+                          {this.state.email}
+                        </Text>
+                        <Text
+                          style={{
+                            color: "rgba(103, 104, 112, 1)",
+                            fontSize: 14,
+                            fontWeight: "100",
+                          }}
+                        >
+                          We've sent a 4 digit code to your email address.
+                        </Text>
+                        <Text
+                          style={{
+                            color: "rgba(103, 104, 112, 1)",
+                            fontSize: 14,
+                            fontWeight: "100",
+                          }}
+                        >
+                          Please enter the verification code.
+                        </Text>
+                        <View
+                          style={{
+                            width: "100%",
+                            marginTop: 70,
+                            alignItems: "center",
+                          }}
+                        >
+                          <View style={{ width: "100%" }}>
+                            <OTP />
+                          </View>
                         </View>
+
+                        <TouchableOpacity onPress={() => this.onPageChange(5)}>
+                          <Text
+                            style={{
+                              color: "grey",
+                              marginTop: 20,
+                              marginBottom: 230,
+                            }}
+                          >
+                            Skip
+                          </Text>
+                        </TouchableOpacity>
                       </View>
-
-                      <TouchableOpacity
-                          onPress={() => this.onPageChange(5)}
-                      >
-                          <Text style={{ color: "grey", marginTop: 20, marginBottom: 230 }}>Skip</Text>
-                      </TouchableOpacity>
-                    </View>
-
                     </View>
                   </ScrollView>
                 </>
-              ) : this.state.currentPosition === 4?(
+              ) : this.state.currentPosition === 4 ? (
                 <>
-                <ScrollView style={{width: '100%', height: '100%'}}>
-                  <View style={{marginTop: 150}}>
-                  <View style={styles.container}>
-                    <View style={{width: 150, height: 150, borderRadius: 75, backgroundColor: 'rgba(168, 126, 111, 0.10196078431372549)',flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-                      <Avatar.Icon size={120} color='white' icon="check" style={{backgroundColor: 'rgba(46, 165, 221, 1)'}}/>
-                    </View>
-                    <View style={{width: '100%', marginTop: 50, alignItems:'center'}}>
-                      <Text style={{fontSize: 27, marginBottom: 10}}>Email Verified</Text>
-                      <Text style={{color: 'rgba(141, 141, 141, 1)', marginBottom: 170}}>Your email id has been verified.</Text>
-                    </View>
-                    <TouchableOpacity
-                        style={styles.nextBtn}
-                        onPress={() => this.onPageChange()}
-                      >
+                  <ScrollView style={{ width: "100%", height: "100%" }}>
+                    <View style={{ marginTop: 150 }}>
+                      <View style={styles.container}>
+                        <View
+                          style={{
+                            width: 150,
+                            height: 150,
+                            borderRadius: 75,
+                            backgroundColor:
+                              "rgba(168, 126, 111, 0.10196078431372549)",
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                          }}
+                        >
+                          <Avatar.Icon
+                            size={120}
+                            color="white"
+                            icon="check"
+                            style={{ backgroundColor: "rgba(46, 165, 221, 1)" }}
+                          />
+                        </View>
+                        <View
+                          style={{
+                            width: "100%",
+                            marginTop: 50,
+                            alignItems: "center",
+                          }}
+                        >
+                          <Text style={{ fontSize: 27, marginBottom: 10 }}>
+                            Email Verified
+                          </Text>
+                          <Text
+                            style={{
+                              color: "rgba(141, 141, 141, 1)",
+                              marginBottom: 170,
+                            }}
+                          >
+                            Your email id has been verified.
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.nextBtn}
+                          onPress={() => this.onPageChange()}
+                        >
                           <Text style={styles.loginText}>CONTINUE</Text>
-                      </TouchableOpacity>
-                  </View>
-                  </View>
-                </ScrollView>
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  </ScrollView>
                 </>
               ) : (
                 <>
-                  <ScrollView style={{width: '100%'}}>
-                    <View style={styles.container, {marginTop: 100, alignItems: 'center'}}>
+                  <ScrollView style={{ width: "100%" }}>
+                    <View
+                      style={
+                        (styles.container,
+                        { marginTop: 100, alignItems: "center" })
+                      }
+                    >
                       <View style={styles.textContainer}>
-                        <Text style={{fontSize: 18, color: 'rgba(141, 141, 141, 1)'}}>Congratulations, You Are Just A Step Away To</Text>
-                        <Text style={{fontSize: 18, color: 'rgba(141, 141, 141, 1)'}}>Connect To Your College Remotely!</Text>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "rgba(141, 141, 141, 1)",
+                          }}
+                        >
+                          Congratulations, You Are Just A Step Away To
+                        </Text>
+                        <Text
+                          style={{
+                            fontSize: 18,
+                            color: "rgba(141, 141, 141, 1)",
+                          }}
+                        >
+                          Connect To Your College Remotely!
+                        </Text>
                       </View>
                       <View style={styles.inputView}>
                         <TextInput
@@ -470,12 +579,20 @@ export default class Login extends React.Component {
                           onChangeText={text => this.setState({ year: text })}
                         />
                       </View>
-                      <View style={{width: '100%', marginTop: 90, marginBottom: 70, alignContent: 'center', alignItems: 'center'}}>
+                      <View
+                        style={{
+                          width: "100%",
+                          marginTop: 90,
+                          marginBottom: 70,
+                          alignContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
                         <TouchableOpacity
                           style={styles.nextBtn}
                           onPress={() => this.toggleSignUp()}
                         >
-                            <Text style={styles.loginText}>FINISH</Text>
+                          <Text style={styles.loginText}>FINISH</Text>
                         </TouchableOpacity>
                       </View>
                     </View>
@@ -485,7 +602,7 @@ export default class Login extends React.Component {
             </>
           ) : (
             <>
-              <SignUp1/>
+              <SignUp1 />
               <View>
                 <Text style={styles.loginHeader}>Login to your account</Text>
               </View>
@@ -531,9 +648,9 @@ export default class Login extends React.Component {
               </TouchableOpacity>
               <View style={styles.already1}>
                 <Text style={styles.already}>Don't have an account yet?</Text>
-                  <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                    <Text style={styles.already2}> SIGN UP</Text>
-                  </TouchableOpacity>
+                <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                  <Text style={styles.already2}> SIGN UP</Text>
+                </TouchableOpacity>
               </View>
             </>
           )}
@@ -551,11 +668,11 @@ const styles = StyleSheet.create({
     height: "100%",
     //height: Dimensions.get("window").height,
   },
-  createAcc:{
+  createAcc: {
     marginTop: 15,
     marginBottom: 15,
     fontSize: 23,
-    color: 'rgba(112, 112, 112, 1)',
+    color: "rgba(112, 112, 112, 1)",
   },
   logo: {
     fontWeight: "bold",
@@ -566,13 +683,13 @@ const styles = StyleSheet.create({
   drops: {
     marginTop: 100,
     marginBottom: 120,
-    alignContent: 'center',
-    alignItems: 'center'
+    alignContent: "center",
+    alignItems: "center",
   },
   dropContainer: {
     marginHorizontal: 65,
     height: 47,
-    width: '65%',
+    width: "65%",
     marginBottom: 10,
     alignItems: "center",
   },
@@ -605,7 +722,7 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     color: "rgba(43, 164, 219, 0.6313725490196078)",
     borderWidth: 2,
-    borderColor: 'rgba(46, 165, 221, 0.5724890232086182)',
+    borderColor: "rgba(46, 165, 221, 0.5724890232086182)",
   },
   inputView: {
     color: "rgba(159,159,159,1)",
@@ -614,15 +731,15 @@ const styles = StyleSheet.create({
     fontStyle: "normal",
     // sfontFamily: "Segoe UI",
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderWidth: 2,
     borderRadius: 5,
-    borderColor: 'rgba(46, 165, 221, 0.5724890232086182)',
+    borderColor: "rgba(46, 165, 221, 0.5724890232086182)",
     textAlign: "center",
     paddingVertical: 0,
     paddingBottom: 0,
     paddingHorizontal: 10,
-    width: '65%',
+    width: "65%",
     marginTop: 0,
     marginBottom: 10,
   },
@@ -701,7 +818,7 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 50,
   },
-  already2:{
+  already2: {
     color: "rgba(46, 165, 221, 1)",
     fontSize: 13,
     fontWeight: "300",
@@ -718,21 +835,22 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  textContainer:{
-    width: '100%',
-    alignContent: 'center',
-    alignItems: 'center',
+  textContainer: {
+    width: "100%",
+    alignContent: "center",
+    alignItems: "center",
     marginTop: 130,
     marginBottom: 30,
   },
-  textStyle:{
-    color: 'rgba(141, 141, 141, 1)',
+  textStyle: {
+    color: "rgba(141, 141, 141, 1)",
     fontSize: 22,
   },
-  loginHeader:{
+  loginHeader: {
     fontSize: 25,
-    color: 'rgba(46, 165, 221, 1)',
-    fontWeight: '700',
+    color: "rgba(46, 165, 221, 1)",
+    fontWeight: "700",
     marginTop: 92,
-  }
+  },
 });
+

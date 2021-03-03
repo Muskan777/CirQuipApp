@@ -31,7 +31,7 @@ export function ChatWithUser(props) {
   const [Alumni, setAlumni] = React.useState(false);
   const [Faculty, setFaculty] = React.useState(false);
   const [socket, setSocket] = React.useState(() => {
-    return io(`http://15.207.85.98:3000`);
+    return io(`${global.config.socketURL}`);
   });
   let message = {};
 

@@ -96,16 +96,16 @@ export class ChatWithAdmin extends React.Component {
     console.log("chat with admin", this.props.route, this.props.route.params);
     this.state = {
       messages: [],
-      socket: io(`http://15.207.85.98:3000`),
+      socket: io(`${global.config.socketURL}`),
     };
   }
 
   componentDidMount() {
     this._unsubscribe = this.props.navigation.addListener("focus", () => {
+      this.setState({ socket: io.connect(global.config.socketURL) });
       this.state.socket.on("new message", message => {
         this.onRecv(message);
       });
-      console.log("unsubscribe");
       axios
         .get(`${global.config.host}/message/getMessages`)
         .then(res => {
@@ -154,13 +154,14 @@ export class ChatWithAdmin extends React.Component {
     this._blurevent = this.props.navigation.addListener("blur", () => {
       console.log("blurevent");
       //check on this -- even when user goes to notifications shade, it become offline and get kicked out of the online array
+
       this.state.socket.disconnect();
     });
   }
 
   componentWillUnmount() {
-    this._unsubscribe();
-    this._blurevent();
+    //this._unsubscribe();
+    //this._blurevent();
   }
 
   onSend = (messages = []) => {
