@@ -77,7 +77,6 @@ export default function Posts(props) {
     if (refresh) {
       setIsRefreshing(true);
       fetchData();
-      setIsRefreshing(false);
     }
   };
 
@@ -111,6 +110,7 @@ export default function Posts(props) {
               savedData = savedData.reverse();
               setData(savedData);
               setLoading(false);
+              setIsRefreshing(false);
             })
             .catch(e => console.log(e));
         })
@@ -152,6 +152,7 @@ export default function Posts(props) {
                     console.log(data);
                     setData(data);
                     setLoading(false);
+                    setIsRefreshing(false);
                   })
                   .catch(e => console.log(e));
               }
