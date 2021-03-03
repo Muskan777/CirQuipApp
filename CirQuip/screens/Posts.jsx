@@ -24,6 +24,7 @@ import { handleLogout } from "./AppNavigator";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import { Col } from "native-base";
+import { log } from "react-native-reanimated";
 export default function Posts(props) {
   const { navigation, route } = props;
   const routeState = useRoute();
@@ -42,7 +43,6 @@ export default function Posts(props) {
   const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
-  
 
   // React.useEffect(() => {
   //   navigation?.setOptions({
@@ -144,7 +144,7 @@ export default function Posts(props) {
                       return post.userCollege === College;
                     });
                     console.log("Data", data);
-                    if (props.route.prams && props.route.params.type) {
+                    if (props.route.params && props.route.params.type) {
                       data = data.filter(post => {
                         return response.data._id === post.userId;
                       });

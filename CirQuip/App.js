@@ -304,6 +304,7 @@ export default function App() {
         headerStyle: {
           backgroundColor: "rgba(43, 164, 219, 1)",
         },
+        headerShown: false,
       }}
     >
       <ShopProductsStack.Screen

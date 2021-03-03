@@ -14,6 +14,7 @@ import {
 import { Button } from "react-native-paper";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-simple-toast";
 
 import { CommonActions } from "@react-navigation/native";
 const width = Dimensions.get("screen").width;
@@ -98,8 +99,8 @@ export default class Published extends React.Component {
               onPress={() => {
                 this.props.navigation.dispatch(
                   CommonActions.reset({
-                    index: 1,
-                    routes: [{ name: "Home" }],
+                    index: 0,
+                    routes: [{ name: "Shop", params: { type: "all" } }],
                   })
                 );
               }}

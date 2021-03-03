@@ -36,6 +36,7 @@ import {
   Ionicons,
   AntDesign,
 } from "@expo/vector-icons";
+import Toast from "react-native-simple-toast";
 
 export default class Shop extends React.Component {
   constructor(props) {
@@ -61,7 +62,9 @@ export default class Shop extends React.Component {
     Linking.canOpenURL(phoneNumber)
       .then(supported => {
         if (!supported) {
-          Alert.alert("Phone number is not available");
+          Toast.show("Phone number is not available", Toast.SHORT, [
+            "UIAlertController",
+          ]);
         } else {
           return Linking.openURL(phoneNumber);
         }

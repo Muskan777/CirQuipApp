@@ -26,6 +26,8 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { clockRunning } from "react-native-reanimated";
 const { width, height } = Dimensions.get("window");
+import Toast from "react-native-simple-toast";
+
 // #003f5c
 export default class Sell extends React.Component {
   constructor(props) {
@@ -66,7 +68,7 @@ export default class Sell extends React.Component {
     this.setState({ currentPosition: position });
   }
   componentDidUpdate() {
-    const unsubscribe = this.props.navigation.addListener("focus", () => {
+    this._unsubscribe = this.props.navigation.addListener("focus", () => {
       let image = this.props.route?.params?.images[0];
       console.log("Image", image);
       if (image) {
@@ -122,30 +124,38 @@ export default class Sell extends React.Component {
   };
 
   pushToSale = async () => {
-    await AsyncStorage.getItem("cirquip-auth-token")
-      .then(async token => {
-        axios
-          .post(`${global.config.host}/shop/addProduct`, this.state, {
-            headers: {
-              "cirquip-auth-token": token,
-            },
-          })
-          .then(res => {
-            this.setState({ published: true });
-            //Alert.alert("Success", "Your Product Is Live");
-            this.props.navigation.navigate({
-              name: "Published",
-              params: { type: "sell" },
+    console.log(this.state);
+    if (this.state.image) {
+      await AsyncStorage.getItem("cirquip-auth-token")
+        .then(async token => {
+          axios
+            .post(`${global.config.host}/shop/addProduct`, this.state, {
+              headers: {
+                "cirquip-auth-token": token,
+              },
+            })
+            .then(res => {
+              console.log("Here");
+              this.setState({ published: true });
+              //Alert.alert("Success", "Your Product Is Live");
+              this.props.navigation.navigate("Published", {
+                screen: "Published",
+                params: { type: "Sell" },
+              });
+            })
+            .catch(e => {
+              Alert.alert("Error", "Something went wrong");
+              console.log(e);
             });
-          })
-          .catch(e => {
-            Alert.alert("Error", "Something went wrong");
-            console.log(e);
-          });
-      })
-      .catch(err =>
-        Alert.alert("Error", "Something went wrong in authentication !")
-      );
+        })
+        .catch(err =>
+          Alert.alert("Error", "Something went wrong in authentication !")
+        );
+    } else {
+      Toast.show("Image needs to be added!", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+    }
   };
   render() {
     return (
@@ -504,7 +514,9 @@ export default class Sell extends React.Component {
                       fontStyle: "normal",
                       fontFamily: "SF Pro Text",
                     }}
-                    onPress={() => this.pushToSale()}
+                    onPress={() => {
+                      this.pushToSale();
+                    }}
                   >
                     Sell
                   </Button>

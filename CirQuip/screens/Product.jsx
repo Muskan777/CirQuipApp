@@ -23,6 +23,7 @@ import {
   Avatar,
   FAB,
 } from "react-native-paper";
+import Toast from "react-native-simple-toast";
 import { CommonActions } from "@react-navigation/native";
 import axios from "axios";
 import { ScrollView } from "react-native-gesture-handler";
@@ -145,8 +146,8 @@ export default class Product extends React.Component {
         user: this.state.id,
       })
       .then(res => {
-        this.props.navigation.navigate({
-          name: "Published",
+        this.props.navigation.navigate("Published", {
+          screen: "Published",
           params: { type: "buy" },
         });
       })
@@ -235,7 +236,9 @@ export default class Product extends React.Component {
     Linking.canOpenURL(phoneNumber)
       .then(supported => {
         if (!supported) {
-          Alert.alert("Phone number is not available");
+          Toast.show("Phone number is not available", Toast.SHORT, [
+            "UIAlertController",
+          ]);
         } else {
           return Linking.openURL(phoneNumber);
         }
@@ -278,13 +281,31 @@ export default class Product extends React.Component {
             }
           )
           .then(res => {
-            Alert.alert("Congratulations", "Your product has been removed !");
-            this.props.navigation.dispatch(
-              CommonActions.reset({
-                index: 1,
-                routes: [{ name: "Home" }],
-              })
-            );
+            if (this.state.type === "my") {
+              Toast.show("Your product has been deleted !", Toast.SHORT, [
+                "UIAlertController",
+              ]);
+              this.props.navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: "MyProducts", params: { type: "my" } }],
+                })
+              );
+            } else {
+              Toast.show(
+                "Congratulations, Your product is sold !",
+                Toast.SHORT,
+                ["UIAlertController"]
+              );
+              this.props.navigation.dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [
+                    { name: "BuyRequests", params: { type: "requests" } },
+                  ],
+                })
+              );
+            }
           })
           .catch(err => {
             if (global.config.debug) console.log(err);
@@ -299,14 +320,16 @@ export default class Product extends React.Component {
     await axios
       .put(`${global.config.host}/shop/revoke/${this.state?._id}`)
       .then(res => {
-        Alert.alert(
-          "Success",
-          "The Product has been moved to selling arena again !"
+        Toast.show(
+          "The Product has been moved to selling arena again !",
+          Toast.SHORT,
+          ["UIAlertController"]
         );
+
         this.props.navigation.dispatch(
           CommonActions.reset({
-            index: 1,
-            routes: [{ name: "Home" }],
+            index: 0,
+            routes: [{ name: "BuyRequests", params: { type: "requests" } }],
           })
         );
       })
@@ -334,124 +357,135 @@ export default class Product extends React.Component {
 
     return (
       <>
-        <ScrollView>
-          <Card style={{ elevation: 4 }}>
-            <Card.Title
-              title={
-                this.state?.type === "my" ? "You" : this.state.seller?.name
-              }
-              subtitle={this.state.seller?.email}
-              left={LeftContent}
-              right={RightContent}
-            />
-          </Card>
-          <Card>
-            <Card.Cover
-              source={{ uri: `${this.state.image}` }}
-              style={{ height: 450, padding: 5 }}
-            />
-            {this.state?.type === "my" ? (
-              <></>
-            ) : (
-              <TouchableOpacity
-                style={{
-                  position: "absolute",
-                  zIndex: 1000,
-                  elevation: 10,
-                  alignSelf: "flex-end",
-                }}
-                onPress={() =>
-                  this.state?.user?.likes.includes(this.state?._id)
-                    ? this.handleDislike(this.state?._id)
-                    : this.handleLike(this.state?._id)
+        <SafeAreaView
+          style={{
+            backgroundColor: "#fff",
+            flex: 1,
+            paddingTop: Platform.OS === "android" ? 25 : 0,
+          }}
+        >
+          <ScrollView>
+            <Card style={{ elevation: 4 }}>
+              <Card.Title
+                title={
+                  this.state?.type === "my" ? "You" : this.state.seller?.name
                 }
-              >
-                <Avatar.Icon
-                  color={
-                    this.state?.user?.likes.includes(this.state?._id)
-                      ? "red"
-                      : "gray"
-                  }
-                  icon="heart"
+                subtitle={this.state.seller?.email}
+                left={LeftContent}
+                right={RightContent}
+              />
+            </Card>
+            <Card>
+              <Card.Cover
+                source={{ uri: `${this.state.image}` }}
+                style={{ height: 450, padding: 5 }}
+              />
+              {this.state?.type === "my" ? (
+                <></>
+              ) : (
+                <TouchableOpacity
                   style={{
-                    ...styles.like,
-                    display:
-                      this.state?.type === "my" ||
-                      this.state?.type === "requests"
-                        ? "none"
-                        : "flex",
+                    position: "absolute",
+                    zIndex: 1000,
+                    elevation: 10,
+                    alignSelf: "flex-end",
+                  }}
+                  onPress={() =>
+                    this.state?.user?.likes.includes(this.state?._id)
+                      ? this.handleDislike(this.state?._id)
+                      : this.handleLike(this.state?._id)
+                  }
+                >
+                  <Avatar.Icon
+                    color={
+                      this.state?.user?.likes.includes(this.state?._id)
+                        ? "red"
+                        : "gray"
+                    }
+                    icon="heart"
+                    style={{
+                      ...styles.like,
+                      display:
+                        this.state?.type === "my" ||
+                        this.state?.type === "requests"
+                          ? "none"
+                          : "flex",
+                    }}
+                  />
+                </TouchableOpacity>
+              )}
+              <Card.Content>
+                <Title style={{ fontWeight: "bold" }}>{this.state.name}</Title>
+                <Text style={{ fontSize: 18 }}>
+                  <Text style={{ fontWeight: "bold" }}>Details: </Text>
+                  {this.state.info}
+                </Text>
+                <View
+                  style={{
+                    marginTop: 5,
+                    marginBottom: 5,
+                    height: 2,
+                    backgroundColor: "rgba(0,0,0,0.5)",
                   }}
                 />
-              </TouchableOpacity>
-            )}
-            <Card.Content>
-              <Title style={{ fontWeight: "bold" }}>{this.state.name}</Title>
-              <Text style={{ fontSize: 18 }}>
-                <Text style={{ fontWeight: "bold" }}>Details: </Text>
-                {this.state.info}
-              </Text>
-              <View
-                style={{
-                  marginTop: 5,
-                  marginBottom: 5,
-                  height: 2,
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                }}
-              />
-              <Text style={{ fontWeight: "900", fontSize: 20, color: "#333" }}>
-                PRICE
-              </Text>
-              <Text style={{ fontSize: 30, fontWeight: "bold" }}>
-                {" "}
-                ₹ {this.state.price}
-              </Text>
-            </Card.Content>
-          </Card>
-          <Card>
-            <Card.Actions style={{ justifyContent: "space-around" }}>
-              {this.state?.type === "my" ? (
-                <Button
-                  mode="contained"
-                  icon="delete"
-                  style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-                  onPress={() => this.handleSell()}
+                <Text
+                  style={{ fontWeight: "900", fontSize: 20, color: "#333" }}
                 >
-                  <Text style={{ fontSize: 20 }}>Delete</Text>
-                </Button>
-              ) : this.state?.type === "requests" ? (
-                <>
-                  <View style={{ display: "flex", justifyContent: "center" }}>
-                    <Button
-                      mode="contained"
-                      icon="cart"
-                      style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-                      onPress={() => this.handleSell()}
-                    >
-                      <Text style={{ fontSize: 15 }}>Sell</Text>
-                    </Button>
-                    <Button
-                      mode="contained"
-                      icon="cancel"
-                      style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-                      onPress={() => this.handleRevoke()}
-                    >
-                      <Text style={{ fontSize: 15 }}>Revoke Request</Text>
-                    </Button>
-                  </View>
-                </>
-              ) : (
-                <Button
-                  mode="contained"
-                  icon="cart"
-                  style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-                  onPress={() => this.buyProduct()}
-                >
-                  <Text style={{ fontSize: 20 }}>Buy</Text>
-                </Button>
-              )}
-            </Card.Actions>
-          </Card>
-        </ScrollView>
+                  PRICE
+                </Text>
+                <Text style={{ fontSize: 30, fontWeight: "bold" }}>
+                  {" "}
+                  ₹ {this.state.price}
+                </Text>
+              </Card.Content>
+            </Card>
+            <Card>
+              <Card.Actions style={{ justifyContent: "space-around" }}>
+                {this.state?.type === "my" ? (
+                  <Button
+                    mode="contained"
+                    icon="delete"
+                    style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                    onPress={() => this.handleSell()}
+                  >
+                    <Text style={{ fontSize: 20 }}>Delete</Text>
+                  </Button>
+                ) : this.state?.type === "requests" ? (
+                  <>
+                    <View style={{ display: "flex", justifyContent: "center" }}>
+                      <Button
+                        mode="contained"
+                        icon="cart"
+                        style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                        onPress={() => this.handleSell()}
+                      >
+                        <Text style={{ fontSize: 15 }}>Sell</Text>
+                      </Button>
+                      <Button
+                        mode="contained"
+                        icon="cancel"
+                        style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                        onPress={() => this.handleRevoke()}
+                      >
+                        <Text style={{ fontSize: 15 }}>Revoke Request</Text>
+                      </Button>
+                    </View>
+                  </>
+                ) : (
+                  <Button
+                    mode="contained"
+                    icon="cart"
+                    style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                    onPress={() => this.buyProduct()}
+                  >
+                    <Text style={{ fontSize: 20 }}>Buy</Text>
+                  </Button>
+                )}
+              </Card.Actions>
+            </Card>
+          </ScrollView>
+        </SafeAreaView>
+
         {this.state?.type === "my" ? (
           <></>
         ) : (

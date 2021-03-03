@@ -120,9 +120,13 @@ export function DrawerContent(props) {
               />
               <DrawerItem
                 icon={({ color, size }) => (
-                  <FontAwesome name="info" size={30} style={styles.Icons} />
+                  <FontAwesome
+                    name="info"
+                    size={30}
+                    style={{ ...styles.Icons, marginLeft: 7 }}
+                  />
                 )}
-                label="About"
+                label="  About"
                 onPress={() => {
                   props.navigation.navigate("About");
                 }}
@@ -210,9 +214,13 @@ export function DrawerContent(props) {
               />
               <DrawerItem
                 icon={({ color, size }) => (
-                  <FontAwesome name="info" size={30} style={styles.Icons} />
+                  <FontAwesome
+                    name="info"
+                    size={30}
+                    style={{ ...styles.Icons, marginLeft: 7 }}
+                  />
                 )}
-                label="About"
+                label="  About"
                 onPress={() => {
                   props.navigation.navigate("About");
                 }}
