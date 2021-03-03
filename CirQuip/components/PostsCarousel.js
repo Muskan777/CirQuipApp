@@ -90,8 +90,10 @@ export default function PostCarousel({
   const [deleted, setDeleted] = useState(false);
   const [visibleMenu, setVisibleMenu] = React.useState(false);
   const [full, setfull] = React.useState(false);
+  let key = 0;
   let usersTagged = [];
   let usersTaggedId = [];
+
   taggedUsers.map(user => {
     usersTagged.push(user.name);
   });

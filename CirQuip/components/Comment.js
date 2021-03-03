@@ -6,6 +6,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Button } from "react-native-paper";
 import axios from "axios";
 import Loader from "../screens/Loader";
+import Toast from "react-native-simple-toast";
 
 const Comment = ({
   id,
@@ -109,6 +110,8 @@ const Comment = ({
         onRefresh(true);
         setDeleted(true);
         setLoading(false);
+        Toast.show("Comment Deleted", Toast.SHORT, ["UIAlertController"]);
+        handleExit();
       })
       .catch(e => console.log(e));
   };
@@ -200,54 +203,39 @@ const Comment = ({
             ) : (
               <View>
                 {!deleted ? (
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 18,
-                      color: "gray",
-                      alignSelf: "center",
-                      margin: 10,
-                    }}
-                  >
-                    Are you sure you want to delete this comment?
-                  </Text>
-                ) : (
-                  <Text
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: 18,
-                      color: "gray",
-                      alignSelf: "center",
-                      margin: 21,
-                    }}
-                  >
-                    Comment deleted
-                  </Text>
-                )}
+                  <View>
+                    <Text
+                      style={{
+                        fontWeight: "bold",
+                        fontSize: 18,
+                        color: "gray",
+                        alignSelf: "center",
+                        margin: 10,
+                      }}
+                    >
+                      Are you sure you want to delete this comment?
+                    </Text>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <Button onPress={handleDialog} color="gray" fontSize="15">
+                        Back
+                      </Button>
+                      <Button
+                        onPress={handleDelete}
+                        color="#B11B1B"
+                        fontSize="15"
+                      >
+                        Delete
+                      </Button>
+                    </View>
+                  </View>
+                ) : null}
               </View>
             )}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "flex-end",
-              }}
-            >
-              {!deleted ? (
-                <Button onPress={handleDialog} color="gray" fontSize="15">
-                  Back
-                </Button>
-              ) : (
-                <Button onPress={handleExit} color="gray" fontSize="15">
-                  Ok
-                </Button>
-              )}
-
-              {!deleted ? (
-                <Button onPress={handleDelete} color="#B11B1B" fontSize="15">
-                  Delete
-                </Button>
-              ) : null}
-            </View>
           </View>
         </View>
       </Modal>
