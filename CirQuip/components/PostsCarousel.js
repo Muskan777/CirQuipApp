@@ -91,8 +91,13 @@ export default function PostCarousel({
   const [visibleMenu, setVisibleMenu] = React.useState(false);
   const [full, setfull] = React.useState(false);
   let usersTagged = [];
+  let usersTaggedId = [];
   taggedUsers.map(user => {
     usersTagged.push(user.name);
+  });
+
+  taggedUsers.map(user => {
+    usersTaggedId.push(user._id);
   });
 
   const handleDialog = () => {
@@ -368,17 +373,57 @@ export default function PostCarousel({
             {skill && club ? <Text> | </Text> : ""}
             {club ? club : ""}
           </Text>
-          {usersTagged.length > 0 && (
-            <Text style={{ fontWeight: "bold", width: "100%" }}>
-              {usersTagged?.length != 0 && <Text>with </Text>}
-              {usersTagged?.length != 0 && (
-                <Text style={{ color: "#4FB5A5" }}>
-                  {`${usersTagged[0]}, and ${
-                    usersTagged?.length - 1
-                  } others    `}
+          {!full ? (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                setfull(!full);
+              }}
+            >
+              <View>
+                {usersTagged.length > 0 && (
+                  <Text style={{ fontWeight: "bold", width: "100%" }}>
+                    {usersTagged?.length != 0 && <Text>with </Text>}
+                    {usersTagged?.length != 0 && (
+                      <Text style={{ color: "#4FB5A5" }}>
+                        {`${usersTagged[0]}, and ${
+                          usersTagged?.length - 1
+                        } others    `}
+                      </Text>
+                    )}
+                  </Text>
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          ) : (
+            <View>
+              {usersTagged.length > 0 && (
+                <Text style={{ fontWeight: "bold", width: "100%" }}>
+                  {usersTagged?.length != 0 && <Text>with </Text>}
+                  {usersTagged?.length != 0 && (
+                    <Text style={{ color: "#4FB5A5" }}>
+                      {usersTagged.map((user, index) => {
+                        return (
+                          <Text
+                            key={index}
+                            style={{ color: "#4FB5A5" }}
+                            onPress={() => {
+                              if (full) {
+                                navigation.navigate("Profile", {
+                                  _id: usersTaggedId[index],
+                                });
+                              }
+                            }}
+                          >
+                            {user}
+                            {"\n"}
+                          </Text>
+                        );
+                      })}
+                    </Text>
+                  )}
                 </Text>
               )}
-            </Text>
+            </View>
           )}
         </View>
         <View style={styles.closeIcon}>
