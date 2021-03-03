@@ -71,6 +71,13 @@ export default class Product extends React.Component {
           />
         ),
       });
+    await AsyncStorage.getItem("email")
+      .then(email => {
+        this.setState({ myEmail: email });
+      })
+      .catch(err => {
+        console.log(err);
+      });
     await AsyncStorage.getItem("user").then(userId => {
       if (!userId) return;
       if (this.state?.from === "notification") {
@@ -441,6 +448,19 @@ export default class Product extends React.Component {
             </Card>
             <Card>
               <Card.Actions style={{ justifyContent: "space-around" }}>
+                {this.state?.type !== "my" &&
+                this.state?.myEmail === global.config.admin ? (
+                  <Button
+                    mode="contained"
+                    icon="delete"
+                    style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                    onPress={() => this.handleSell()}
+                  >
+                    <Text style={{ fontSize: 20 }}>Delete</Text>
+                  </Button>
+                ) : (
+                  <></>
+                )}
                 {this.state?.type === "my" ? (
                   <Button
                     mode="contained"
