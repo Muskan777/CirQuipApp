@@ -29,6 +29,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
 import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-simple-toast";
+import { CommonActions } from "@react-navigation/native";
 
 export default function CreatePost(props) {
   const [modalOpen, setModalOpen] = useState(false);
@@ -50,7 +51,9 @@ export default function CreatePost(props) {
   const [Club, setClubs] = React.useState("");
   const [Interest, setInterest] = React.useState("");
 
-  const handleDialog = () => setVisible(!visible);
+  const handleDialog = () => {
+    setVisible(!visible);
+  };
 
   useEffect(() => {
     const user = async () => {
@@ -130,7 +133,12 @@ export default function CreatePost(props) {
       });
     setVisible(false);
 
-    props.navigation.goBack();
+    props.navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: "Home" }],
+      })
+    );
   };
   useEffect(() => {
     props.navigation.setOptions({

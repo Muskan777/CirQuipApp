@@ -5,6 +5,8 @@ import {
   View,
   Text,
   Image,
+  Share,
+  Linking,
   TouchableHighlight,
   TouchableOpacity,
   Dimensions,
@@ -34,22 +36,38 @@ export default function Post({
   taggedUsers,
   id,
 }) {
-  var date =
-    createdAt.substr(8, 2) +
-    "-" +
-    createdAt.substr(5, 2) +
-    "-" +
-    createdAt.substr(0, 4);
-  if (createdAt.substr(11, 2) > 12) {
-    var time = createdAt.substr(11, 5) + " PM";
-  } else {
-    var time = createdAt.substr(11, 5) + " AM";
+  data = "";
+  if (createdAt) {
+    const date =
+      createdAt.substr(8, 2) +
+      "-" +
+      createdAt.substr(5, 2) +
+      "-" +
+      createdAt.substr(0, 4);
+    var localhour = parseInt(createdAt.substr(11, 2));
+    var localmin = parseInt(createdAt.substr(14, 2));
+    localmin = localmin + 30;
+    if (localmin >= 60) {
+      localmin = localmin - 60;
+      localhour = localhour + 6;
+    } else {
+      localhour = localhour + 5;
+    }
+    if (localmin >= 0 && localmin <= 9) {
+      localmin = "0" + localmin;
+    }
+    if (localhour > 12) {
+      var time = localhour + ":" + localmin + " PM";
+    } else {
+      var time = localhour + ":" + localmin + " AM";
+    }
   }
   const [currentLikes, setCurrentLikes] = useState(likes);
   const [currentSaves, setCurrentSaves] = useState(saves);
   const [currentShares, setCurrentShares] = useState(shares);
   const [liked, setLiked] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [URL, setURL] = useState(null);
   const [shared, setShared] = useState(false);
   let usersTagged = [];
   taggedUsers &&
@@ -63,6 +81,8 @@ export default function Post({
 
   const fetchLikedPosts = async () => {
     let token = await AsyncStorage.getItem("cirquip-auth-token");
+    const initialUrl = await Linking.getInitialURL();
+    setURL(initialUrl);
     axios
       .get(`${global.config.host}/user/getLikedPosts`, {
         headers: {
@@ -151,25 +171,22 @@ export default function Post({
   };
 
   const handleShare = async () => {
-    let token = await AsyncStorage.getItem("cirquip-auth-token");
-    axios
-      .patch(
-        `${global.config.host}/post/sharePost`,
-        {
-          id: postId,
-          shared: shared,
-        },
-        {
-          headers: {
-            "cirquip-auth-token": token,
-          },
+    try {
+      const result = await Share.share({
+        message: `Check out ${name}'s post! \n${caption}\n${URL}`,
+      });
+      if (result.action === Share.sharedAction) {
+        if (result.activityType) {
+          // shared with activity type of result.activityType
+        } else {
+          // shared
         }
-      )
-      .then(res => {
-        setCurrentShares(res.data.shares);
-        setShared(res.data.shared);
-      })
-      .catch(e => console.log(e));
+      } else if (result.action === Share.dismissedAction) {
+        // dismissed
+      }
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -194,9 +211,10 @@ export default function Post({
               }}
             >
               {name}
+              <Entypo style={styles.TextStyle} name="dot-single" color="grey" />
+              <Text style={styles.TextStyle}>{role}</Text>
             </Text>
           </TouchableOpacity>
-          <Text>{role}</Text>
         </View>
       </View>
       <View style={styles.postCaption}>
@@ -245,7 +263,6 @@ export default function Post({
               <FontAwesome name="bookmark-o" size={30} style={styles.Icons} />
             )}
           </TouchableOpacity>
-          <Text style={styles.TextStyle}>{currentSaves}</Text>
         </View>
         <View style={styles.IconContainer}>
           <TouchableOpacity onPress={handleShare}>
@@ -281,6 +298,7 @@ const styles = StyleSheet.create({
   },
   TextStyle: {
     color: "#888",
+    fontSize: 15,
   },
   topContainer: {
     width: "100%",
@@ -293,8 +311,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   Icons: {
-    fontSize: 30,
-    color: "#4FB5A5",
+    fontSize: 25,
+    color: "#2EA5DD",
     paddingHorizontal: 10,
   },
   postImageContainer: {
