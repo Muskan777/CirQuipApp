@@ -70,7 +70,7 @@ export default class Sell extends React.Component {
   componentDidUpdate() {
     this._unsubscribe = this.props.navigation.addListener("focus", () => {
       let image = this.props.route?.params?.images[0];
-      console.log("Image", image);
+      console.log("Image received");
       if (image) {
         this.setState({ image: image });
       }
