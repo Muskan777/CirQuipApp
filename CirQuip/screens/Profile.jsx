@@ -9,9 +9,10 @@ import {
 } from "react-native";
 import axios from "axios";
 import Loader from "./Loader";
-import { TextInput } from "react-native-gesture-handler";
+import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { handleLogout } from "./AppNavigator";
 export default function Profile(props) {
   const [user, setUser] = useState({});
   const [userProfile, setUserProfile] = useState({});
@@ -27,15 +28,14 @@ export default function Profile(props) {
     label3: "Skills & Interests*",
     label4: "Club & Activities*",
   });
-  const [showContact, setShowContact] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
-  const [showEmail, setShowEmail] = React.useState(false);
-
   const myself = props.route.params.myself;
   const fetchData = () => {
     axios
       .get(`${global.config.host}/user/getUserWithId/${props.route.params._id}`)
       .then(res => {
+        let user = res.data;
+        console.log(user);
         setUser(res.data);
         setUserProfile({
           name: user.name,
@@ -48,8 +48,11 @@ export default function Profile(props) {
           title: user.title,
           skills: user.skills.join(", "),
           clubs: user.clubs.join(", "),
+          showEmail: user.showEmail ? user.showEmail : false,
+          showContact: user.showContact ? user.showContact : false,
         });
-        placeholderOnRoles();
+
+        placeholderOnRoles(user.role);
         setIsLoading(false);
       })
       .catch(e => console.log(e));
@@ -87,10 +90,13 @@ export default function Profile(props) {
           return item.trim();
         });
     }
-    console.log(detailsToBeUpdated);
+    axios.patch(`${global.config.host}/user/updateUserData`, {
+      user: detailsToBeUpdated,
+    });
+    console.log("Pressed", detailsToBeUpdated);
   };
-  const placeholderOnRoles = () => {
-    if (userProfile.role === "Student") {
+  const placeholderOnRoles = role => {
+    if (role === "Student") {
       setLabels({
         placeholder1: "Admission Year",
         placeholder2: "Branch Name",
@@ -103,7 +109,7 @@ export default function Profile(props) {
         label3: "Skills & Interests*",
         label4: "Club & Activities*",
       });
-    } else if (userProfile.role === "Faculty") {
+    } else if (role === "Faculty") {
       setLabels({
         placeholder1: "Dept. Name",
         placeholder2: "Teaching Experience",
@@ -116,7 +122,7 @@ export default function Profile(props) {
         label3: "Research & Project*",
         label4: "MemberShip & Publications*",
       });
-    } else if (userProfile.role === "Club") {
+    } else if (role === "Club") {
       setLabels({
         placeholder1: "Type",
         placeholder2: "Established Year",
@@ -129,7 +135,7 @@ export default function Profile(props) {
         label3: "Achievements*",
         label4: "Skills & Interests*",
       });
-    } else if (userProfile.role === "Alumnus") {
+    } else if (role === "Alumnus") {
       setLabels({
         placeholder1: "Admission Year",
         placeholder2: "Branch Name",
@@ -169,9 +175,9 @@ export default function Profile(props) {
                   }));
                 }}
               />
-            ) : (
+            ) : userProfile.showContact ? (
               <Text style={styles.primaryText}>{userProfile?.phone}</Text>
-            )}
+            ) : null}
             {myself ? (
               <TextInput
                 style={styles.input1}
@@ -184,9 +190,9 @@ export default function Profile(props) {
                   }));
                 }}
               />
-            ) : (
+            ) : userProfile.showEmail ? (
               <Text style={styles.primaryText}>{userProfile?.email}</Text>
-            )}
+            ) : null}
           </View>
           <View
             style={{
@@ -208,7 +214,7 @@ export default function Profile(props) {
                 }}
               />
             ) : (
-              <Text style={styles.primaryText}>
+              <Text style={(styles.primaryText, styles.input2)}>
                 {userProfile?.admissionYear}
               </Text>
             )}
@@ -225,7 +231,9 @@ export default function Profile(props) {
                 }}
               />
             ) : (
-              <Text style={styles.primaryText}>{userProfile?.branch}</Text>
+              <Text style={(styles.primaryText, styles.input2)}>
+                {userProfile?.branch}
+              </Text>
             )}
           </View>
           <View style={styles.MiddleSection}>
@@ -306,23 +314,42 @@ export default function Profile(props) {
             <View>
               <View style={styles.radioContainer}>
                 <RadioButton
-                  status={showContact ? "checked" : "unchecked"}
+                  status={userProfile.showContact ? "checked" : "unchecked"}
                   color="dodgerblue"
-                  onPress={() => setShowContact(!showContact)}
+                  onPress={() => {
+                    setUserProfile(prev => ({
+                      ...prev,
+                      showContact: !userProfile.showContact,
+                    }));
+                  }}
                 />
-                <Text style={styles.primaryText}>Show Contact Number</Text>
+                <Text style={styles.Text}>Show Contact Number</Text>
               </View>
               <View style={styles.radioContainer}>
                 <RadioButton
-                  status={showEmail ? "checked" : "unchecked"}
+                  status={userProfile.showEmail ? "checked" : "unchecked"}
                   color="dodgerblue"
-                  onPress={() => setShowEmail(!showEmail)}
+                  onPress={() => {
+                    setUserProfile(prev => ({
+                      ...prev,
+                      showEmail: !userProfile.showEmail,
+                    }));
+                  }}
                 />
-                <Text style={styles.primaryText}>Show Email Id</Text>
+                <Text style={styles.Text}>Show Email Id</Text>
               </View>
               <View style={styles.radioContainer}>
-                <MaterialCommunityIcons name="logout" size={34} color="gray" />
-                <Text style={styles.primaryText}>Log Out</Text>
+                <TouchableOpacity
+                  onPress={() => props.route.params.handleLogout()}
+                  style={{ flexDirection: "row" }}
+                >
+                  <MaterialCommunityIcons
+                    name="logout"
+                    size={34}
+                    color="gray"
+                  />
+                  <Text style={styles.Text}>Log Out</Text>
+                </TouchableOpacity>
               </View>
               <View style={{ alignItems: "center" }}>
                 <Button
@@ -373,6 +400,8 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 16,
     marginTop: 5,
+    paddingBottom: 8,
+    textDecorationLine: "underline",
   },
   input1: {
     fontSize: 18,
@@ -392,6 +421,11 @@ const styles = StyleSheet.create({
     width: "45%",
     paddingBottom: 0,
     margin: 5,
+  },
+  Text: {
+    fontSize: 16,
+    marginTop: 5,
+    paddingBottom: 8,
   },
   topContainer: {
     display: "flex",

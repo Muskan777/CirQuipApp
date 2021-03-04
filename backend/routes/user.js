@@ -183,16 +183,25 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 
 router.route("/updateUserData").patch(async (req, res) => {
   console.log("Update!", req.body.user);
-  console.log(req.body.user._id);
   try {
-    let user = await User.findById(req.body.user._id);
-    console.log(user);
-    if (!user) {
-      res.status(400).send("User with id not found");
-    }
     await User.findOneAndUpdate(
-      { _id: user },
-      { $set: { skills: req.body.user.skills, clubs: req.body.user.clubs } }
+      { email: req.body.user.email },
+      {
+        $set: {
+          name: req.body.user.name,
+          phone: req.body.user.phone,
+          email: req.body.user.email,
+          role: req.body.user.role,
+          admissionYear: req.body.user.admissionYear,
+          branch: req.body.user.branch,
+          projects: req.body.user.projects,
+          title: req.body.user.title,
+          skills: req.body.user.skills,
+          clubs: req.body.user.clubs,
+          showContact: req.body.user.showContact,
+          showEmail: req.body.user.showEmail,
+        },
+      }
     )
       .then(() => {
         console.log("Done");

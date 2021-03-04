@@ -550,32 +550,29 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(43, 164, 219, 1)",
+          backgroundColor: "#fff",
+        },
+        headerTitleStyle: {
+          color: "#287EC1",
         },
       }}
     >
       <ProfileStack.Screen
         name="ProfileScreen"
         component={Profile}
-        initialParams={{ _id: user._id, myself: true }}
+        initialParams={{
+          _id: user._id,
+          myself: true,
+          handleLogout: handleLogout,
+        }}
         options={{
-          title: "Your Profile",
-          headerRight: () => (
-            <IconButton
-              icon="logout"
-              color="#000"
-              size={30}
-              onPress={() => {
-                handleLogout();
-              }}
-            />
-          ),
+          title: "Profile",
           headerLeft: () => (
             <MaterialCommunityIcons
-              name="menu"
+              name="arrow-left"
               size={26}
               onPress={() => {
-                navigation.openDrawer();
+                navigation.goBack();
               }}
             />
           ),

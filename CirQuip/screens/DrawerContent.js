@@ -118,19 +118,6 @@ export function DrawerContent(props) {
                   });
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  props.navigation.navigate("About");
-                }}
-              />
               {props.user.verified === false ? (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -212,19 +199,7 @@ export function DrawerContent(props) {
                   props.navigation.navigate("SavedScreen");
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  props.navigation.navigate("About");
-                }}
-              />
+
               {props.user.verified === false ? (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -263,14 +238,13 @@ export function DrawerContent(props) {
         >
           <TouchableOpacity
             onPress={() => {
-              props.handleLogout();
+              props.navigation.navigate("About");
             }}
           >
             <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              SignOut
+              About
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => {
               Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
