@@ -20,7 +20,6 @@ import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
-import { handleLogout } from "./AppNavigator";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import { Col } from "native-base";
@@ -33,7 +32,6 @@ export default function Posts(props) {
   let postData = [];
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [CCPIndex, setCCPIndex] = useState(null);
   const [commentText, setCommentText] = useState(null);
   const [comments, setComments] = useState([]);
@@ -43,6 +41,7 @@ export default function Posts(props) {
   const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
+  const [originaldata, setoriginaldata] = useState([]);
 
   // React.useEffect(() => {
   //   navigation?.setOptions({
@@ -110,6 +109,7 @@ export default function Posts(props) {
               }
               savedData = savedData.reverse();
               setData(savedData);
+              setoriginaldata(savedData);
               setLoading(false);
               setIsRefreshing(false);
             })
@@ -143,15 +143,13 @@ export default function Posts(props) {
                     let data = res.data.post.filter(post => {
                       return post.userCollege === College;
                     });
-                    console.log("Data", data);
                     if (props.route.params && props.route.params.type) {
                       data = data.filter(post => {
                         return response.data._id === post.userId;
                       });
                     }
-                    console.log(response.data);
-                    console.log(data);
                     setData(data);
+                    setoriginaldata(data);
                     setLoading(false);
                     setIsRefreshing(false);
                   })
@@ -214,13 +212,18 @@ export default function Posts(props) {
       });
   };
   const searchFunction = () => {
+    let posts = originaldata;
     if (searchQuery == "") {
-      setRequiredUsers(users);
+      setData(posts);
     }
-    setRequiredUsers(
-      users?.filter(user => {
+    setData(
+      posts?.filter(userpost => {
         return (
-          user.name.includes(searchQuery) || user.role.includes(searchQuery)
+          userpost.userName.includes(searchQuery) ||
+          userpost.userRole.includes(searchQuery) ||
+          (userpost.userAdmissionYear &&
+            userpost.userAdmissionYear.includes(searchQuery)) ||
+          (userpost.userBranch && userpost.userBranch.includes(searchQuery))
         );
       })
     );
@@ -239,99 +242,22 @@ export default function Posts(props) {
             color="#2ba4db"
             size={30}
           />
-          <TouchableOpacity
-            onPress={() => {
-              setSearchModalOpen(true);
+          <TextInput
+            style={{
+              flex: 1,
+              margin: 5,
+              fontSize: 20,
+              maxHeight: "100%",
             }}
-          >
-            <Text
-              style={{
-                width: "100%",
-                marginLeft: 10,
-                fontSize: 20,
-                color: "gray",
-              }}
-            >
-              Search
-            </Text>
-          </TouchableOpacity>
+            placeholder="Search"
+            onChangeText={query => {
+              setSearchQuery(query);
+            }}
+            value={searchQuery}
+          />
         </View>
       </View>
-      <Modal visible={searchModalOpen} transparent={true} animationType="slide">
-        <View
-          style={{
-            height: "94%",
-            marginTop: "auto",
-            backgroundColor: "white",
-          }}
-        >
-          <View style={styles.SearchContainer}>
-            <MaterialIcons
-              name="arrow-back"
-              style={{ ...styles.Icons, marginTop: 20 }}
-              size={28}
-              onPress={() => {
-                setSearchModalOpen(false);
-              }}
-            />
-            <TextInput
-              style={{
-                flex: 1,
-                margin: 5,
-                fontSize: 20,
-                maxHeight: "100%",
-              }}
-              placeholder="Search"
-              onChangeText={query => {
-                setSearchQuery(query);
-              }}
-              value={searchQuery}
-            />
-            <TouchableOpacity
-              onPress={() => {
-                setSearchQuery("");
-              }}
-            >
-              <MaterialIcons
-                name="close"
-                style={{ ...styles.Icons, marginTop: 20 }}
-                size={28}
-                onPress={() => {
-                  setSearchModalOpen(false);
-                }}
-              />
-            </TouchableOpacity>
-          </View>
 
-          <View style={{ flex: 0.8 }}>
-            <FlatList
-              data={requiredusers}
-              keyExtractor={item => item._id}
-              renderItem={user => (
-                <TouchableOpacity
-                  onPress={() => {
-                    setSearchModalOpen(false);
-                    navigation.navigate("Profile", { _id: user.item._id });
-                  }}
-                >
-                  <View style={{ ...styles.searchCard }}>
-                    <Image
-                      style={styles.searchImage}
-                      source={require("../assets/ellipse174b251b3.png")}
-                    />
-                    <Text
-                      style={{ fontSize: 18 }}
-                    >{`${user.item.name}  |`}</Text>
-                    <Text style={{ marginLeft: 8, fontSize: 12 }}>
-                      {user.item.role}
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-              )}
-            />
-          </View>
-        </View>
-      </Modal>
       {isLoading ? (
         <Loader />
       ) : (

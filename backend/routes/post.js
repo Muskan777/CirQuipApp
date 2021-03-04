@@ -157,6 +157,8 @@ router.route("/createPost").post(auth, async (req, res) => {
     userSkill,
     userInterest,
     userClub,
+    userAdmissionYear,
+    userBranch,
   } = req.body;
   await uploadImages(content, req.payload.email)
     .then(images => {
@@ -170,6 +172,8 @@ router.route("/createPost").post(auth, async (req, res) => {
         userInterest,
         userSkill,
         userClub,
+        userAdmissionYear,
+        userBranch,
         content: images,
         caption,
         taggedUsers,

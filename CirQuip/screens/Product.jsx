@@ -309,11 +309,18 @@ export default class Product extends React.Component {
                 })
               );
             } else {
-              Toast.show(
-                "Congratulations, Your product is sold !",
-                Toast.SHORT,
-                ["UIAlertController"]
-              );
+              if (this.state.myEmail === global.config.admin) {
+                Toast.show("Product Deleted!", Toast.SHORT, [
+                  "UIAlertController",
+                ]);
+              } else {
+                Toast.show(
+                  "Congratulations, Your product is sold !",
+                  Toast.SHORT,
+                  ["UIAlertController"]
+                );
+              }
+
               this.props.navigation.dispatch(
                 CommonActions.reset({
                   index: 0,

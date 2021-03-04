@@ -34,10 +34,10 @@ export default class Sell extends React.Component {
     super(props);
     this.state = {
       image: null,
-      pPrice: "400",
+      pPrice: "",
       currentPosition: 0,
-      pName: "Random Item",
-      pDetails: "This product can freak you out, really !",
+      pName: "",
+      pDetails: "",
     };
   }
   labels = ["Product Details", "Attachments", "Preview"];
@@ -65,7 +65,25 @@ export default class Sell extends React.Component {
     currentStepLabelColor: "#287EC1",
   };
   onPageChange(position) {
-    this.setState({ currentPosition: position });
+    if (position === 1) {
+      if (this.state.pPrice && this.state.pName && this.state.pDetails) {
+        this.setState({ currentPosition: position });
+      } else {
+        Toast.show("Please fill in all the details", Toast.SHORT, [
+          "UIAlertController",
+        ]);
+      }
+    } else if (position == 2) {
+      if (this.state.image) {
+        this.setState({ currentPosition: position });
+      } else {
+        Toast.show("Image needs to be added!", Toast.SHORT, [
+          "UIAlertController",
+        ]);
+      }
+    } else {
+      this.setState({ currentPosition: position });
+    }
   }
   componentDidUpdate() {
     this._unsubscribe = this.props.navigation.addListener("focus", () => {
@@ -125,37 +143,31 @@ export default class Sell extends React.Component {
 
   pushToSale = async () => {
     console.log(this.state);
-    if (this.state.image) {
-      await AsyncStorage.getItem("cirquip-auth-token")
-        .then(async token => {
-          axios
-            .post(`${global.config.host}/shop/addProduct`, this.state, {
-              headers: {
-                "cirquip-auth-token": token,
-              },
-            })
-            .then(res => {
-              console.log("Here");
-              this.setState({ published: true });
-              //Alert.alert("Success", "Your Product Is Live");
-              this.props.navigation.navigate("Published", {
-                screen: "Published",
-                params: { type: "Sell" },
-              });
-            })
-            .catch(e => {
-              Alert.alert("Error", "Something went wrong");
-              console.log(e);
+    await AsyncStorage.getItem("cirquip-auth-token")
+      .then(async token => {
+        axios
+          .post(`${global.config.host}/shop/addProduct`, this.state, {
+            headers: {
+              "cirquip-auth-token": token,
+            },
+          })
+          .then(res => {
+            console.log("Here");
+            this.setState({ published: true });
+            //Alert.alert("Success", "Your Product Is Live");
+            this.props.navigation.navigate("Published", {
+              screen: "Published",
+              params: { type: "Sell" },
             });
-        })
-        .catch(err =>
-          Alert.alert("Error", "Something went wrong in authentication !")
-        );
-    } else {
-      Toast.show("Image needs to be added!", Toast.SHORT, [
-        "UIAlertController",
-      ]);
-    }
+          })
+          .catch(e => {
+            Alert.alert("Error", "Something went wrong");
+            console.log(e);
+          });
+      })
+      .catch(err =>
+        Alert.alert("Error", "Something went wrong in authentication !")
+      );
   };
   render() {
     return (

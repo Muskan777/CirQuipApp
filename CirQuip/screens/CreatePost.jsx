@@ -50,6 +50,8 @@ export default function CreatePost(props) {
   const [Skill, setSkill] = React.useState("");
   const [Club, setClubs] = React.useState("");
   const [Interest, setInterest] = React.useState("");
+  const [admissionYear, setadmissionYear] = React.useState("");
+  const [branch, setbranch] = React.useState("");
 
   const handleDialog = () => {
     setVisible(!visible);
@@ -64,6 +66,9 @@ export default function CreatePost(props) {
           .then(res => {
             setUser(res.data.name);
             setCollege(res.data.college);
+            res.data.admissionYear &&
+              setadmissionYear(res.data.admissionYear.toString());
+            res.data.branch && setbranch(res.data.branch);
             res.data.skills && setSkill(res.data.skills[0]);
             res.data.Interest && setInterest(res.data.Interest[0]);
             res.data.clubs && setClubs(res.data.clubs[0]);
@@ -115,6 +120,8 @@ export default function CreatePost(props) {
           userSkill: Skill,
           userInterest: Interest,
           userClub: Club,
+          userBranch: branch,
+          userAdmissionYear: admissionYear,
         },
         {
           headers: {
