@@ -14,7 +14,7 @@ import {
 } from "react-native-paper";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
-import Profile2 from "./screens/Profile2.jsx";
+import Profile from "./screens/Profile.jsx";
 import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
@@ -556,7 +556,7 @@ export default function App() {
     >
       <ProfileStack.Screen
         name="ProfileScreen"
-        component={Profile2}
+        component={Profile}
         initialParams={{ _id: user._id, myself: true }}
         options={{
           title: "Your Profile",
@@ -624,7 +624,7 @@ export default function App() {
       />
       <HomeStack.Screen
         name="Profile"
-        component={Profile2}
+        component={Profile}
         options={{
           title: "Posts",
           headerRight: () => (
