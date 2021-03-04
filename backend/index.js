@@ -19,7 +19,7 @@ app.use(
     parameterLimit: 50000,
   })
 );
-app.use(bodyparser.json({ limit: "50mb", extended: true }));
+app.use(bodyparser.json({ limit: "100mb", extended: true }));
 app.use(cookieparser());
 
 (async () => await connectDB())();

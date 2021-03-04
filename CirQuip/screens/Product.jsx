@@ -131,12 +131,22 @@ export default class Product extends React.Component {
     this.doAllTasks();
   }
   async componentDidUpdate(prevProps, prevState) {
-    if (this.state?.from === "notification") return;
+    if (this.props.from === "notification") {
+      this.setState({
+        ...this.props,
+        user: { likes: [] },
+        type: "my",
+      });
+      return;
+    }
     //if (
     //prevState === this.state ||
     //JSON.stringify(prevState) === JSON.stringify(this.state)
     //)
     //return;
+    this.setState({
+      type: this.props.route.params.type,
+    });
 
     if (JSON.stringify(prevProps) !== JSON.stringify(this.props)) {
       this.setState(
