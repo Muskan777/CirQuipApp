@@ -400,8 +400,9 @@ const styles = StyleSheet.create({
   primaryText: {
     fontSize: 16,
     marginTop: 5,
-    paddingBottom: 8,
-    textDecorationLine: "underline",
+    paddingBottom: 5,
+    borderBottomColor: "black",
+    borderBottomWidth: 1,
   },
   input1: {
     fontSize: 18,
