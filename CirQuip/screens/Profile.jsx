@@ -15,6 +15,18 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 export default function Profile(props) {
   const [user, setUser] = useState({});
   const [userProfile, setUserProfile] = useState({});
+  const [labels, setLabels] = useState({
+    placeholder1: "Admission Year",
+    placeholder2: "Branch Name",
+    placeholder3: "eg: XYZ club secretarty, Intern at Cirquip",
+    placeholder4: "eg: 1st prize at event, Winner in competiton",
+    placeholder5: "eg: Autocad, ML, Web",
+    placeholder6: "eg:  Coordinator at NGO",
+    label1: "Title*",
+    label2: "Projects & Achievements",
+    label3: "Skills & Interests*",
+    label4: "Club & Activities*",
+  });
   const [showContact, setShowContact] = React.useState(false);
   const [isLoading, setIsLoading] = React.useState(true);
   const [showEmail, setShowEmail] = React.useState(false);
@@ -29,6 +41,7 @@ export default function Profile(props) {
           name: user.name,
           phone: user.phone,
           email: user.email,
+          role: user.role,
           admissionYear: user.admissionYear.toString(),
           branch: user.branch,
           projects: user.projects.join(", "),
@@ -36,6 +49,7 @@ export default function Profile(props) {
           skills: user.skills.join(", "),
           clubs: user.clubs.join(", "),
         });
+        placeholderOnRoles();
         setIsLoading(false);
       })
       .catch(e => console.log(e));
@@ -46,7 +60,7 @@ export default function Profile(props) {
   const handleChangesinProfile = () => {
     // for deeply copying json
     const detailsToBeUpdated = JSON.parse(JSON.stringify(userProfile));
-    // console.log("user", userProfile);
+    console.log("user", user);
     detailsToBeUpdated.admissionYear = parseInt(
       detailsToBeUpdated.admissionYear
     );
@@ -74,6 +88,61 @@ export default function Profile(props) {
         });
     }
     console.log(detailsToBeUpdated);
+  };
+  const placeholderOnRoles = () => {
+    if (userProfile.role === "Student") {
+      setLabels({
+        placeholder1: "Admission Year",
+        placeholder2: "Branch Name",
+        placeholder3: "eg: XYZ club secretarty, Intern at Cirquip",
+        placeholder4: "eg: 1st prize at event, Winner in competiton",
+        placeholder5: "eg: Autocad, ML, Web",
+        placeholder6: "eg:  Coordinator at NGO",
+        label1: "Title*",
+        label2: "Projects & Achievements",
+        label3: "Skills & Interests*",
+        label4: "Club & Activities*",
+      });
+    } else if (userProfile.role === "Faculty") {
+      setLabels({
+        placeholder1: "Dept. Name",
+        placeholder2: "Teaching Experience",
+        placeholder3: "eg: Head at maths department",
+        placeholder4: "eg: Phd in Mathematics",
+        placeholder5: "eg: Graph Theory",
+        placeholder6: "eg:  Indian Mathematical Society",
+        label1: "Title*",
+        label2: "Quaification*",
+        label3: "Research & Project*",
+        label4: "MemberShip & Publications*",
+      });
+    } else if (userProfile.role === "Club") {
+      setLabels({
+        placeholder1: "Type",
+        placeholder2: "Established Year",
+        placeholder3: "eg: Social working club",
+        placeholder4: "eg:xyz",
+        placeholder5: "eg: National Social award ",
+        placeholder6: "eg:Communication",
+        label1: "Description*",
+        label2: "Faculty Advisor*",
+        label3: "Achievements*",
+        label4: "Skills & Interests*",
+      });
+    } else if (userProfile.role === "Alumnus") {
+      setLabels({
+        placeholder1: "Admission Year",
+        placeholder2: "Branch Name",
+        placeholder3: "eg: CEO at xyz",
+        placeholder4: "eg: Marketing at XYZ, Chairman",
+        placeholder5: "eg: Autocad, ML, Web",
+        placeholder6: "eg:  Masters at MIT",
+        label1: "Title*",
+        label2: "Industry Experience",
+        label3: "Skills & Interests*",
+        label4: "Qualification & Achievements*",
+      });
+    }
   };
   if (isLoading) return <Loader />;
   else
@@ -106,7 +175,7 @@ export default function Profile(props) {
             {myself ? (
               <TextInput
                 style={styles.input1}
-                placeholder="Contact Email"
+                placeholder="College Email"
                 value={userProfile.email}
                 onChangeText={text => {
                   setUserProfile(prev => ({
@@ -129,7 +198,7 @@ export default function Profile(props) {
             {myself ? (
               <TextInput
                 style={styles.input2}
-                placeholder="Admission Year"
+                placeholder={labels.placeholder1}
                 value={userProfile.admissionYear}
                 onChangeText={text => {
                   setUserProfile(prev => ({
@@ -146,7 +215,7 @@ export default function Profile(props) {
             {myself ? (
               <TextInput
                 style={styles.input2}
-                placeholder="Branch Name"
+                placeholder={labels.placeholder2}
                 value={userProfile.branch}
                 onChangeText={text => {
                   setUserProfile(prev => ({
@@ -161,11 +230,11 @@ export default function Profile(props) {
           </View>
           <View style={styles.MiddleSection}>
             <View style={styles.MiddleSectionItem}>
-              <Text style={{ fontSize: 18 }}>Title :</Text>
+              <Text style={{ fontSize: 18 }}>{labels.label1}</Text>
               {myself ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
-                  placeholder="eg: XYZ club secretarty, Intern at Cirquip"
+                  placeholder={labels.placeholder3}
                   value={userProfile.title}
                   onChangeText={text => {
                     setUserProfile(prev => ({
@@ -179,11 +248,11 @@ export default function Profile(props) {
               )}
             </View>
             <View style={styles.MiddleSectionItem}>
-              <Text style={{ fontSize: 18 }}>Projects & Achievements :</Text>
+              <Text style={{ fontSize: 18 }}>{labels.label2}</Text>
               {myself ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
-                  placeholder="eg: 1st prize at event, Winner in competiton"
+                  placeholder={labels.placeholder4}
                   value={userProfile.projects}
                   onChangeText={text => {
                     setUserProfile(prev => ({
@@ -197,11 +266,11 @@ export default function Profile(props) {
               )}
             </View>
             <View style={styles.MiddleSectionItem}>
-              <Text style={{ fontSize: 18 }}>Skills & Interests :</Text>
+              <Text style={{ fontSize: 18 }}>{labels.label3}</Text>
               {myself ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
-                  placeholder="eg: Autocad, ML, Web"
+                  placeholder={labels.placeholder5}
                   value={userProfile.skills}
                   onChangeText={text => {
                     setUserProfile(prev => ({
@@ -215,11 +284,11 @@ export default function Profile(props) {
               )}
             </View>
             <View style={styles.MiddleSectionItem}>
-              <Text style={{ fontSize: 18 }}>Club & Activities :</Text>
+              <Text style={{ fontSize: 18 }}>{labels.label4} </Text>
               {myself ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
-                  placeholder="eg:  Coordinator at NGO"
+                  placeholder={labels.placeholder6}
                   value={userProfile.clubs}
                   onChangeText={text => {
                     setUserProfile(prev => ({
