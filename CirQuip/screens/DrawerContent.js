@@ -69,7 +69,7 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                      uri: user.profileImage,
                     }}
                   />
                 ) : (
@@ -174,7 +174,7 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                      uri: user.profileImage,
                     }}
                   />
                 ) : (

@@ -61,7 +61,8 @@ export default function Profile(props) {
           showContact: user.showContact ? user.showContact : false,
           profileImage: user.profileImage ? user.profileImage : null,
         });
-        if (user.profileImage) setimage({ image: user.profileImage.image });
+        console.log("profile image", userProfile.profileImage);
+        //if (user.profileImage) setimage({ image: user.profileImage.image });
         placeholderOnRoles(user.role);
         setIsLoading(false);
       })
@@ -120,7 +121,7 @@ export default function Profile(props) {
     axios.patch(`${global.config.host}/user/updateUserData`, {
       user: detailsToBeUpdated,
     });
-    console.log("Pressed", detailsToBeUpdated);
+    //console.log("Pressed", detailsToBeUpdated);
   };
   const placeholderOnRoles = role => {
     if (role === "Student") {
@@ -205,11 +206,13 @@ export default function Profile(props) {
                   pickImage();
                 }}
               >
-                {image.image ? (
+                {image.image || userProfile.profileImage ? (
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${image.image}`,
+                      uri: image.image
+                        ? `data:image/jpg;base64,${image.image}`
+                        : userProfile.profileImage,
                     }}
                   />
                 ) : (
@@ -221,11 +224,13 @@ export default function Profile(props) {
               </TouchableOpacity>
             ) : (
               <>
-                {image.image ? (
+                {image.image || userProfile.profileImage ? (
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${image.image}`,
+                      uri: image.image
+                        ? `data:image/jpg;base64,${image.image}`
+                        : userProfile.profileImage,
                     }}
                   />
                 ) : (
