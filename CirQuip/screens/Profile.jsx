@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
+  Touchable,
 } from "react-native";
 import axios from "axios";
 import Loader from "./Loader";
@@ -13,6 +14,8 @@ import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { handleLogout } from "./AppNavigator";
+import * as ImagePicker from "expo-image-picker";
+
 export default function Profile(props) {
   const [user, setUser] = useState({});
   const [userProfile, setUserProfile] = useState({});
@@ -28,6 +31,7 @@ export default function Profile(props) {
     label3: "Skills & Interests*",
     label4: "Club & Activities*",
   });
+  const [image, setimage] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const myself = props.route.params.myself;
   const fetchData = () => {
@@ -59,7 +63,23 @@ export default function Profile(props) {
   };
   useEffect(() => {
     fetchData();
+    async () => {
+      let user = await AsyncStorage.getItem("user");
+      this.setState({ id: user });
+      if (Platform.OS !== "web") {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          Alert.alert(
+            "CirQuip",
+            "We need camera/gallery paermission to upload photos"
+          );
+        }
+      }
+    };
   }, []);
+
   const handleChangesinProfile = () => {
     // for deeply copying json
     const detailsToBeUpdated = JSON.parse(JSON.stringify(userProfile));
@@ -150,16 +170,39 @@ export default function Profile(props) {
       });
     }
   };
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      quality: 1,
+      base64: true,
+    });
+
+    console.log(result.type);
+
+    if (!result.cancelled) {
+      setimage({ image: result.base64 });
+    }
+  };
+
   if (isLoading) return <Loader />;
   else
     return (
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View style={styles.topSection}>
-            <Image
-              style={styles.ProfileImage}
-              source={require("../assets/avatar.png")}
-            />
+            <TouchableOpacity
+              onPress={() => {
+                pickImage();
+              }}
+            >
+              <Image
+                style={styles.ProfileImage}
+                source={require("../assets/avatar.png")}
+              />
+            </TouchableOpacity>
+            {console.log(image)}
             <Text style={{ fontSize: 24, marginTop: 5 }}>
               {userProfile?.name}
             </Text>
