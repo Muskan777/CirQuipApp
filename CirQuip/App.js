@@ -183,6 +183,7 @@ export default function App() {
   const setVariables = async () => {
     const data = await AsyncStorage.getItem("user");
     setUser(data);
+    console.log("yo1");
     setVerified(data.verified);
   };
   const checkJWT = async () => {
@@ -561,7 +562,6 @@ export default function App() {
         name="ProfileScreen"
         component={Profile}
         initialParams={{
-          _id: user._id,
           myself: true,
           handleLogout: handleLogout,
         }}
@@ -961,7 +961,7 @@ export default function App() {
                 handleLogout={handleLogout}
               />
             )}
-            initialRouteName={verified ? "Home" : "OTP"}
+            initialRouteName={"Home"}
           >
             <Drawer.Screen
               name="SellProducts"
@@ -979,7 +979,11 @@ export default function App() {
             />
             <Drawer.Screen name="BuyRequests" component={BuyRequestsScreen} />
             <Drawer.Screen name="ChatAdmin" component={ChatScreen} />
-            <Drawer.Screen name="Profile" component={ProfileScreen} />
+            <Drawer.Screen
+              name="Profile"
+              component={Profile}
+              initialParams={{ myself: true, handleLogout: handleLogout }}
+            />
             <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />
             <Drawer.Screen
               name="OTP"

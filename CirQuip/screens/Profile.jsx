@@ -34,6 +34,7 @@ export default function Profile(props) {
   const [image, setimage] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
   const myself = props.route.params.myself;
+  console.log(props.route.params);
   const fetchData = () => {
     axios
       .get(`${global.config.host}/user/getUserWithId/${props.route.params._id}`)
@@ -73,7 +74,7 @@ export default function Profile(props) {
         if (status !== "granted") {
           Alert.alert(
             "CirQuip",
-            "We need camera/gallery paermission to upload photos"
+            "We need camera/gallery permission to upload photos"
           );
         }
       }
