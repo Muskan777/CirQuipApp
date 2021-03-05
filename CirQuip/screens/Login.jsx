@@ -110,7 +110,7 @@ export default class Login extends React.Component {
   }
 
   handleSignUp() {
-    if (this.state.name.trim() === "") {
+    if (this.state.firstname.trim() === "") {
       Alert.alert("Name Error", "Name cannot be empty");
       return;
     }
@@ -185,7 +185,7 @@ export default class Login extends React.Component {
     axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
-        this.props.handleStatus(true);
+        console.log(res);
       })
       .catch(err => {
         console.log(err.response.data);
@@ -403,7 +403,10 @@ export default class Login extends React.Component {
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.nextBtn}
-                        onPress={() => this.onPageChange(3)}
+                        onPress={() => {
+                          this.onPageChange(3);
+                          this.handleSignUp();
+                        }}
                       >
                         <Text style={styles.loginText}>CONTINUE</Text>
                       </TouchableOpacity>
@@ -853,4 +856,3 @@ const styles = StyleSheet.create({
     marginTop: 92,
   },
 });
-

@@ -12,7 +12,8 @@ const { s3 } = require("../config/config");
 
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
-  let { name, phone, college, email, password, role } = req.body;
+  let { firstname, lastname, phone, college, email, password, role } = req.body;
+  let name = firstname + " " + lastname;
   phone = parseInt(phone);
   let num = Math.floor(Math.random() * 10000).toString();
   console.log(num);
