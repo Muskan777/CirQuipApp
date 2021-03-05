@@ -129,19 +129,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   });
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
-                }}
-              />
               {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -248,19 +235,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 label="Bookmarks"
                 onPress={() => {
                   navigation.navigate("SavedScreen");
-                }}
-              />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
                 }}
               />
               {user.verified === false && (
