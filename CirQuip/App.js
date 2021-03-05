@@ -14,7 +14,7 @@ import {
 } from "react-native-paper";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
-import Profile2 from "./screens/Profile2.jsx";
+import Profile from "./screens/Profile.jsx";
 import Published from "./screens/Published";
 import { createStackNavigator } from "@react-navigation/stack";
 import axios from "axios";
@@ -550,32 +550,29 @@ export default function App() {
           fontSize: 20,
         },
         headerStyle: {
-          backgroundColor: "rgba(43, 164, 219, 1)",
+          backgroundColor: "#fff",
+        },
+        headerTitleStyle: {
+          color: "#287EC1",
         },
       }}
     >
       <ProfileStack.Screen
         name="ProfileScreen"
-        component={Profile2}
-        initialParams={{ _id: user._id, myself: true }}
+        component={Profile}
+        initialParams={{
+          _id: user._id,
+          myself: true,
+          handleLogout: handleLogout,
+        }}
         options={{
-          title: "Your Profile",
-          headerRight: () => (
-            <IconButton
-              icon="logout"
-              color="#000"
-              size={30}
-              onPress={() => {
-                handleLogout();
-              }}
-            />
-          ),
+          title: "Profile",
           headerLeft: () => (
             <MaterialCommunityIcons
-              name="menu"
+              name="arrow-left"
               size={26}
               onPress={() => {
-                navigation.openDrawer();
+                navigation.goBack();
               }}
             />
           ),
@@ -624,7 +621,7 @@ export default function App() {
       />
       <HomeStack.Screen
         name="Profile"
-        component={Profile2}
+        component={Profile}
         options={{
           title: "Posts",
           headerRight: () => (

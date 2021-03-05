@@ -269,14 +269,13 @@ export function DrawerContent(props) {
         >
           <TouchableOpacity
             onPress={() => {
-              props.handleLogout();
+              props.navigation.navigate("About");
             }}
           >
             <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              SignOut
+              About
             </Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() => {
               Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
