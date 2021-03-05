@@ -52,6 +52,7 @@ export default function CreatePost(props) {
   const [Interest, setInterest] = React.useState("");
   const [admissionYear, setadmissionYear] = React.useState("");
   const [branch, setbranch] = React.useState("");
+  const [userImage, setUserImage] = useState("");
 
   const handleDialog = () => {
     setVisible(!visible);
@@ -72,6 +73,7 @@ export default function CreatePost(props) {
             res.data.skills && setSkill(res.data.skills[0]);
             res.data.Interest && setInterest(res.data.Interest[0]);
             res.data.clubs && setClubs(res.data.clubs[0]);
+            if (res.data.profileImage) setUserImage(res.data.profileImage);
           })
           .catch(err => {
             Alert.alert("Error", "Something Went Wrong");
@@ -281,8 +283,10 @@ export default function CreatePost(props) {
         <View style={styles.ProfilePicAndCaption}>
           <View style={{ flex: 1, flexDirection: "row" }}>
             <Image
-              style={{ ...styles.PostAreaImage }}
-              source={require("../assets/ellipse174b251b3.png")}
+              style={{ ...styles.ProfileImage }}
+              source={{
+                uri: userImage,
+              }}
             />
             <ScrollView
               style={{
@@ -633,6 +637,11 @@ export default function CreatePost(props) {
 }
 
 const styles = StyleSheet.create({
+  ProfileImage: {
+    width: 54,
+    height: 54,
+    borderRadius: 40,
+  },
   tagContainer: {
     display: "flex",
     // flexDirection: "row",

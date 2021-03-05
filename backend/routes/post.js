@@ -167,7 +167,6 @@ router.route("/createPost").post(auth, async (req, res) => {
         userId: req.payload.id,
         userName: req.payload.name,
         userRole: req.payload.role,
-        userImage: req.payload.profileImage,
         group,
         userCollege,
         userInterest,
@@ -184,7 +183,8 @@ router.route("/createPost").post(auth, async (req, res) => {
         createdAt,
         comments: [],
       });
-      console.log("tagged", taggedUsers);
+      // console.log("tagged", taggedUsers);
+
       try {
         newPost
           .save()

@@ -158,22 +158,18 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 style={{ flexDirection: "row" }}
               >
                 {user.profileImage ? (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={{
                       uri: user.profileImage,
                     }}
                   />
                 ) : (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={require("../assets/profile.png")}
                   />
                 )}
-                <Avatar.Image
-                  source={require("../assets/profile.png")}
-                  size={50}
-                />
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   <Title style={styles.title}>{user.name}</Title>
                   <Caption style={styles.caption}>{user.role}</Caption>
