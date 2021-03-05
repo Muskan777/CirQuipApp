@@ -130,6 +130,17 @@ router.get("/getUserWithId/:id", async (req, res) => {
   }
 });
 
+router.get("/getUserWithEmail/:email", async (req, res) => {
+  try {
+    const user = await User.find({ email: req.params.email });
+    log("user", user[0]);
+    return res.status(200).json({ ...user[0]._doc, password: "" });
+  } catch (err) {
+    log("user fetch", err);
+    res.status(400).json(err);
+  }
+});
+
 router.post("/verifyJWT", auth, (req, res) => {
   req.payload
     ? res.status(200).json(req.payload.id)
