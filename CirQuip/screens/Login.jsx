@@ -129,55 +129,57 @@ export default class Login extends React.Component {
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
     let emailId = this.state.email;
-    if (this.state.college == "COEP") {
-      if (emailId.split("@")[1] !== "coep.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "VJTI") {
-      if (emailId.split("@")[1] !== "vjti.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "VIT") {
-      if (emailId.split("@")[1] !== "vit.edu") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "PICT") {
-      if (emailId.split("@")[1] !== "pict.edu") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "PCCOE") {
-      if (emailId.split("@")[1] !== "pccoepune.org") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "MIT") {
-      if (emailId.split("@")[1] !== "mitwpu.edu.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "VIIT") {
-      if (emailId.split("@")[1] !== "viit.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "Sandeep University") {
-      if (emailId.split("@")[1] !== "sandipuniversity.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "VU") {
-      if (emailId.split("@")[1] !== "vupune.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
-      }
-    } else if (this.state.college == "IIIT Pune") {
-      if (emailId.split("@")[1] !== "iiitp.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return 1;
+    if (this.state.role != "Alumnus") {
+      if (this.state.college == "COEP") {
+        if (emailId.split("@")[1] !== "coep.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VJTI") {
+        if (emailId.split("@")[1] !== "vjti.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VIT") {
+        if (emailId.split("@")[1] !== "vit.edu") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "PICT") {
+        if (emailId.split("@")[1] !== "pict.edu") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "PCCOE") {
+        if (emailId.split("@")[1] !== "pccoepune.org") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "MIT") {
+        if (emailId.split("@")[1] !== "mitwpu.edu.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VIIT") {
+        if (emailId.split("@")[1] !== "viit.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "Sandeep University") {
+        if (emailId.split("@")[1] !== "sandipuniversity.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VU") {
+        if (emailId.split("@")[1] !== "vupune.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "IIIT Pune") {
+        if (emailId.split("@")[1] !== "iiitp.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
       }
     }
 
@@ -292,7 +294,7 @@ export default class Login extends React.Component {
                       items={[
                         { label: "Student", value: "Student" },
                         { label: "Faculty", value: "Faculty" },
-                        { label: "Alumni", value: "Alumni" },
+                        { label: "Alumnus", value: "Alumnus" },
                         { label: "Club", value: "Club" },
                       ]}
                       defaultNull
