@@ -185,36 +185,60 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 });
 
 router.route("/updateUserData").patch(async (req, res) => {
-  // console.log("Update!", req.body.user);
+  const buf = Buffer.from(
+    req.body.user.profileImage.image.replace(/^data:image\/\w+;base64,/, ""),
+    "base64"
+  );
+  //configuring parameters
 
-  try {
-    await User.findOneAndUpdate(
-      { email: req.body.user.email },
-      {
-        $set: {
-          name: req.body.user.name,
-          phone: req.body.user.phone,
-          email: req.body.user.email,
-          role: req.body.user.role,
-          admissionYear: req.body.user.admissionYear,
-          branch: req.body.user.branch,
-          projects: req.body.user.projects,
-          title: req.body.user.title,
-          skills: req.body.user.skills,
-          clubs: req.body.user.clubs,
-          showContact: req.body.user.showContact,
-          showEmail: req.body.user.showEmail,
-          profileImage: req.body.user.profileImage,
-        },
+  var params = {
+    Bucket: "cirquip",
+    Body: buf,
+    ContentEncoding: "base64",
+    ContentType: "image/jpeg",
+    Key: `profile-pics/${req.body.user.email}.jpeg`,
+    ACL: "public-read",
+  };
+
+  s3.upload(params, async function (err, data) {
+    //handle error
+    if (err) {
+      console.log("Error", err);
+      return resp.status(400).json("error in uploading image");
+    }
+    //success
+    if (data) {
+      console.log("Uploaded in:", data.Location);
+      try {
+        await User.findOneAndUpdate(
+          { email: req.body.user.email },
+          {
+            $set: {
+              name: req.body.user.name,
+              phone: req.body.user.phone,
+              email: req.body.user.email,
+              role: req.body.user.role,
+              admissionYear: req.body.user.admissionYear,
+              branch: req.body.user.branch,
+              projects: req.body.user.projects,
+              title: req.body.user.title,
+              skills: req.body.user.skills,
+              clubs: req.body.user.clubs,
+              showContact: req.body.user.showContact,
+              showEmail: req.body.user.showEmail,
+              profileImage: data.Location,
+            },
+          }
+        )
+          .then(() => {
+            console.log("Done");
+          })
+          .catch(err => res.status(400).send("Error: " + err));
+      } catch {
+        e => console.log("Error", e);
       }
-    )
-      .then(() => {
-        console.log("Done");
-      })
-      .catch(err => res.status(400).send("Error: " + err));
-  } catch {
-    e => console.log("Error", e);
-  }
+    }
+  });
 });
 
 // @route GET /api/user/getUsers
