@@ -6,6 +6,7 @@ const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
 const emailHandler = require("./email");
 const notifUtils = require("./notifUtils");
+const { s3 } = require("../config/config");
 // @route POST api/user/register
 // @desc registration of new user
 
@@ -39,6 +40,7 @@ router.post("/register", (req, res) => {
           verified: false,
           otp: num,
           sharedPosts: [],
+          profileImage: null,
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -83,6 +85,7 @@ router.post("/login", (req, res) => {
             likedPosts: user.likedPosts,
             savedPosts: user.savedPosts,
             sharedPosts: user.sharedPosts,
+            profileImage: user.profileImage,
           };
           if (token) notifUtils.addNotificationToken(token, user.id);
           jwt.sign(
@@ -182,7 +185,8 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 });
 
 router.route("/updateUserData").patch(async (req, res) => {
-  console.log("Update!", req.body.user);
+  // console.log("Update!", req.body.user);
+
   try {
     await User.findOneAndUpdate(
       { email: req.body.user.email },
@@ -200,6 +204,7 @@ router.route("/updateUserData").patch(async (req, res) => {
           clubs: req.body.user.clubs,
           showContact: req.body.user.showContact,
           showEmail: req.body.user.showEmail,
+          profileImage: req.body.user.profileImage,
         },
       }
     )

@@ -51,6 +51,7 @@ export default function PostCarousel({
   club,
   interest,
   userEmail,
+  userImage,
 }) {
   const date =
     createdAt.substr(8, 2) +
@@ -343,10 +344,19 @@ export default function PostCarousel({
   return (
     <Card style={styles.PostContainer}>
       <View style={styles.topContainer}>
-        <Image
-          style={styles.contactimg}
-          source={require("../assets/ellipse1adfd341c.png")}
-        />
+        {userImage ? (
+          <Image
+            style={styles.contactimg}
+            source={{
+              uri: `data:image/jpg;base64,${userImage.image}`,
+            }}
+          />
+        ) : (
+          <Image
+            style={styles.contactimg}
+            source={require("../assets/profile.png")}
+          />
+        )}
         <View>
           <TouchableWithoutFeedback
             style={{ flexDirection: "row" }}

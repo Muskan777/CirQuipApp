@@ -167,6 +167,7 @@ router.route("/createPost").post(auth, async (req, res) => {
         userId: req.payload.id,
         userName: req.payload.name,
         userRole: req.payload.role,
+        userImage: req.payload.profileImage,
         group,
         userCollege,
         userInterest,
