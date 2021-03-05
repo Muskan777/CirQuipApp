@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, StyleSheet, Alert, Image } from "react-native";
 import {
   Avatar,
@@ -28,13 +28,19 @@ import { Linking } from "react-native";
 import screen from "../assets/cirquip.png";
 
 export function DrawerContent(props) {
+  let [user, setUser] = React.useState({});
+
+  useEffect(() => {
+    findEmail();
+  }, []);
+
   const findEmail = async () => {
     let user = await AsyncStorage.getItem("user");
     if (user) {
       axios
         .get(`${global.config.host}/user/getUserWithId/${user}`)
         .then(res => {
-          setemail(res.data.email);
+          setUser(res.data);
         })
         .catch(err => {
           Alert.alert("Error", "Something Went Wrong In Fetching Admin 2");
@@ -42,10 +48,6 @@ export function DrawerContent(props) {
         });
     }
   };
-
-  let [email, setemail] = React.useState(() => {
-    return findEmail();
-  });
 
   return (
     <View style={{ flex: 1 }}>
@@ -69,8 +71,8 @@ export function DrawerContent(props) {
                   size={50}
                 />
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
-                  <Title style={styles.title}>{props.user.name}</Title>
-                  <Caption style={styles.caption}>{props.user.role}</Caption>
+                  <Title style={styles.title}>{user.name}</Title>
+                  <Caption style={styles.caption}>{user.role}</Caption>
                 </View>
               </TouchableWithoutFeedback>
             </View>
@@ -131,18 +133,20 @@ export function DrawerContent(props) {
                   props.navigation.navigate("About");
                 }}
               />
-              {props.user.verified === false ? (
+              {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
-                    <Icon name="pin" color={color} size={size} />
+                    <FontAwesome
+                      name="shield"
+                      size={30}
+                      style={{ ...styles.Icons, marginLeft: 4 }}
+                    />
                   )}
                   label="Verify Email"
                   onPress={() => {
                     props.navigation.navigate("OTP");
                   }}
                 />
-              ) : (
-                <></>
               )}
             </Drawer.Section>
           </View>
@@ -225,18 +229,20 @@ export function DrawerContent(props) {
                   props.navigation.navigate("About");
                 }}
               />
-              {props.user.verified === false ? (
+              {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
-                    <Icon name="pin" color={color} size={size} />
+                    <FontAwesome
+                      name="shield"
+                      size={30}
+                      style={{ ...styles.Icons, marginLeft: 4 }}
+                    />
                   )}
                   label="Verify Email"
                   onPress={() => {
                     props.navigation.navigate("OTP");
                   }}
                 />
-              ) : (
-                <></>
               )}
             </Drawer.Section>
           </View>

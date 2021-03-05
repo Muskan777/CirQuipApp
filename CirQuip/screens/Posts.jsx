@@ -143,7 +143,7 @@ export default function Posts(props) {
                     let data = res.data.post.filter(post => {
                       return post.userCollege === College;
                     });
-                    console.log("Data", data);
+                    // console.log("Data", data);
                     if (props.route.params && props.route.params.type) {
                       data = data.filter(post => {
                         return response.data._id === post.userId;
@@ -570,6 +570,9 @@ const styles = StyleSheet.create({
     borderBottomColor: "#aaa",
   },
   bottom: {
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
     position: "relative",
   },
   cart: {
@@ -614,8 +617,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     position: "absolute",
     alignSelf: "center",
-    left: 160,
-    bottom: 55,
+    bottom: 50,
     paddingBottom: 40,
     shadowColor: "#36b5a5",
     shadowOpacity: 1,

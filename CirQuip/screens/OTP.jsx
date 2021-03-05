@@ -110,13 +110,13 @@ export default function OTP({ email, navigation }) {
       >
         <Text style={styles.loginText}>Verify</Text>
       </TouchableOpacity>
-      {/* <TouchableOpacity
+      <TouchableOpacity
         onPress={() => {
           navigation.navigate("Home");
         }}
       >
         <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
-      </TouchableOpacity> */}
+      </TouchableOpacity>
     </View>
   );
 }
