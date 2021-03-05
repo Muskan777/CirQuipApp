@@ -286,6 +286,7 @@ export default function Posts(props) {
               interest={item.userInterest}
               onRefresh={onRefresh}
               userEmail={email}
+              userImage={item.userImage}
             />
           )}
           keyExtractor={item => item._id}

@@ -15,9 +15,11 @@ import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { handleLogout } from "./AppNavigator";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Profile(props) {
   const [user, setUser] = useState({});
+  const [userId, setId] = useState("");
   const [userProfile, setUserProfile] = useState({});
   const [labels, setLabels] = useState({
     placeholder1: "Admission Year",
@@ -35,7 +37,9 @@ export default function Profile(props) {
   const [isLoading, setIsLoading] = React.useState(true);
   const myself = props.route.params.myself;
   console.log(props.route.params);
-  const fetchData = () => {
+  const fetchData = async () => {
+    let userId = await AsyncStorage.getItem("user");
+    setId(userId);
     axios
       .get(`${global.config.host}/user/getUserWithId/${props.route.params._id}`)
       .then(res => {
@@ -55,8 +59,9 @@ export default function Profile(props) {
           clubs: user.clubs.join(", "),
           showEmail: user.showEmail ? user.showEmail : false,
           showContact: user.showContact ? user.showContact : false,
+          profileImage: user.profileImage ? user.profileImage : null,
         });
-
+        if (user.profileImage) setimage({ image: user.profileImage.image });
         placeholderOnRoles(user.role);
         setIsLoading(false);
       })
@@ -88,6 +93,7 @@ export default function Profile(props) {
     detailsToBeUpdated.admissionYear = parseInt(
       detailsToBeUpdated.admissionYear
     );
+    detailsToBeUpdated.profileImage = image;
     if (userProfile.skills == "") {
       detailsToBeUpdated.skills = [];
     } else {
@@ -193,17 +199,44 @@ export default function Profile(props) {
       <SafeAreaView style={styles.container}>
         <ScrollView>
           <View style={styles.topSection}>
-            <TouchableOpacity
-              onPress={() => {
-                pickImage();
-              }}
-            >
-              <Image
-                style={styles.ProfileImage}
-                source={require("../assets/avatar.png")}
-              />
-            </TouchableOpacity>
-            {console.log(image)}
+            {userId == props.route.params._id ? (
+              <TouchableOpacity
+                onPress={() => {
+                  pickImage();
+                }}
+              >
+                {image.image ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: `data:image/jpg;base64,${image.image}`,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
+              </TouchableOpacity>
+            ) : (
+              <>
+                {image.image ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: `data:image/jpg;base64,${image.image}`,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
+              </>
+            )}
+
             <Text style={{ fontSize: 24, marginTop: 5 }}>
               {userProfile?.name}
             </Text>

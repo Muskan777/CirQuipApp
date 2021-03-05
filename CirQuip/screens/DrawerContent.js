@@ -65,12 +65,19 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 }}
                 style={{ flexDirection: "row" }}
               >
-                <Avatar.Image
-                  source={{
-                    uri: "https://reactnavigation.org/img/spiro.svg",
-                  }}
-                  size={50}
-                />
+                {user.profileImage ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   {console.log(user._id)}
                   <Title style={styles.title}>{user.name}</Title>
@@ -163,10 +170,21 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 }}
                 style={{ flexDirection: "row" }}
               >
+                {user.profileImage ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
                 <Avatar.Image
-                  source={{
-                    uri: "https://reactnavigation.org/img/spiro.svg",
-                  }}
+                  source={require("../assets/profile.png")}
                   size={50}
                 />
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
