@@ -85,7 +85,6 @@ router.post("/login", (req, res) => {
             likedPosts: user.likedPosts,
             savedPosts: user.savedPosts,
             sharedPosts: user.sharedPosts,
-            profileImage: user.profileImage,
           };
           if (token) notifUtils.addNotificationToken(token, user.id);
           jwt.sign(
