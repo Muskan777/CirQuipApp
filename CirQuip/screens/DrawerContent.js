@@ -69,7 +69,7 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                      uri: user.profileImage,
                     }}
                   />
                 ) : (
@@ -129,19 +129,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   });
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
-                }}
-              />
               {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -171,22 +158,18 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 style={{ flexDirection: "row" }}
               >
                 {user.profileImage ? (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: `data:image/jpg;base64,${user.profileImage.image}`,
+                      uri: user.profileImage,
                     }}
                   />
                 ) : (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={require("../assets/profile.png")}
                   />
                 )}
-                <Avatar.Image
-                  source={require("../assets/profile.png")}
-                  size={50}
-                />
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   <Title style={styles.title}>{user.name}</Title>
                   <Caption style={styles.caption}>{user.role}</Caption>
@@ -248,19 +231,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 label="Bookmarks"
                 onPress={() => {
                   navigation.navigate("SavedScreen");
-                }}
-              />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
                 }}
               />
               {user.verified === false && (

@@ -51,7 +51,6 @@ export default function PostCarousel({
   club,
   interest,
   userEmail,
-  userImage,
 }) {
   const date =
     createdAt.substr(8, 2) +
@@ -91,6 +90,7 @@ export default function PostCarousel({
   const [deleted, setDeleted] = useState(false);
   const [visibleMenu, setVisibleMenu] = React.useState(false);
   const [full, setfull] = React.useState(false);
+  const [userImage, setUserImage] = useState("");
   let key = 0;
   let usersTagged = [];
   let usersTaggedId = [];
@@ -102,6 +102,18 @@ export default function PostCarousel({
   taggedUsers.map(user => {
     usersTaggedId.push(user._id);
   });
+
+  const fetchUser = async () => {
+    axios
+      .get(`${global.config.host}/user/getUserWithId/${id}`)
+      .then(res => {
+        if (res.data.profileImage) setUserImage(res.data.profileImage);
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something Went Wrong");
+        console.log(err);
+      });
+  };
 
   const handleDialog = () => {
     setVisibleMenu(false);
@@ -144,6 +156,7 @@ export default function PostCarousel({
   const handleMenu = () => setVisibleMenu(!visibleMenu);
   useEffect(() => {
     fetchLikedPosts();
+    fetchUser();
   }, []);
 
   const fetchLikedPosts = async () => {
@@ -348,7 +361,7 @@ export default function PostCarousel({
           <Image
             style={styles.contactimg}
             source={{
-              uri: `data:image/jpg;base64,${userImage.image}`,
+              uri: userImage,
             }}
           />
         ) : (
