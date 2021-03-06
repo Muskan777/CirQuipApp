@@ -22,13 +22,13 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "",
-      firstname: "",
-      lastname: "",
-      phone: "",
-      college: "",
-      password2: "",
-      role: "",
+      email: "Rajmathur@coep.ac.in",
+      firstname: "Raj",
+      lastname: "Mathur",
+      phone: "9854566254",
+      college: "COEP",
+      password2: "123",
+      role: "Student",
       toggleSignUp: false,
       currentPosition: false,
       notifToken: null,
@@ -104,9 +104,9 @@ export default class Login extends React.Component {
     this.setState({ currentPosition: 0 });
   }
 
-  onPageChange(position) {
+  onPageChange = position => {
     this.setState({ currentPosition: position });
-  }
+  };
 
   async handleSignUp() {
     if (this.state.firstname.trim() === "") {
@@ -418,74 +418,10 @@ export default class Login extends React.Component {
                   </ScrollView>
                 </>
               ) : this.state.currentPosition === 3 ? (
-                <>
-                  <ScrollView style={{ width: "100%", height: "100%" }}>
-                    <View style={{ marginTop: 80 }}>
-                      <View style={styles.container}>
-                        <Text
-                          style={{
-                            color: "rgba(39, 40, 51, 1)",
-                            fontSize: 24,
-                            fontWeight: "600",
-                          }}
-                        >
-                          Enter the 4 digit code sent to:
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(46, 165, 221, 1)",
-                            fontSize: 25,
-                            fontWeight: "600",
-                            marginVertical: 10,
-                          }}
-                        >
-                          {this.state.email}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(103, 104, 112, 1)",
-                            fontSize: 14,
-                            fontWeight: "100",
-                          }}
-                        >
-                          We've sent a 4 digit code to your email address.
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(103, 104, 112, 1)",
-                            fontSize: 14,
-                            fontWeight: "100",
-                          }}
-                        >
-                          Please enter the verification code.
-                        </Text>
-                        <View
-                          style={{
-                            width: "100%",
-                            marginTop: 70,
-                            alignItems: "center",
-                          }}
-                        >
-                          <View style={{ width: "100%" }}>
-                            <OTP email={this.state.email} />
-                          </View>
-                        </View>
-
-                        <TouchableOpacity onPress={() => this.onPageChange(5)}>
-                          <Text
-                            style={{
-                              color: "grey",
-                              marginTop: 20,
-                              marginBottom: 230,
-                            }}
-                          >
-                            Skip
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </ScrollView>
-                </>
+                <OTP
+                  email={this.state.email}
+                  onPageChange={this.onPageChange}
+                />
               ) : this.state.currentPosition === 4 ? (
                 <>
                   <ScrollView style={{ width: "100%", height: "100%" }}>
@@ -551,6 +487,7 @@ export default class Login extends React.Component {
                       <View style={styles.textContainer}>
                         <Text
                           style={{
+                            textAlign: "center",
                             fontSize: 18,
                             color: "rgba(141, 141, 141, 1)",
                           }}
