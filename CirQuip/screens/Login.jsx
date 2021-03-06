@@ -22,13 +22,13 @@ export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: "Rajmathur@coep.ac.in",
-      firstname: "Raj",
-      lastname: "Mathur",
-      phone: "9854566254",
-      college: "COEP",
-      password2: "123",
-      role: "Student",
+      email: "",
+      firstname: "",
+      lastname: "",
+      phone: "",
+      college: "",
+      password2: "",
+      role: "",
       toggleSignUp: false,
       currentPosition: false,
       notifToken: null,
