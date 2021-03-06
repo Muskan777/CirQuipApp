@@ -183,7 +183,7 @@ export default function CreatePost(props) {
     let imageHeight = Math.round((dimensions.width * 6) / 16);
     let imageWidth = imageHeight;
     // console.log(item.length);
-    return (
+    return item ? (
       <Image
         style={{
           height: imageHeight,
@@ -196,7 +196,7 @@ export default function CreatePost(props) {
         }}
         key={i}
       />
-    );
+    ) : null;
   }
   async function pickDocument() {
     const doc = await DocumentPicker.getDocumentAsync({ type: "video/*" });
@@ -282,12 +282,14 @@ export default function CreatePost(props) {
       <KeyboardAvoidingView style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
           <View style={{ flex: 1, flexDirection: "row" }}>
-            <Image
-              style={{ ...styles.ProfileImage }}
-              source={{
-                uri: userImage,
-              }}
-            />
+            {userImage ? (
+              <Image
+                style={{ ...styles.ProfileImage }}
+                source={{
+                  uri: userImage,
+                }}
+              />
+            ) : null}
             <ScrollView
               style={{
                 marginHorizontal: 10,
@@ -617,10 +619,19 @@ export default function CreatePost(props) {
                 }}
               >
                 <View style={{ ...styles.tagCard }}>
-                  <Image
-                    style={styles.tagImage}
-                    source={require("../assets/ellipse174b251b3.png")}
-                  />
+                  {user.item.profileImage ? (
+                    <Image
+                      style={styles.tagImage}
+                      source={{
+                        uri: user.item.profileImage,
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.tagImage}
+                      source={require("../assets/profile.png")}
+                    />
+                  )}
                   <Text style={{ fontSize: 18 }}>{`${user.item.name}  |`}</Text>
                   <Text style={{ marginLeft: 8, fontSize: 12 }}>
                     {user.item.role}

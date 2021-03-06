@@ -29,7 +29,7 @@ router.post("/register", (req, res) => {
           email,
           password,
           role,
-          admissionYear: 1970,
+          admissionYear: null,
           branch: "",
           title: "",
           projects: [],
