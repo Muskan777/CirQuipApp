@@ -29,11 +29,12 @@ export default function CommentWrapper(props) {
   const [comments, setComments] = useState([]);
   const [commentLoading, setCommentLoading] = useState(true);
   const [key, setKey] = useState(false);
+  const [userImage, setUserImage] = useState("");
   const scroll = React.useRef();
   const navigation = useNavigation();
 
   useEffect(() => {
-    console.log("in comment wrapper");
+    handleProfileImage();
     axios
       .get(`${global.config.host}/post/getPostWithComment/${props.uid}`)
       .then(res => {
@@ -46,6 +47,20 @@ export default function CommentWrapper(props) {
   }, []);
   const onCommentClick = (index, postId) => {
     scroll.current.scrollTo(0);
+  };
+  const handleProfileImage = async () => {
+    let user = await AsyncStorage.getItem("user");
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          if (res.data.profileImage) setUserImage(res.data.profileImage);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong");
+          console.log(err);
+        });
+    }
   };
 
   const handleComment = async () => {
@@ -104,17 +119,33 @@ export default function CommentWrapper(props) {
           />
         )}
         <View style={styles.CommentInputContainer}>
-          <Image
-            style={{
-              ...styles.CommentInputImage,
-              width: 30,
-              height: 30,
-              alignSelf: "center",
-              borderRadius: 15,
-              marginRight: 15,
-            }}
-            source={require("../assets/ellipse174b251b3.png")}
-          />
+          {userImage ? (
+            <Image
+              style={{
+                ...styles.CommentInputImage,
+                width: 30,
+                height: 30,
+                alignSelf: "center",
+                borderRadius: 15,
+                marginRight: 15,
+              }}
+              source={{
+                uri: userImage,
+              }}
+            />
+          ) : (
+            <Image
+              style={{
+                ...styles.CommentInputImage,
+                width: 30,
+                height: 30,
+                alignSelf: "center",
+                borderRadius: 15,
+                marginRight: 15,
+              }}
+              source={require("../assets/profile.png")}
+            />
+          )}
           <TextInput
             editable
             multiline

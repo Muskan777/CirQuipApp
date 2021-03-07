@@ -289,7 +289,12 @@ export default function CreatePost(props) {
                   uri: userImage,
                 }}
               />
-            ) : null}
+            ) : (
+              <Image
+                style={{ ...styles.ProfileImage }}
+                source={require("../assets/profile.png")}
+              />
+            )}
             <ScrollView
               style={{
                 marginHorizontal: 10,

@@ -42,6 +42,7 @@ export default function Posts(props) {
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
   const [originaldata, setoriginaldata] = useState([]);
+  const [userImage, setUserImage] = useState("");
 
   // React.useEffect(() => {
   //   navigation?.setOptions({
@@ -80,7 +81,23 @@ export default function Posts(props) {
     }
   };
 
+  const handleProfileImage = async () => {
+    let user = await AsyncStorage.getItem("user");
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          if (res.data.profileImage) setUserImage(res.data.profileImage);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong");
+          console.log(err);
+        });
+    }
+  };
+
   const fetchData = async () => {
+    handleProfileImage();
     if (props.route.name === "SavedPosts") {
       let token = await AsyncStorage.getItem("cirquip-auth-token");
       await axios
@@ -329,17 +346,33 @@ export default function Posts(props) {
             />
           )}
           <View style={styles.CommentInputContainer}>
-            <Image
-              style={{
-                ...styles.CommentInputImage,
-                width: 30,
-                height: 30,
-                alignSelf: "center",
-                borderRadius: 15,
-                marginRight: 15,
-              }}
-              source={require("../assets/ellipse174b251b3.png")}
-            />
+            {userImage ? (
+              <Image
+                style={{
+                  ...styles.CommentInputImage,
+                  width: 30,
+                  height: 30,
+                  alignSelf: "center",
+                  borderRadius: 15,
+                  marginRight: 15,
+                }}
+                source={{
+                  uri: userImage,
+                }}
+              />
+            ) : (
+              <Image
+                style={{
+                  ...styles.CommentInputImage,
+                  width: 30,
+                  height: 30,
+                  alignSelf: "center",
+                  borderRadius: 15,
+                  marginRight: 15,
+                }}
+                source={require("../assets/profile.png")}
+              />
+            )}
             <TextInput
               editable
               multiline
