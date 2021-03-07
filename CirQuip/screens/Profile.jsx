@@ -37,6 +37,7 @@ export default function Profile(props) {
   });
   const [image, setimage] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [profileImage, setProfileImage] = useState(null);
   const myself = props.route.params.myself;
   console.log(props.route.params);
   const fetchData = async () => {
@@ -48,6 +49,7 @@ export default function Profile(props) {
         let user = res.data;
         console.log(user);
         setUser(res.data);
+        if (res.data.profileImage) setProfileImage(res.data.profileImage);
         setUserProfile({
           name: user.name,
           phone: user.phone,
@@ -61,10 +63,7 @@ export default function Profile(props) {
           clubs: user.clubs.join(", "),
           showEmail: user.showEmail ? user.showEmail : false,
           showContact: user.showContact ? user.showContact : false,
-          profileImage: user.profileImage ? user.profileImage : null,
         });
-        console.log("profile image", userProfile.profileImage);
-        //if (user.profileImage) setimage({ image: user.profileImage.image });
         placeholderOnRoles(user.role);
         setIsLoading(false);
       })
@@ -96,7 +95,6 @@ export default function Profile(props) {
     detailsToBeUpdated.admissionYear = parseInt(
       detailsToBeUpdated.admissionYear
     );
-    detailsToBeUpdated.profileImage = image;
     if (userProfile.skills == "") {
       detailsToBeUpdated.skills = [];
     } else {
@@ -183,18 +181,28 @@ export default function Profile(props) {
     }
   };
 
-  const pickImage = async () => {
+  const handleProfilePicture = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
       base64: true,
     });
-
-    console.log(result.type);
-
     if (!result.cancelled) {
-      setimage({ image: result.base64 });
+      setIsLoading(true);
+      axios
+        .patch(`${global.config.host}/user/updateProfileImage`, {
+          email: userProfile.email,
+          profileImage: result.base64,
+        })
+        .then(res => {
+          setProfileImage(res.data.profileImage);
+          setIsLoading(false);
+          Toast.show("Profile Picture Updated!", Toast.SHORT, [
+            "UIAlertController",
+          ]);
+        })
+        .catch(err => console.log(err));
     }
   };
 
@@ -235,18 +243,12 @@ export default function Profile(props) {
         <ScrollView>
           <View style={styles.topSection}>
             {userId == props.route.params._id ? (
-              <TouchableOpacity
-                onPress={() => {
-                  pickImage();
-                }}
-              >
-                {image.image || userProfile.profileImage ? (
+              <TouchableOpacity onPress={handleProfilePicture}>
+                {profileImage ? (
                   <Image
                     style={styles.ProfileImage}
                     source={{
-                      uri: image.image
-                        ? `data:image/jpg;base64,${image.image}`
-                        : userProfile.profileImage,
+                      uri: profileImage,
                     }}
                   />
                 ) : (
