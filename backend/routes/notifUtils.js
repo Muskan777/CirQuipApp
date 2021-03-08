@@ -75,7 +75,7 @@ const sendChatNotification = async msg => {
   });
   //console.log(userTo, userFrom);
   sendNotifications(userTo._doc._id, {
-    title: `${userFrom._doc.name} ${msg.user._id === "Admin" ? "| Admin" : ""}`,
+    title: `${msg.user._id === "Admin" ? "Admin" : userFrom._doc.name}`,
     message: `${msg.text}`,
     type: `${msg.to === "Admin" ? "chat-user" : "chat-admin"}`,
     email: userTo._doc.email,
