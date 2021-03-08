@@ -1,16 +1,6 @@
 import React, { Component } from "react";
-import {
-  Platform,
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  TouchableOpacity,
-  Alert,
-  Dimensions,
-} from "react-native";
+import { Platform, StyleSheet, View, Image } from "react-native";
 
-const height = Dimensions.get("screen").height;
 import screen from "../assets/splash1.png";
 export default class Splash extends Component {
   render() {

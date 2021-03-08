@@ -8,13 +8,11 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  Dimensions,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
 import { Avatar } from "react-native-paper";
 import OTP from "./OTP";
 

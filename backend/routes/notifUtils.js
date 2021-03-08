@@ -7,7 +7,6 @@ const config = require("config");
  * password - sds@1234
  * project - criquip-test
  */
-var serviceAccount = require("../config/firebase-keys.json");
 const addNotificationToken = async (token, userId) => {
   try {
     await User.findByIdAndUpdate(userId, { $addToSet: { notifTokens: token } });

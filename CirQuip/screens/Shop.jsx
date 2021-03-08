@@ -5,37 +5,19 @@ import {
   SafeAreaView,
   FlatList,
   View,
-  Image,
   Dimensions,
   TouchableOpacity,
   Alert,
   Linking,
   TextInput,
 } from "react-native";
-import {
-  IconButton,
-  Title,
-  Searchbar,
-  Card,
-  Paragraph,
-  Button,
-  FAB,
-  Avatar,
-} from "react-native-paper";
+import { IconButton, Title, Card, Paragraph, Avatar } from "react-native-paper";
 import Loader from "./Loader";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ShadowView from "react-native-simple-shadow-view";
 import * as RootNavigation from "../RootNavigation.js";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  FontAwesome,
-  MaterialIcons,
-  Ionicons,
-  AntDesign,
-} from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import Toast from "react-native-simple-toast";
 
 export default class Shop extends React.Component {

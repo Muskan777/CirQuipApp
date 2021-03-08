@@ -1,6 +1,4 @@
 const nodemailer = require("nodemailer");
-const bcrypt = require("bcrypt");
-const router = require("express").Router();
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -10,8 +8,6 @@ const transporter = nodemailer.createTransport({
     pass: "sds@1234",
   },
 });
-
-let to_email = "xy@gmail.com";
 
 // sent email to "to_email" with the otp
 const email = (to_email, otp) => {

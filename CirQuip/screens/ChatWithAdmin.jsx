@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { Alert, StyleSheet, View } from "react-native";
+import React from "react";
+import { StyleSheet, View } from "react-native";
 import {
   GiftedChat,
   InputToolbar,
@@ -11,7 +11,6 @@ import Loader from "./Loader";
 import axios from "axios";
 import "../config";
 import { IconButton } from "react-native-paper";
-import * as RootNavigation from "../RootNavigation";
 const customtInputToolbar = props => {
   return (
     <InputToolbar
@@ -23,16 +22,6 @@ const customtInputToolbar = props => {
         marginHorizontal: 10,
         paddingVertical: 8,
       }}
-      // accessoryStyle={{
-      //   shadowOpacity: 0.3,
-      //   shadowOffset: {
-      //     width: 0,
-      //     height: 3,
-      //   },
-      //   shadowRadius: 6,
-      //   shadowColor: "#4FB5A5",
-      //   elevation: 3,
-      // }}
     ></InputToolbar>
   );
 };
@@ -132,7 +121,7 @@ export class ChatWithAdmin extends React.Component {
             let image = msg => {
               if (msg.user._id === "Admin") {
                 msg.user.name = "admin";
-                msg.user.avatar = require("../assets/cirquip.png");
+                msg.user.avatar = require("../assets/asset2.png");
               } else {
                 msg.user.name = "users";
                 msg.user.avatar = "https://placeimg.com/140/140/any";

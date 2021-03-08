@@ -7,9 +7,6 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  Text,
-  TouchableHighlight,
-  Button,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import Toast from "react-native-simple-toast";
@@ -22,8 +19,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
-import { Col } from "native-base";
-import { log } from "react-native-reanimated";
 export default function Posts(props) {
   const { navigation, route } = props;
   const routeState = useRoute();

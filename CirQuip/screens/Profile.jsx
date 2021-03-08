@@ -6,14 +6,12 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  Touchable,
 } from "react-native";
 import axios from "axios";
 import Loader from "./Loader";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { handleLogout } from "./AppNavigator";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";

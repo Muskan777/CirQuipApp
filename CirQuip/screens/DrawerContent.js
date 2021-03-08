@@ -25,8 +25,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native-gesture-handler";
 import { Linking } from "react-native";
-import screen from "../assets/cirquip.png";
-import { handleLogout } from "./AppNavigator";
+import screen from "../assets/asset2.png";
 
 export function DrawerContent({ handleLogout, navigation, ...props }) {
   let [user, setUser] = React.useState({});
