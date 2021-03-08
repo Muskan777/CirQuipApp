@@ -11,7 +11,7 @@ import axios from "axios";
 import Toast from "react-native-simple-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function OTP({ email, navigation }) {
+export default function OTP({ email, navigation, onPageChange }) {
   const [otp, setOTP] = useState("");
   const [id, setId] = useState("");
   const [mailId, setMailId] = useState(email);
@@ -23,6 +23,8 @@ export default function OTP({ email, navigation }) {
         setId(id);
         getData(id);
       });
+    } else {
+      getDataMail(email);
     }
   }, []);
 
@@ -33,6 +35,20 @@ export default function OTP({ email, navigation }) {
       .then(res => {
         user = res.data;
         setMailId(user.email);
+        setValidOTP(user.otp);
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something Went Wrong In Fetching User Data");
+        console.log(err);
+      });
+  }
+
+  function getDataMail(email) {
+    let user;
+    axios
+      .get(`${global.config.host}/user/getUserWithEmail/${email}`)
+      .then(res => {
+        user = res.data;
         setValidOTP(user.otp);
       })
       .catch(err => {
@@ -72,7 +88,11 @@ export default function OTP({ email, navigation }) {
             Toast.show("Successfuly Verified", Toast.SHORT, [
               "UIAlertController",
             ]);
-            navigation.navigate("Home");
+            if (navigation) {
+              navigation.navigate("Home");
+            } else {
+              onPageChange(4);
+            }
           } else {
             Toast.show("Verification Failed!", Toast.SHORT, [
               "UIAlertController",
@@ -90,6 +110,8 @@ export default function OTP({ email, navigation }) {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.top1}>An OTP has been sent to</Text>
+      <Text style={styles.top2}>{email}</Text>
       <TextInput
         style={styles.inputView}
         placeholder="Enter OTP"
@@ -112,7 +134,9 @@ export default function OTP({ email, navigation }) {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
-          navigation.navigate("Home");
+          if (navigation) {
+            navigation.navigate("Home");
+          }
         }}
       >
         <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
@@ -123,10 +147,20 @@ export default function OTP({ email, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginVertical: "60%",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    width: "auto",
+  },
+  top1: {
+    fontSize: 30,
+    marginBottom: 10,
+  },
+  top2: {
+    fontSize: 25,
+    color: "#2ea5dd",
+    marginBottom: 30,
   },
   logo: {
     fontWeight: "bold",
@@ -169,7 +203,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   loginBtn: {
-    width: "60%",
+    width: 200,
     backgroundColor: "rgba(43, 164, 219, 0.6313725490196078)",
     borderRadius: 25,
     height: 50,

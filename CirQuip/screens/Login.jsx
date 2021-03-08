@@ -30,7 +30,6 @@ export default class Login extends React.Component {
       password2: "",
       role: "",
       toggleSignUp: false,
-      otp: "0000",
       currentPosition: false,
       notifToken: null,
     };
@@ -105,92 +104,94 @@ export default class Login extends React.Component {
     this.setState({ currentPosition: 0 });
   }
 
-  onPageChange(position) {
+  onPageChange = position => {
     this.setState({ currentPosition: position });
-  }
+  };
 
-  handleSignUp() {
-    if (this.state.name.trim() === "") {
+  async handleSignUp() {
+    if (this.state.firstname.trim() === "") {
       Alert.alert("Name Error", "Name cannot be empty");
-      return;
+      return 1;
     }
 
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
       Alert.alert("Phone error", "Enter a valid phone number");
-      return;
+      return 1;
     }
 
     if (this.state.password !== this.state.password2) {
       Alert.alert("Error", "Passwords Don't Match");
-      return;
+      return 1;
     }
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
     let emailId = this.state.email;
-    if (this.state.college == "COEP") {
-      if (emailId.split("@")[1] !== "coep.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "VJTI") {
-      if (emailId.split("@")[1] !== "vjti.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "VIT") {
-      if (emailId.split("@")[1] !== "vit.edu") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "PICT") {
-      if (emailId.split("@")[1] !== "pict.edu") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "PCCOE") {
-      if (emailId.split("@")[1] !== "pccoepune.org") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "MIT") {
-      if (emailId.split("@")[1] !== "mitwpu.edu.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "VIIT") {
-      if (emailId.split("@")[1] !== "viit.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "Sandeep University") {
-      if (emailId.split("@")[1] !== "sandipuniversity.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "VU") {
-      if (emailId.split("@")[1] !== "vupune.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
-      }
-    } else if (this.state.college == "IIIT Pune") {
-      if (emailId.split("@")[1] !== "iiitp.ac.in") {
-        Alert.alert("CirQuip", "Please use valid college email address");
-        return;
+    if (this.state.role != "Alumnus" || this.state.role != "Alumni") {
+      if (this.state.college == "COEP") {
+        if (emailId.split("@")[1] !== "coep.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VJTI") {
+        if (emailId.split("@")[1] !== "vjti.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VIT") {
+        if (emailId.split("@")[1] !== "vit.edu") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "PICT") {
+        if (emailId.split("@")[1] !== "pict.edu") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "PCCOE") {
+        if (emailId.split("@")[1] !== "pccoepune.org") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "MIT") {
+        if (emailId.split("@")[1] !== "mitwpu.edu.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VIIT") {
+        if (emailId.split("@")[1] !== "viit.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "Sandeep University") {
+        if (emailId.split("@")[1] !== "sandipuniversity.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "VU") {
+        if (emailId.split("@")[1] !== "vupune.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
+      } else if (this.state.college == "IIIT Pune") {
+        if (emailId.split("@")[1] !== "iiitp.ac.in") {
+          Alert.alert("CirQuip", "Please use valid college email address");
+          return 1;
+        }
       }
     }
 
-    axios
+    await axios
       .post(`${global.config.host}/user/register`, this.state)
       .then(res => {
-        this.props.handleStatus(true);
+        console.log(res);
       })
       .catch(err => {
         console.log(err.response.data);
         Alert.alert("Error", err.response.data);
-        this.props.handleStatus(false);
+        // this.props.handleStatus(false);
       });
   }
   render() {
@@ -201,7 +202,6 @@ export default class Login extends React.Component {
             <>
               {this.state.currentPosition === 0 ? (
                 <>
-                  {console.log(this.state)}
                   <SignUp1 />
                   <Text style={styles.createAcc}>Create account</Text>
                   <View style={styles.inputView}>
@@ -294,7 +294,7 @@ export default class Login extends React.Component {
                       items={[
                         { label: "Student", value: "Student" },
                         { label: "Faculty", value: "Faculty" },
-                        { label: "Alumni", value: "Alumni" },
+                        { label: "Alumnus", value: "Alumnus" },
                         { label: "Club", value: "Club" },
                       ]}
                       defaultNull
@@ -368,6 +368,8 @@ export default class Login extends React.Component {
                 </>
               ) : this.state.currentPosition === 2 ? (
                 <>
+                  {console.log(this.state)}
+
                   <ScrollView style={{ width: "100%" }}>
                     <View
                       style={
@@ -403,7 +405,12 @@ export default class Login extends React.Component {
                       </TouchableOpacity>
                       <TouchableOpacity
                         style={styles.nextBtn}
-                        onPress={() => this.onPageChange(3)}
+                        onPress={async () => {
+                          let valid = await this.handleSignUp();
+                          if (valid !== 1) {
+                            this.onPageChange(3);
+                          }
+                        }}
                       >
                         <Text style={styles.loginText}>CONTINUE</Text>
                       </TouchableOpacity>
@@ -411,74 +418,10 @@ export default class Login extends React.Component {
                   </ScrollView>
                 </>
               ) : this.state.currentPosition === 3 ? (
-                <>
-                  <ScrollView style={{ width: "100%", height: "100%" }}>
-                    <View style={{ marginTop: 80 }}>
-                      <View style={styles.container}>
-                        <Text
-                          style={{
-                            color: "rgba(39, 40, 51, 1)",
-                            fontSize: 24,
-                            fontWeight: "600",
-                          }}
-                        >
-                          Enter the 4 digit code sent to:
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(46, 165, 221, 1)",
-                            fontSize: 25,
-                            fontWeight: "600",
-                            marginVertical: 10,
-                          }}
-                        >
-                          {this.state.email}
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(103, 104, 112, 1)",
-                            fontSize: 14,
-                            fontWeight: "100",
-                          }}
-                        >
-                          We've sent a 4 digit code to your email address.
-                        </Text>
-                        <Text
-                          style={{
-                            color: "rgba(103, 104, 112, 1)",
-                            fontSize: 14,
-                            fontWeight: "100",
-                          }}
-                        >
-                          Please enter the verification code.
-                        </Text>
-                        <View
-                          style={{
-                            width: "100%",
-                            marginTop: 70,
-                            alignItems: "center",
-                          }}
-                        >
-                          <View style={{ width: "100%" }}>
-                            <OTP />
-                          </View>
-                        </View>
-
-                        <TouchableOpacity onPress={() => this.onPageChange(5)}>
-                          <Text
-                            style={{
-                              color: "grey",
-                              marginTop: 20,
-                              marginBottom: 230,
-                            }}
-                          >
-                            Skip
-                          </Text>
-                        </TouchableOpacity>
-                      </View>
-                    </View>
-                  </ScrollView>
-                </>
+                <OTP
+                  email={this.state.email}
+                  onPageChange={this.onPageChange}
+                />
               ) : this.state.currentPosition === 4 ? (
                 <>
                   <ScrollView style={{ width: "100%", height: "100%" }}>
@@ -544,6 +487,7 @@ export default class Login extends React.Component {
                       <View style={styles.textContainer}>
                         <Text
                           style={{
+                            textAlign: "center",
                             fontSize: 18,
                             color: "rgba(141, 141, 141, 1)",
                           }}
@@ -841,6 +785,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginTop: 130,
     marginBottom: 30,
+    textAlign: "center",
   },
   textStyle: {
     color: "rgba(141, 141, 141, 1)",
@@ -853,4 +798,3 @@ const styles = StyleSheet.create({
     marginTop: 92,
   },
 });
-

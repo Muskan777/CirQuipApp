@@ -6,12 +6,14 @@ const keys = require("../config/default.json");
 const auth = require("../middlewares/auth");
 const emailHandler = require("./email");
 const notifUtils = require("./notifUtils");
+const { s3 } = require("../config/config");
 // @route POST api/user/register
 // @desc registration of new user
 
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 router.post("/register", (req, res) => {
-  let { name, phone, college, email, password, role } = req.body;
+  let { firstname, lastname, phone, college, email, password, role } = req.body;
+  let name = firstname + " " + lastname;
   phone = parseInt(phone);
   let num = Math.floor(Math.random() * 10000).toString();
   console.log(num);
@@ -27,7 +29,7 @@ router.post("/register", (req, res) => {
           email,
           password,
           role,
-          admissionYear: 1970,
+          admissionYear: null,
           branch: "",
           title: "",
           projects: [],
@@ -39,6 +41,7 @@ router.post("/register", (req, res) => {
           verified: false,
           otp: num,
           sharedPosts: [],
+          profileImage: null,
         });
         bcrypt.hash(newUser.password, 10, (err, hash) => {
           if (err) throw err;
@@ -127,6 +130,17 @@ router.get("/getUserWithId/:id", async (req, res) => {
   }
 });
 
+router.get("/getUserWithEmail/:email", async (req, res) => {
+  try {
+    const user = await User.find({ email: req.params.email });
+    log("user", user[0]);
+    return res.status(200).json({ ...user[0]._doc, password: "" });
+  } catch (err) {
+    log("user fetch", err);
+    res.status(400).json(err);
+  }
+});
+
 router.post("/verifyJWT", auth, (req, res) => {
   req.payload
     ? res.status(200).json(req.payload.id)
@@ -181,8 +195,45 @@ router.route("/sharePost").patch(auth, async (req, res) => {
   }
 });
 
+router.route("/updateProfileImage").patch(async (req, res) => {
+  const buf = Buffer.from(
+    req.body.profileImage.replace(/^data:image\/\w+;base64,/, ""),
+    "base64"
+  );
+  var params = {
+    Bucket: "cirquip",
+    Body: buf,
+    ContentEncoding: "base64",
+    ContentType: "image/jpeg",
+    Key: `profile-pics/${req.body.email}/${Date.now()}.jpeg`,
+    ACL: "public-read",
+  };
+  s3.upload(params, async function (err, data) {
+    if (err) {
+      console.log("Error", err);
+      return resp.status(400).json("error in uploading image");
+    }
+    if (data) {
+      try {
+        await User.findOneAndUpdate(
+          { email: req.body.email },
+          {
+            $set: {
+              profileImage: data.Location,
+            },
+          }
+        )
+          .then(() => {
+            return res.status(200).send({ profileImage: data.Location });
+          })
+          .catch(err => res.status(400).send("Error: " + err));
+      } catch {
+        e => console.log("Error", e);
+      }
+    }
+  });
+});
 router.route("/updateUserData").patch(async (req, res) => {
-  console.log("Update!", req.body.user);
   try {
     await User.findOneAndUpdate(
       { email: req.body.user.email },

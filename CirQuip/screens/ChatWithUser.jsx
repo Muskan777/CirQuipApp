@@ -30,6 +30,7 @@ export function ChatWithUser(props) {
   const [Student, setStudent] = React.useState(false);
   const [Alumni, setAlumni] = React.useState(false);
   const [Faculty, setFaculty] = React.useState(false);
+  const [Club, setClub] = React.useState(false);
   const [socket, setSocket] = React.useState(() => {
     return io(`${global.config.socketURL}`);
   });
@@ -70,10 +71,17 @@ export function ChatWithUser(props) {
       }
       if (Alumni) {
         let Alumnis = threads.filter(thread => {
-          return thread.role === "Alumni";
+          return thread.role === "Alumni" || thread.role === "Alumnus";
         });
         console.log(Alumnis);
         Alumnis.forEach(sendmessage);
+      }
+      if (Club) {
+        let Faculties = threads.filter(thread => {
+          return thread.role === "Club";
+        });
+        console.log(Faculties);
+        Faculties.forEach(sendmessage);
       }
     }
   };
@@ -93,6 +101,18 @@ export function ChatWithUser(props) {
   };
   useEffect(searchFunction, [searchQuery]);
 
+  function compareUnreadmsgs(a, b) {
+    if (a.UnreadMsgs < b.UnreadMsgs) {
+      return +1;
+    }
+    if (a.UnreadMsgs > b.UnreadMsgs) {
+      return -1;
+    }
+    return 0;
+  }
+
+  let thread = [];
+
   useEffect(() => {
     const unsubscribe = props.navigation.addListener("focus", () => {
       console.log("Working Fine!", props.route);
@@ -103,15 +123,14 @@ export function ChatWithUser(props) {
             let Users = res.data.users.filter(user => {
               return user.email != global.config.admin;
             });
-            const thread = Users.map(user => {
+            thread = Users.map(user => {
               return {
                 _id: user.email,
                 name: user.name,
                 role: user.role,
+                UnreadMsgs: 0,
               };
             });
-            setThreads(thread);
-            setRequiredUsers(thread);
           }
           if (loading) {
             setLoading(false);
@@ -137,6 +156,24 @@ export function ChatWithUser(props) {
             }
           }
           setUnread(UnreadMsgs);
+          console.log("Unread", UnreadMsgs);
+          console.log("threads", thread);
+          var objectKeys = Object.keys(UnreadMsgs);
+          console.log(objectKeys);
+          var usrs = thread;
+          objectKeys.forEach(key => {
+            usrs.forEach(usr => {
+              if (usr._id === key) {
+                usr.UnreadMsgs = UnreadMsgs[key].length;
+              }
+            });
+          });
+          console.log("Usrs", usrs);
+
+          usrs.sort(compareUnreadmsgs);
+          console.log("Usrs", usrs);
+          setThreads(usrs);
+          setRequiredUsers(usrs);
         })
         .catch(e => console.log(e));
     });
@@ -280,7 +317,7 @@ export function ChatWithUser(props) {
       <Modal animationType="slide" transparent={true} visible={visible}>
         <View
           style={{
-            height: "50%",
+            height: "60%",
             marginTop: "auto",
             backgroundColor: "white",
             borderRadius: 80,
@@ -373,6 +410,24 @@ export function ChatWithUser(props) {
                 }}
               >
                 Only Faculties
+              </Text>
+            </View>
+            <View style={styles.checkBoxContainer}>
+              <CheckBox
+                checked={Club}
+                color={Club ? "#2EA5DD" : "gray"}
+                onPress={() => setClub(!Club)}
+              />
+              <Text
+                style={{
+                  ...styles.checkBoxTxt,
+                  color: Club ? "#2EA5DD" : "gray",
+                  fontWeight: "bold",
+                  flex: 1,
+                  fontSize: 15,
+                }}
+              >
+                Only Clubs
               </Text>
             </View>
             <View

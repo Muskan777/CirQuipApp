@@ -183,7 +183,8 @@ router.route("/createPost").post(auth, async (req, res) => {
         createdAt,
         comments: [],
       });
-      console.log("tagged", taggedUsers);
+      // console.log("tagged", taggedUsers);
+
       try {
         newPost
           .save()

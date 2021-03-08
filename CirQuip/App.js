@@ -112,7 +112,7 @@ export default function App() {
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
     checkJWT();
-    setTimeout(() => toggleSplash(!splash), 0);
+    setTimeout(() => toggleSplash(!splash), 2000);
 
     AppState.addEventListener("change", handleStateChange);
     RootNavigation.notificationListener.current = Notifications.addNotificationReceivedListener(
@@ -922,11 +922,11 @@ export default function App() {
           title: "CirQuip Assistant",
           headerLeft: () => (
             <MaterialCommunityIcons
-              name="menu"
+              name="arrow-left"
               size={30}
               color="#287EC1"
               onPress={() => {
-                navigation.openDrawer();
+                navigation.goBack();
               }}
             />
           ),
@@ -982,6 +982,19 @@ export default function App() {
             <Drawer.Screen
               name="Profile"
               component={Profile}
+              options={{
+                title: "",
+                headerLeft: () => (
+                  <MaterialCommunityIcons
+                    name="arrow-left"
+                    size={30}
+                    color="#287EC1"
+                    onPress={() => {
+                      navigation.goBack();
+                    }}
+                  />
+                ),
+              }}
               initialParams={{ myself: true, handleLogout: handleLogout }}
             />
             <Drawer.Screen name="SavedScreen" component={SavedStackScreen} />

@@ -15,9 +15,13 @@ import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { handleLogout } from "./AppNavigator";
 import * as ImagePicker from "expo-image-picker";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { IconButton } from "react-native-paper";
+import Toast from "react-native-simple-toast";
 
 export default function Profile(props) {
   const [user, setUser] = useState({});
+  const [userId, setId] = useState("");
   const [userProfile, setUserProfile] = useState({});
   const [labels, setLabels] = useState({
     placeholder1: "Admission Year",
@@ -33,21 +37,25 @@ export default function Profile(props) {
   });
   const [image, setimage] = React.useState("");
   const [isLoading, setIsLoading] = React.useState(true);
+  const [profileImage, setProfileImage] = useState(null);
   const myself = props.route.params.myself;
   console.log(props.route.params);
-  const fetchData = () => {
+  const fetchData = async () => {
+    let userId = await AsyncStorage.getItem("user");
+    setId(userId);
     axios
       .get(`${global.config.host}/user/getUserWithId/${props.route.params._id}`)
       .then(res => {
         let user = res.data;
         console.log(user);
         setUser(res.data);
+        if (res.data.profileImage) setProfileImage(res.data.profileImage);
         setUserProfile({
           name: user.name,
           phone: user.phone,
           email: user.email,
           role: user.role,
-          admissionYear: user.admissionYear.toString(),
+          admissionYear: user.admissionYear?.toString(),
           branch: user.branch,
           projects: user.projects.join(", "),
           title: user.title,
@@ -56,7 +64,6 @@ export default function Profile(props) {
           showEmail: user.showEmail ? user.showEmail : false,
           showContact: user.showContact ? user.showContact : false,
         });
-
         placeholderOnRoles(user.role);
         setIsLoading(false);
       })
@@ -114,6 +121,8 @@ export default function Profile(props) {
     axios.patch(`${global.config.host}/user/updateUserData`, {
       user: detailsToBeUpdated,
     });
+    Toast.show("Details Updated!", Toast.SHORT, ["UIAlertController"]);
+
     console.log("Pressed", detailsToBeUpdated);
   };
   const placeholderOnRoles = role => {
@@ -156,7 +165,7 @@ export default function Profile(props) {
         label3: "Achievements*",
         label4: "Skills & Interests*",
       });
-    } else if (role === "Alumnus") {
+    } else if (role === "Alumnus" || role === "Alumni") {
       setLabels({
         placeholder1: "Admission Year",
         placeholder2: "Branch Name",
@@ -172,18 +181,28 @@ export default function Profile(props) {
     }
   };
 
-  const pickImage = async () => {
+  const handleProfilePicture = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       quality: 1,
       base64: true,
     });
-
-    console.log(result.type);
-
     if (!result.cancelled) {
-      setimage({ image: result.base64 });
+      setIsLoading(true);
+      axios
+        .patch(`${global.config.host}/user/updateProfileImage`, {
+          email: userProfile.email,
+          profileImage: result.base64,
+        })
+        .then(res => {
+          setProfileImage(res.data.profileImage);
+          setIsLoading(false);
+          Toast.show("Profile Picture Updated!", Toast.SHORT, [
+            "UIAlertController",
+          ]);
+        })
+        .catch(err => console.log(err));
     }
   };
 
@@ -191,23 +210,78 @@ export default function Profile(props) {
   else
     return (
       <SafeAreaView style={styles.container}>
+        <View
+          style={{
+            height: 55,
+            width: "100%",
+            borderWidth: 0,
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: "transparent",
+          }}
+        >
+          <IconButton
+            icon="arrow-left"
+            onPress={() => {
+              props.navigation.goBack();
+            }}
+            color="#287EC1"
+            size={30}
+          />
+          <Text
+            style={{
+              flex: 1,
+              margin: 5,
+              fontSize: 20,
+              maxHeight: "100%",
+              color: "#287EC1",
+            }}
+          >
+            Profile
+          </Text>
+        </View>
         <ScrollView>
           <View style={styles.topSection}>
-            <TouchableOpacity
-              onPress={() => {
-                pickImage();
-              }}
-            >
-              <Image
-                style={styles.ProfileImage}
-                source={require("../assets/avatar.png")}
-              />
-            </TouchableOpacity>
-            {console.log(image)}
+            {userId == props.route.params._id ? (
+              <TouchableOpacity onPress={handleProfilePicture}>
+                {profileImage ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: profileImage,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
+              </TouchableOpacity>
+            ) : (
+              <>
+                {image.image || userProfile.profileImage ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: image.image
+                        ? `data:image/jpg;base64,${image.image}`
+                        : userProfile.profileImage,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
+              </>
+            )}
+
             <Text style={{ fontSize: 24, marginTop: 5 }}>
               {userProfile?.name}
             </Text>
-            {myself ? (
+            {userId == props.route.params._id ? (
               <TextInput
                 style={styles.input1}
                 placeholder="Contact Number"
@@ -222,7 +296,7 @@ export default function Profile(props) {
             ) : userProfile.showContact ? (
               <Text style={styles.primaryText}>{userProfile?.phone}</Text>
             ) : null}
-            {myself ? (
+            {userId == props.route.params._id ? (
               <TextInput
                 style={styles.input1}
                 placeholder="College Email"
@@ -245,7 +319,7 @@ export default function Profile(props) {
               marginTop: 20,
             }}
           >
-            {myself ? (
+            {userId == props.route.params._id ? (
               <TextInput
                 style={styles.input2}
                 placeholder={labels.placeholder1}
@@ -262,7 +336,7 @@ export default function Profile(props) {
                 {userProfile?.admissionYear}
               </Text>
             )}
-            {myself ? (
+            {userId == props.route.params._id ? (
               <TextInput
                 style={styles.input2}
                 placeholder={labels.placeholder2}
@@ -283,7 +357,7 @@ export default function Profile(props) {
           <View style={styles.MiddleSection}>
             <View style={styles.MiddleSectionItem}>
               <Text style={{ fontSize: 18 }}>{labels.label1}</Text>
-              {myself ? (
+              {userId == props.route.params._id ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
                   placeholder={labels.placeholder3}
@@ -301,7 +375,7 @@ export default function Profile(props) {
             </View>
             <View style={styles.MiddleSectionItem}>
               <Text style={{ fontSize: 18 }}>{labels.label2}</Text>
-              {myself ? (
+              {userId == props.route.params._id ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
                   placeholder={labels.placeholder4}
@@ -319,7 +393,7 @@ export default function Profile(props) {
             </View>
             <View style={styles.MiddleSectionItem}>
               <Text style={{ fontSize: 18 }}>{labels.label3}</Text>
-              {myself ? (
+              {userId == props.route.params._id ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
                   placeholder={labels.placeholder5}
@@ -337,7 +411,7 @@ export default function Profile(props) {
             </View>
             <View style={styles.MiddleSectionItem}>
               <Text style={{ fontSize: 18 }}>{labels.label4} </Text>
-              {myself ? (
+              {userId == props.route.params._id ? (
                 <TextInput
                   style={{ ...styles.input1, width: "98%", textAlign: "left" }}
                   placeholder={labels.placeholder6}
@@ -354,7 +428,7 @@ export default function Profile(props) {
               )}
             </View>
           </View>
-          {myself && (
+          {userId == props.route.params._id && (
             <View>
               <View style={styles.radioContainer}>
                 <RadioButton
@@ -419,6 +493,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    paddingTop: Platform.OS === "android" ? 25 : 0,
   },
   ProfileImage: {
     width: 80,

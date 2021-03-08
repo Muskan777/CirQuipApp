@@ -65,12 +65,19 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 }}
                 style={{ flexDirection: "row" }}
               >
-                <Avatar.Image
-                  source={{
-                    uri: "https://reactnavigation.org/img/spiro.svg",
-                  }}
-                  size={50}
-                />
+                {user.profileImage ? (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: user.profileImage,
+                    }}
+                  />
+                ) : (
+                  <Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   {console.log(user._id)}
                   <Title style={styles.title}>{user.name}</Title>
@@ -122,19 +129,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   });
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
-                }}
-              />
               {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -163,12 +157,19 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 }}
                 style={{ flexDirection: "row" }}
               >
-                <Avatar.Image
-                  source={{
-                    uri: "https://reactnavigation.org/img/spiro.svg",
-                  }}
-                  size={50}
-                />
+                {user.profileImage ? (
+                  <Avatar.Image
+                    style={styles.ProfileImage}
+                    source={{
+                      uri: user.profileImage,
+                    }}
+                  />
+                ) : (
+                  <Avatar.Image
+                    style={styles.ProfileImage}
+                    source={require("../assets/profile.png")}
+                  />
+                )}
                 <View style={{ marginLeft: 15, flexDirection: "column" }}>
                   <Title style={styles.title}>{user.name}</Title>
                   <Caption style={styles.caption}>{user.role}</Caption>
@@ -232,19 +233,6 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   navigation.navigate("SavedScreen");
                 }}
               />
-              <DrawerItem
-                icon={({ color, size }) => (
-                  <FontAwesome
-                    name="info"
-                    size={30}
-                    style={{ ...styles.Icons, marginLeft: 7 }}
-                  />
-                )}
-                label="  About"
-                onPress={() => {
-                  navigation.navigate("About");
-                }}
-              />
               {user.verified === false && (
                 <DrawerItem
                   icon={({ color, size }) => (
@@ -260,49 +248,38 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   }}
                 />
               )}
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="info"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="About"
+                onPress={() => {
+                  navigation.navigate("About");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="feedback"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Help & Feedback"
+                onPress={() => {
+                  Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
+                }}
+              />
             </Drawer.Section>
           </View>
         </DrawerContentScrollView>
       )}
-
-      <View
-        style={{
-          marginLeft: 15,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          marginBottom: 15,
-          marginTop: 15,
-          borderTopColor: "#f4f4f4",
-          borderTopWidth: 1,
-        }}
-      >
-        <Avatar.Image source={screen} size={50} />
-        <View
-          style={{
-            marginLeft: 15,
-            flexDirection: "column",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("About");
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              About
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              Help & FeedBack
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 }

@@ -85,7 +85,7 @@ export default class Published extends React.Component {
                 convinience.
               </Text>
               <Text style={styles.desc}>
-                • Non valuaeble for you is valuaeble for someone, so keep
+                • Non valuable for you is valuable for someone, so keep
                 selling on CirQuip and help your Community.
               </Text>
             </View>

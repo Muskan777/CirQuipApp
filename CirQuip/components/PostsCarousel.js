@@ -90,6 +90,7 @@ export default function PostCarousel({
   const [deleted, setDeleted] = useState(false);
   const [visibleMenu, setVisibleMenu] = React.useState(false);
   const [full, setfull] = React.useState(false);
+  const [userImage, setUserImage] = useState("");
   let key = 0;
   let usersTagged = [];
   let usersTaggedId = [];
@@ -101,6 +102,18 @@ export default function PostCarousel({
   taggedUsers.map(user => {
     usersTaggedId.push(user._id);
   });
+
+  const fetchUser = async () => {
+    axios
+      .get(`${global.config.host}/user/getUserWithId/${id}`)
+      .then(res => {
+        if (res.data.profileImage) setUserImage(res.data.profileImage);
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something Went Wrong");
+        console.log(err);
+      });
+  };
 
   const handleDialog = () => {
     setVisibleMenu(false);
@@ -143,6 +156,7 @@ export default function PostCarousel({
   const handleMenu = () => setVisibleMenu(!visibleMenu);
   useEffect(() => {
     fetchLikedPosts();
+    fetchUser();
   }, []);
 
   const fetchLikedPosts = async () => {
@@ -343,10 +357,19 @@ export default function PostCarousel({
   return (
     <Card style={styles.PostContainer}>
       <View style={styles.topContainer}>
-        <Image
-          style={styles.contactimg}
-          source={require("../assets/ellipse1adfd341c.png")}
-        />
+        {userImage ? (
+          <Image
+            style={styles.contactimg}
+            source={{
+              uri: userImage,
+            }}
+          />
+        ) : (
+          <Image
+            style={styles.contactimg}
+            source={require("../assets/profile.png")}
+          />
+        )}
         <View>
           <TouchableWithoutFeedback
             style={{ flexDirection: "row" }}
@@ -361,8 +384,21 @@ export default function PostCarousel({
               }}
             >
               {name}
-              <Entypo style={styles.TextStyle} name="dot-single" color="grey" />
-              <Text style={styles.TextStyle}>{role}</Text>
+              {role != "Admin" ? (
+                <Entypo
+                  style={styles.TextStyle}
+                  name="dot-single"
+                  color="grey"
+                />
+              ) : (
+                <Text></Text>
+              )}
+
+              {role != "Admin" ? (
+                <Text style={styles.TextStyle}>{role}</Text>
+              ) : (
+                <Text></Text>
+              )}
             </Text>
           </TouchableWithoutFeedback>
           <Text style={styles.TextStyle}>

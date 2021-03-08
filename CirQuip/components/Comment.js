@@ -25,6 +25,7 @@ const Comment = ({
   const [deleted, setDeleted] = useState(false);
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [userImage, setUserImage] = useState("");
   var date =
     time.substr(8, 2) + "-" + time.substr(5, 2) + "-" + time.substr(0, 4);
   var localhour = parseInt(time.substr(11, 2));
@@ -46,7 +47,19 @@ const Comment = ({
   }
   useEffect(() => {
     handleCommentLiked();
+    handleProfileImage();
   }, []);
+  const handleProfileImage = async () => {
+    axios
+      .get(`${global.config.host}/user/getUserWithId/${userId}`)
+      .then(res => {
+        if (res.data.profileImage) setUserImage(res.data.profileImage);
+      })
+      .catch(err => {
+        Alert.alert("Error", "Something Went Wrong");
+        console.log(err);
+      });
+  };
   const handleCommentLiked = async () => {
     let userId = await AsyncStorage.getItem("user");
     setUser(userId);
@@ -118,14 +131,23 @@ const Comment = ({
   return (
     <View style={styles.CommentContainer}>
       <View style={styles.CommentImageContainer}>
-        <Image
-          style={{ ...styles.commentImage }}
-          source={require("../assets/ellipse174b251b3.png")}
-        />
+        {userImage ? (
+          <Image
+            style={{ ...styles.ProfileImage }}
+            source={{
+              uri: userImage,
+            }}
+          />
+        ) : (
+          <Image
+            style={{ ...styles.ProfileImage }}
+            source={require("../assets/profile.png")}
+          />
+        )}
       </View>
       <View style={styles.CommentContentContainer}>
         <View style={styles.CommentUserInfo}>
-          <Text style={styles.PrimaryText}>{name || "Anonymus"}</Text>
+          <Text style={styles.PrimaryText}>{name || "Anonymous"}</Text>
           <Text style={styles.SecondaryText}>{role}</Text>
         </View>
         <Text style={styles.Comment}>{comment}</Text>
@@ -307,5 +329,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     color: "#2ba4db",
     marginLeft: 20,
+  },
+  ProfileImage: {
+    width: 54,
+    height: 54,
+    borderRadius: 40,
   },
 });

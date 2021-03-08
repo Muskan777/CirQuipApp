@@ -45,6 +45,7 @@ export default function CreatePost(props) {
   const [checkedA, setCheckedA] = React.useState(false);
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
+  const [checkedD, setCheckedD] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [College, setCollege] = React.useState("");
   const [Skill, setSkill] = React.useState("");
@@ -52,6 +53,7 @@ export default function CreatePost(props) {
   const [Interest, setInterest] = React.useState("");
   const [admissionYear, setadmissionYear] = React.useState("");
   const [branch, setbranch] = React.useState("");
+  const [userImage, setUserImage] = useState("");
 
   const handleDialog = () => {
     setVisible(!visible);
@@ -72,6 +74,7 @@ export default function CreatePost(props) {
             res.data.skills && setSkill(res.data.skills[0]);
             res.data.Interest && setInterest(res.data.Interest[0]);
             res.data.clubs && setClubs(res.data.clubs[0]);
+            if (res.data.profileImage) setUserImage(res.data.profileImage);
           })
           .catch(err => {
             Alert.alert("Error", "Something Went Wrong");
@@ -98,15 +101,19 @@ export default function CreatePost(props) {
     } else {
       content = videoSource?.base64;
     }
-    let group = [];
+    let group = ["Admin"];
     if (checkedA) {
       group.push("Alumni");
+      group.push("Alumnus");
     }
     if (checkedB) {
       group.push("Faculty");
     }
     if (checkedC) {
       group.push("Student");
+    }
+    if (checkedD) {
+      group.push("Club");
     }
     axios
       .post(
@@ -181,7 +188,7 @@ export default function CreatePost(props) {
     let imageHeight = Math.round((dimensions.width * 6) / 16);
     let imageWidth = imageHeight;
     // console.log(item.length);
-    return (
+    return item ? (
       <Image
         style={{
           height: imageHeight,
@@ -194,7 +201,7 @@ export default function CreatePost(props) {
         }}
         key={i}
       />
-    );
+    ) : null;
   }
   async function pickDocument() {
     const doc = await DocumentPicker.getDocumentAsync({ type: "video/*" });
@@ -280,10 +287,19 @@ export default function CreatePost(props) {
       <KeyboardAvoidingView style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
           <View style={{ flex: 1, flexDirection: "row" }}>
-            <Image
-              style={{ ...styles.PostAreaImage }}
-              source={require("../assets/ellipse174b251b3.png")}
-            />
+            {userImage ? (
+              <Image
+                style={{ ...styles.ProfileImage }}
+                source={{
+                  uri: userImage,
+                }}
+              />
+            ) : (
+              <Image
+                style={{ ...styles.ProfileImage }}
+                source={require("../assets/profile.png")}
+              />
+            )}
             <ScrollView
               style={{
                 marginHorizontal: 10,
@@ -442,6 +458,23 @@ export default function CreatePost(props) {
                     }}
                   >
                     Students
+                  </Text>
+                </View>
+                <View style={styles.checkBoxContainer}>
+                  <CheckBox
+                    checked={checkedD}
+                    color={checkedD ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedD(!checkedD)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedD ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Club
                   </Text>
                 </View>
 
@@ -613,10 +646,19 @@ export default function CreatePost(props) {
                 }}
               >
                 <View style={{ ...styles.tagCard }}>
-                  <Image
-                    style={styles.tagImage}
-                    source={require("../assets/ellipse174b251b3.png")}
-                  />
+                  {user.item.profileImage ? (
+                    <Image
+                      style={styles.tagImage}
+                      source={{
+                        uri: user.item.profileImage,
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.tagImage}
+                      source={require("../assets/profile.png")}
+                    />
+                  )}
                   <Text style={{ fontSize: 18 }}>{`${user.item.name}  |`}</Text>
                   <Text style={{ marginLeft: 8, fontSize: 12 }}>
                     {user.item.role}
@@ -633,6 +675,11 @@ export default function CreatePost(props) {
 }
 
 const styles = StyleSheet.create({
+  ProfileImage: {
+    width: 54,
+    height: 54,
+    borderRadius: 40,
+  },
   tagContainer: {
     display: "flex",
     // flexDirection: "row",
