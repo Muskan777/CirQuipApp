@@ -304,7 +304,6 @@ export default function CreatePost(props) {
               style={{
                 marginHorizontal: 10,
                 maxWidth: "84%",
-
                 display: "flex",
               }}
             >
@@ -676,8 +675,8 @@ export default function CreatePost(props) {
 
 const styles = StyleSheet.create({
   ProfileImage: {
-    width: 54,
-    height: 54,
+    width: 50,
+    height: 50,
     borderRadius: 40,
   },
   tagContainer: {
@@ -766,7 +765,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     marginLeft: 5,
-    backgroundColor: "blue",
   },
   ProfilePicAndCaption: {
     flex: 0.25,
