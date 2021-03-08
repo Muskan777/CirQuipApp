@@ -555,7 +555,7 @@ export default class Login extends React.Component {
                 <TextInput
                   value={this.state.email}
                   style={styles.inputText}
-                  placeholder="Email Id."
+                  placeholder="Email ID"
                   placeholderTextColor="grey"
                   onChangeText={text => this.setState({ email: text })}
                   selectionColor="cyan"

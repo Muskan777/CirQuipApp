@@ -69,23 +69,24 @@ export default function Profile(props) {
       })
       .catch(e => console.log(e));
   };
+  const permissions = async () => {
+    let user = await AsyncStorage.getItem("user");
+    this.setState({ id: user });
+    if (Platform.OS !== "web") {
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "CirQuip",
+          "We need camera/gallery permission to upload photos"
+        );
+      }
+    }
+  };
   useEffect(() => {
     fetchData();
-    async () => {
-      let user = await AsyncStorage.getItem("user");
-      this.setState({ id: user });
-      if (Platform.OS !== "web") {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert(
-            "CirQuip",
-            "We need camera/gallery permission to upload photos"
-          );
-        }
-      }
-    };
+    permissions();
   }, []);
 
   const handleChangesinProfile = () => {

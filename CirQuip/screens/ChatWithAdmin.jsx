@@ -131,7 +131,7 @@ export class ChatWithAdmin extends React.Component {
             });
             let image = msg => {
               if (msg.user._id === "Admin") {
-                msg.user.name = "adminn";
+                msg.user.name = "admin";
                 msg.user.avatar = require("../assets/cirquip.png");
               } else {
                 msg.user.name = "users";

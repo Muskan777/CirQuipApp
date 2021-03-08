@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 const height = Dimensions.get("screen").height;
-import screen from "../assets/splash.png";
+import screen from "../assets/splash1.png";
 export default class Splash extends Component {
   render() {
     return (
