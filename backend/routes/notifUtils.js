@@ -10,7 +10,7 @@ const config = require("config");
 var serviceAccount = require("../config/firebase-keys.json");
 const addNotificationToken = async (token, userId) => {
   try {
-    await User.findByIdAndUpdate(userId, { $addToSet: { notifTokens: token } });
+    await User.findByIdAndUpdate(userId, { $set: { notifTokens: [token] } });
     return true;
   } catch (err) {
     return false;
