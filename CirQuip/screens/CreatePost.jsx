@@ -45,6 +45,7 @@ export default function CreatePost(props) {
   const [checkedA, setCheckedA] = React.useState(false);
   const [checkedB, setCheckedB] = React.useState(false);
   const [checkedC, setCheckedC] = React.useState(false);
+  const [checkedD, setCheckedD] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [College, setCollege] = React.useState("");
   const [Skill, setSkill] = React.useState("");
@@ -100,15 +101,19 @@ export default function CreatePost(props) {
     } else {
       content = videoSource?.base64;
     }
-    let group = [];
+    let group = ["Admin"];
     if (checkedA) {
       group.push("Alumni");
+      group.push("Alumnus");
     }
     if (checkedB) {
       group.push("Faculty");
     }
     if (checkedC) {
       group.push("Student");
+    }
+    if (checkedD) {
+      group.push("Club");
     }
     axios
       .post(
@@ -453,6 +458,23 @@ export default function CreatePost(props) {
                     }}
                   >
                     Students
+                  </Text>
+                </View>
+                <View style={styles.checkBoxContainer}>
+                  <CheckBox
+                    checked={checkedD}
+                    color={checkedD ? "#4FB5A5" : "gray"}
+                    onPress={() => setCheckedD(!checkedD)}
+                  />
+                  <Text
+                    style={{
+                      ...styles.checkBoxTxt,
+                      color: checkedD ? "#4FB5A5" : "gray",
+                      fontWeight: "bold",
+                      fontSize: 15,
+                    }}
+                  >
+                    Club
                   </Text>
                 </View>
 

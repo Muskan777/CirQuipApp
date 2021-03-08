@@ -384,8 +384,21 @@ export default function PostCarousel({
               }}
             >
               {name}
-              <Entypo style={styles.TextStyle} name="dot-single" color="grey" />
-              <Text style={styles.TextStyle}>{role}</Text>
+              {role != "Admin" ? (
+                <Entypo
+                  style={styles.TextStyle}
+                  name="dot-single"
+                  color="grey"
+                />
+              ) : (
+                <Text></Text>
+              )}
+
+              {role != "Admin" ? (
+                <Text style={styles.TextStyle}>{role}</Text>
+              ) : (
+                <Text></Text>
+              )}
             </Text>
           </TouchableWithoutFeedback>
           <Text style={styles.TextStyle}>

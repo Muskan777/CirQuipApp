@@ -248,49 +248,38 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   }}
                 />
               )}
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="info"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="About"
+                onPress={() => {
+                  navigation.navigate("About");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="feedback"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Help & Feedback"
+                onPress={() => {
+                  Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
+                }}
+              />
             </Drawer.Section>
           </View>
         </DrawerContentScrollView>
       )}
-
-      <View
-        style={{
-          marginLeft: 15,
-          flexDirection: "row",
-          justifyContent: "flex-start",
-          marginBottom: 15,
-          marginTop: 15,
-          borderTopColor: "#f4f4f4",
-          borderTopWidth: 1,
-        }}
-      >
-        <Avatar.Image source={screen} size={50} />
-        <View
-          style={{
-            marginLeft: 15,
-            flexDirection: "column",
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate("About");
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              About
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
-            }}
-          >
-            <Text style={{ color: "grey", fontSize: 15, marginTop: 5 }}>
-              Help & FeedBack
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 }

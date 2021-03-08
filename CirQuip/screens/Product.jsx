@@ -53,7 +53,6 @@ export default class Product extends React.Component {
     //};
   }
   doAllTasks = async () => {
-    console.log(this.state);
     this.props.navigation.setOptions({
       headerRight: () => <></>,
     });
@@ -82,7 +81,6 @@ export default class Product extends React.Component {
       if (!userId) return;
       if (this.state?.from === "notification") {
         this.setState({ seller: userId });
-        console.log("I used this", userId);
       }
       axios
         .get(
@@ -156,7 +154,6 @@ export default class Product extends React.Component {
     }
   }
   buyProduct = () => {
-    console.log(`${global.config.host}/shop/buy`);
     axios
       .post(`${global.config.host}/shop/buy`, {
         productId: this.state?._id,
@@ -174,7 +171,6 @@ export default class Product extends React.Component {
       });
   };
   handleLike = async id => {
-    console.log("inside like");
     await axios
       .put(`${global.config.host}/shop/like`, {
         user: this.state.id,
@@ -208,7 +204,6 @@ export default class Product extends React.Component {
   };
 
   handleDislike = async id => {
-    console.log("inside dislike");
     await axios
       .put(`${global.config.host}/shop/dislike`, {
         user: this.state.id,
@@ -262,10 +257,7 @@ export default class Product extends React.Component {
       })
       .catch(err => console.log(err));
   };
-  whatsappMsg =
-    this.state?.type === "requests"
-      ? `Hey I received your request for buying ${this.state?.name}. Let's talk....`
-      : `Hi, I am interested to buy ${this.state?.name} posted by you on CirQuip`;
+
   onShare = async () => {
     try {
       const result = await Share.share({
@@ -540,11 +532,16 @@ export default class Product extends React.Component {
               }}
             />
             <FAB
-              onPress={() =>
+              onPress={() => {
+                let whatsappMsg = this.state
+                  ? this.state.type === "requests"
+                    ? `Hey I received your request for buying ${this.state?.name}. Let's talk....`
+                    : `Hi, I am interested to buy ${this.state?.name} posted by you on CirQuip`
+                  : null;
                 Linking.openURL(
-                  `whatsapp://send?phone=${this.state.seller.phone}&text=${this.whatsappMsg}`
-                )
-              }
+                  `whatsapp://send?phone=+91${this.state.seller.phone}&text=${whatsappMsg}`
+                );
+              }}
               icon="whatsapp"
               style={{
                 backgroundColor: "#4ec559",

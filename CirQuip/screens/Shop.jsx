@@ -174,13 +174,13 @@ export default class Shop extends React.Component {
         if (global.config.debug) console.log(err);
       });
   };
-  whatsapp = async sellerId => {
+  whatsapp = async (sellerId, itemname) => {
     await axios
       .get(`${global.config.host}/user/getUserWithId/${sellerId}`)
       .then(res => {
         Linking.openURL(
           `whatsapp://send?phone=+91${res.data.phone}&text=${this.whatsappMsg(
-            res.data.name
+            itemname
           )}`
         );
       })
@@ -191,7 +191,6 @@ export default class Shop extends React.Component {
   };
 
   handleDislike = async id => {
-    console.log("inside dislike");
     await axios
       .put(`${global.config.host}/shop/dislike`, {
         user: this.state.id,
@@ -371,7 +370,8 @@ export default class Shop extends React.Component {
                       this.whatsapp(
                         this.props.route.params.type === "requests"
                           ? data.reserved
-                          : data.seller
+                          : data.seller,
+                        data.name
                       )
                     }
                   >

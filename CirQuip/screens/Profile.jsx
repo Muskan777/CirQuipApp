@@ -55,7 +55,7 @@ export default function Profile(props) {
           phone: user.phone,
           email: user.email,
           role: user.role,
-          admissionYear: user.admissionYear.toString(),
+          admissionYear: user.admissionYear?.toString(),
           branch: user.branch,
           projects: user.projects.join(", "),
           title: user.title,
@@ -165,7 +165,7 @@ export default function Profile(props) {
         label3: "Achievements*",
         label4: "Skills & Interests*",
       });
-    } else if (role === "Alumnus") {
+    } else if (role === "Alumnus" || role === "Alumni") {
       setLabels({
         placeholder1: "Admission Year",
         placeholder2: "Branch Name",
