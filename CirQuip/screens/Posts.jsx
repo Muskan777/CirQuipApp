@@ -71,6 +71,7 @@ export default function Posts(props) {
   // }, [navigation]);
 
   useEffect(() => {
+    console.log("in url", props);
     fetchData();
   }, []);
 
@@ -135,7 +136,7 @@ export default function Posts(props) {
         .catch(e => console.log(e));
     } else {
       let url =
-        props?.from === "notification"
+        props?.from === "notification" || props?.from === "links"
           ? `${global.config.host}/post/getPostWithId/${props?.uid}`
           : `${global.config.host}/post/getPosts`;
 

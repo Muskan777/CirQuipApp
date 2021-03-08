@@ -14,10 +14,10 @@ const NotificationStack = createStackNavigator();
 export default class NotifScreen extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
+    //console.log(this.props);
     let data = {
-      ...this.props.route.params.data,
       from: "notification",
+      ...this.props.route.params.data,
     };
     this.state = {
       data: data,
