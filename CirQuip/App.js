@@ -12,6 +12,7 @@ import {
   IconButton,
   TextInput,
 } from "react-native-paper";
+import * as Linking from "expo-linking";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
 import Profile from "./screens/Profile.jsx";
@@ -95,6 +96,7 @@ export default function App() {
   const [notification, setNotification] = React.useState(false);
   const [notificationClicked, setNotificationClicked] = React.useState(false);
   const chatUserRef = React.useRef();
+  const [dummyURL, setDummyURL] = React.useState(null);
   const handleNotificationClicked = state => {
     setNotificationClicked(state);
   };
@@ -103,12 +105,43 @@ export default function App() {
       RootNavigation.appState.current.match(/inactive|background/) &&
       nextAppState === "active"
     ) {
-      console.log("App has come to the foreground!");
+      console.log("App has come to the foreground!", dummyURL);
+      (async () => {
+        await Linking.getInitialURL().then(url => {
+          //if (url && url !== dummyURL) {
+          //start from here for implementation of linking....
+          //parseCrossLinks(url);
+          //}
+        });
+      })();
     }
     RootNavigation.appState.current = nextAppState;
   };
-
+  const parseCrossLinks = url => {
+    if (!RootNavigation?.navigationRef) return;
+    let { path, queryParams } = Linking.parse(url);
+    console.log(path, queryParams);
+    if (path.includes("posts")) {
+      let target = "notificationStack";
+      let propsData = {
+        data: { from: "links", uid: queryParams.id, type: "post" },
+      };
+      RootNavigation?.navigationRef?.current?.reset({
+        index: 0,
+        routes: [{ name: "HomeDrawer" }],
+      });
+      RootNavigation.navigationRef &&
+        RootNavigation?.navigate(target, propsData);
+      setDummyURL(url);
+    } else if (path.includes("products")) {
+    }
+  };
   React.useEffect(() => {
+    //(async () => {
+    //await Linking.getInitialURL().then(url => {
+    //parseCrossLinks(url);
+    //});
+    //})();
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
     checkJWT();
@@ -1008,8 +1041,6 @@ export default function App() {
             <Drawer.Screen
               name="notificationStack"
               component={props => <NotifScreen {...props} />}
-              name="CreatePost"
-              component={CreatePostStackScreen}
             />
             <Drawer.Screen name="MyPosts" component={MyPostStackScreen} />
             <Drawer.Screen name="Shop" component={ShopStackScreen} />
