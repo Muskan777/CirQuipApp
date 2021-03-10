@@ -14,8 +14,13 @@
       "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": ["**/*"],
+    "notification": {
+      "icon": "./assets/notif.png",
+      "color": "#FFFFFF"
+    },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cirquip.cirquip"
     },
     "android": {
       "googleServicesFile": "./google-services.json",

@@ -10,7 +10,7 @@ const config = require("config");
 var serviceAccount = require("../config/firebase-keys.json");
 const addNotificationToken = async (token, userId) => {
   try {
-    await User.findByIdAndUpdate(userId, { $addToSet: { notifTokens: token } });
+    await User.findByIdAndUpdate(userId, { $set: { notifTokens: [token] } });
     return true;
   } catch (err) {
     return false;
@@ -75,7 +75,7 @@ const sendChatNotification = async msg => {
   });
   //console.log(userTo, userFrom);
   sendNotifications(userTo._doc._id, {
-    title: `${userFrom._doc.name} ${msg.user._id === "Admin" ? "| Admin" : ""}`,
+    title: `${msg.user._id === "Admin" ? "Admin" : userFrom._doc.name}`,
     message: `${msg.text}`,
     type: `${msg.to === "Admin" ? "chat-user" : "chat-admin"}`,
     email: userTo._doc.email,
