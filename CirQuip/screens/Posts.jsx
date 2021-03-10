@@ -22,8 +22,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
-import { Col } from "native-base";
-import { log } from "react-native-reanimated";
 export default function Posts(props) {
   const { navigation, route } = props;
   const routeState = useRoute();
@@ -98,8 +96,9 @@ export default function Posts(props) {
   };
 
   const fetchData = async () => {
+    console.log("fetchdata", props.from);
     handleProfileImage();
-    if (props.route.name === "SavedPosts") {
+    if (props?.route?.name === "SavedPosts") {
       let token = await AsyncStorage.getItem("cirquip-auth-token");
       await axios
         .get(`${global.config.host}/post/getPosts`, {
@@ -135,6 +134,7 @@ export default function Posts(props) {
         })
         .catch(e => console.log(e));
     } else {
+      console.log("id", props?.uid);
       let url =
         props?.from === "notification" || props?.from === "links"
           ? `${global.config.host}/post/getPostWithId/${props?.uid}`
@@ -152,26 +152,35 @@ export default function Posts(props) {
             })
             .then(async res => {
               res.data.post = res.data.post.reverse();
-              let user = await AsyncStorage.getItem("user");
-              if (user) {
-                axios
-                  .get(`${global.config.host}/user/getUserWithId/${user}`)
-                  .then(response => {
-                    let College = response.data.college;
-                    let data = res.data.post.filter(post => {
-                      return post.userCollege === College;
-                    });
-                    if (props.route.params && props.route.params.type) {
-                      data = data.filter(post => {
-                        return response.data._id === post.userId;
+              if (props?.from === "notification" || props?.from === "links") {
+                console.log("data received", res.data.post);
+                setData(res.data.post);
+                setoriginaldata(res.data.post);
+                setLoading(false);
+                setIsRefreshing(false);
+              } else {
+                let user = await AsyncStorage.getItem("user");
+
+                if (user) {
+                  axios
+                    .get(`${global.config.host}/user/getUserWithId/${user}`)
+                    .then(response => {
+                      let College = response.data.college;
+                      let data = res.data.post.filter(post => {
+                        return post?.userCollege === College;
                       });
-                    }
-                    setData(data);
-                    setoriginaldata(data);
-                    setLoading(false);
-                    setIsRefreshing(false);
-                  })
-                  .catch(e => console.log(e));
+                      if (props.route.params && props.route.params.type) {
+                        data = data.filter(post => {
+                          return response.data._id === post.userId;
+                        });
+                      }
+                      setData(data);
+                      setoriginaldata(data);
+                      setLoading(false);
+                      setIsRefreshing(false);
+                    })
+                    .catch(e => console.log(e));
+                }
               }
             })
             .catch(err => {
@@ -250,31 +259,35 @@ export default function Posts(props) {
 
   return (
     <SafeAreaView style={styles.post}>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <IconButton
-            icon="menu"
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-            color="#2ba4db"
-            size={30}
-          />
-          <TextInput
-            style={{
-              flex: 1,
-              margin: 5,
-              fontSize: 20,
-              maxHeight: "100%",
-            }}
-            placeholder="Search"
-            onChangeText={query => {
-              setSearchQuery(query);
-            }}
-            value={searchQuery}
-          />
+      {props?.from === "notification" || props?.from === "links" ? (
+        <></>
+      ) : (
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <IconButton
+              icon="menu"
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+              color="#2ba4db"
+              size={30}
+            />
+            <TextInput
+              style={{
+                flex: 1,
+                margin: 5,
+                fontSize: 20,
+                maxHeight: "100%",
+              }}
+              placeholder="Search"
+              onChangeText={query => {
+                setSearchQuery(query);
+              }}
+              value={searchQuery}
+            />
+          </View>
         </View>
-      </View>
+      )}
 
       {isLoading ? (
         <Loader />

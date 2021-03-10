@@ -489,6 +489,7 @@ router.route("/getPostWithComment/:commentId").get(async (req, res) => {
 
 router.get("/getPostWithId/:id", auth, async (req, res) => {
   try {
+    console.log("fetch with id", req.params.id);
     let post = await Post.findById(req.params.id);
     return res.status(200).json({ post: [post] });
   } catch (err) {

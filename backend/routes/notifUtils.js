@@ -7,6 +7,15 @@ const config = require("config");
  * password - sds@1234
  * project - criquip-test
  */
+const admin_accounts = [
+  "cirquip_a1@yahoo.com",
+
+  "cirquip_a2@yahoo.com",
+
+  "cirquip_a3@outlook.com",
+
+  "cirquip_a4@outlook.com",
+];
 var serviceAccount = require("../config/firebase-keys.json");
 const addNotificationToken = async (token, userId) => {
   try {

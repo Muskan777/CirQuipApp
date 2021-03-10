@@ -277,6 +277,7 @@ export default function PostCarousel({
     let redirectUrl = Linking.createURL("posts", {
       queryParams: { id: postId },
     });
+    console.log(redirectUrl);
 
     try {
       const result = await Share.share({

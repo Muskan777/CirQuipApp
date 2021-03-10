@@ -40,7 +40,7 @@ import CreatePost from "./screens/CreatePost";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import Posts from "./screens/Posts";
 import About from "./screens/About";
-
+import url from "url";
 const checkNotif = notification => {
   const type = notification.request.content.data.type;
   if (type == "chat-admin" || type == "chat-user") {
@@ -106,30 +106,32 @@ export default function App() {
       nextAppState === "active"
     ) {
       console.log("App has come to the foreground!", dummyURL);
-      (async () => {
-        await Linking.getInitialURL().then(url => {
-          //if (url && url !== dummyURL) {
-          //start from here for implementation of linking....
-          //parseCrossLinks(url);
-          //}
-        });
-      })();
+      //(async () => {
+      //await Linking.getInitialURL().then(url => {
+      ////if (url && url !== dummyURL) {
+      //parseCrossLinks(url);
+      ////}
+      //});
+      //})();
     }
     RootNavigation.appState.current = nextAppState;
   };
-  const parseCrossLinks = url => {
-    if (!RootNavigation?.navigationRef) return;
-    let { path, queryParams } = Linking.parse(url);
-    console.log(path, queryParams);
+  const parseCrossLinks = str => {
+    if (!RootNavigation?.navigationRef) {
+      Alert.alert("Something is fishy");
+      return;
+    }
+    console.log(str);
+    let uri = url.parse(str["url"], true);
+    let path = uri.pathname;
+    let queryParams = { id: uri.query["id"] };
+    console.log(uri.pathname, uri.query["id"]);
+    //let { path, queryParams } = Linking.parse(url);
     if (path.includes("posts")) {
       let target = "notificationStack";
       let propsData = {
         data: { from: "links", uid: queryParams.id, type: "post" },
       };
-      RootNavigation?.navigationRef?.current?.reset({
-        index: 0,
-        routes: [{ name: "HomeDrawer" }],
-      });
       RootNavigation.navigationRef &&
         RootNavigation?.navigate(target, propsData);
       setDummyURL(url);
@@ -137,11 +139,7 @@ export default function App() {
     }
   };
   React.useEffect(() => {
-    //(async () => {
-    //await Linking.getInitialURL().then(url => {
-    //parseCrossLinks(url);
-    //});
-    //})();
+    Linking.addEventListener("url", parseCrossLinks);
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
     checkJWT();
@@ -200,6 +198,14 @@ export default function App() {
         RootNavigation.navigate(target, propsData);
       }
     );
+    (async () => {
+      await Linking.getInitialURL().then(url => {
+        parseCrossLinks(url);
+      });
+    })();
+    return () => {
+      Linking.removeEventListener("url", parseCrossLinks);
+    };
     //return () => {
     //AppState.removeEventListener("change", handleStateChange);
     //Notifications.removeNotificationSubscription(notificationListener);
