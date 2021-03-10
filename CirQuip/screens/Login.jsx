@@ -6,6 +6,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Linking,
   Alert,
   ScrollView,
   Dimensions,
@@ -15,8 +16,9 @@ import SignUp1 from "../components/SignUp1";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Notifications from "expo-notifications";
 import Constants from "expo-constants";
-import { Avatar } from "react-native-paper";
+import { Avatar, Checkbox } from "react-native-paper";
 import OTP from "./OTP";
+import { Toast } from "native-base";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -32,6 +34,7 @@ export default class Login extends React.Component {
       toggleSignUp: false,
       currentPosition: false,
       notifToken: null,
+      termsAgreed: false,
     };
   }
 
@@ -270,9 +273,47 @@ export default class Login extends React.Component {
                       onChangeText={text => this.setState({ phone: text })}
                     />
                   </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginTop: 20,
+                    }}
+                  >
+                    <Checkbox
+                      status={this.state.termsAgreed ? "checked" : "unchecked"}
+                      color="#2ea5dd"
+                      onPress={() => {
+                        let curr = this.state.termsAgreed;
+                        this.setState({ termsAgreed: !curr });
+                      }}
+                    />
+                    <Text>
+                      I agree to the{" "}
+                      <Text
+                        style={{ color: "#2ea5dd" }}
+                        onPress={() => {
+                          Linking.openURL(
+                            "https://www.cirquip.com/termsandconditions"
+                          );
+                        }}
+                      >
+                        Terms and Conditions
+                      </Text>
+                    </Text>
+                  </View>
                   <TouchableOpacity
                     style={[styles.signupBtn, { marginBottom: 20 }]}
-                    onPress={() => this.onPageChange(1)}
+                    onPress={() => {
+                      if (this.state.termsAgreed) {
+                        this.onPageChange(1);
+                      } else {
+                        Alert.alert(
+                          "Terms and Conditions",
+                          "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
+                        );
+                      }
+                    }}
                   >
                     <Text style={styles.loginText}>SIGN UP</Text>
                   </TouchableOpacity>

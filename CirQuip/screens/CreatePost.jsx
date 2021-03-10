@@ -766,7 +766,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 10,
     marginLeft: 5,
-    backgroundColor: "blue",
   },
   ProfilePicAndCaption: {
     flex: 0.25,
