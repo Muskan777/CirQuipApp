@@ -127,15 +127,17 @@ export default function App() {
     let queryParams = { id: uri.query["id"] };
     console.log(uri.pathname, uri.query["id"]);
     //let { path, queryParams } = Linking.parse(url);
-    if (path.includes("posts")) {
-      let target = "notificationStack";
-      let propsData = {
-        data: { from: "links", uid: queryParams.id, type: "post" },
-      };
-      RootNavigation.navigationRef &&
-        RootNavigation?.navigate(target, propsData);
-      setDummyURL(url);
-    } else if (path.includes("products")) {
+    if (path) {
+      if (path.includes("posts")) {
+        let target = "notificationStack";
+        let propsData = {
+          data: { from: "links", uid: queryParams.id, type: "post" },
+        };
+        RootNavigation.navigationRef &&
+          RootNavigation?.navigate(target, propsData);
+        setDummyURL(url);
+      } else if (path.includes("products")) {
+      }
     }
   };
   React.useEffect(() => {
@@ -193,7 +195,7 @@ export default function App() {
 
         RootNavigation.navigationRef.current.reset({
           index: 0,
-          routes: [{ name: "HomeDrawer" }],
+          routes: [{ name: "Home" }],
         });
         RootNavigation.navigate(target, propsData);
       }
@@ -1047,6 +1049,10 @@ export default function App() {
             <Drawer.Screen
               name="notificationStack"
               component={props => <NotifScreen {...props} />}
+            />
+            <Drawer.Screen
+              name="CreatePost"
+              component={CreatePostStackScreen}
             />
             <Drawer.Screen name="MyPosts" component={MyPostStackScreen} />
             <Drawer.Screen name="Shop" component={ShopStackScreen} />
