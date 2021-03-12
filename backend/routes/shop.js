@@ -1,8 +1,5 @@
 const router = require("express").Router();
 const Shop = require("../models/shop.model");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const keys = require("../config/default.json");
 const User = require("../models/user");
 const log = (type, message) => console.log(`[${type}]: ${message}`);
 const { s3 } = require("../config/config");
@@ -35,7 +32,6 @@ router.post("/products/:type/:query", async (req, resp) => {
   if (req.header("search")) regex = new RegExp(query, "i");
   else regex = new RegExp(".*");
 
-  console.log(type, regex);
   switch (type) {
     case "my": {
       try {

@@ -3,9 +3,7 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  FlatList,
   View,
-  Image,
   Dimensions,
   TouchableOpacity,
   Alert,
@@ -15,11 +13,9 @@ import {
 } from "react-native";
 import {
   Title,
-  Searchbar,
   Card,
   IconButton,
   Button,
-  Surface,
   Avatar,
   FAB,
 } from "react-native-paper";

@@ -36,7 +36,6 @@
     "expo-step-indicator": "^0.1.2",
     "expo-updates": "~0.4.0",
     "formik": "^2.2.6",
-    "galio-framework": "^0.7.1",
     "internal-ip": "^6.2.0",
     "ip": "^1.1.5",
     "native-base": "^2.15.0",

@@ -1,16 +1,13 @@
 import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
-import { Alert, AppState } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { AppState } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
   DefaultTheme,
   Provider as PaperProvider,
-  Button,
-  Text,
   IconButton,
-  TextInput,
 } from "react-native-paper";
 import Login from "./screens/Login.jsx";
 import Sell from "./screens/Sell.jsx";
@@ -22,8 +19,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DrawerContent } from "./screens/DrawerContent";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import NotifScreen from "./screens/NotifScreen.jsx";
-import * as SplashScreen from "expo-splash-screen";
-import SavedPosts from "./screens/SavedPosts";
 import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
@@ -32,7 +27,6 @@ import CreatePostCamera from "./screens/CreatePostCamera";
 import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
-import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as RootNavigation from "./RootNavigation";
 import CreatePost from "./screens/CreatePost";
@@ -183,8 +177,17 @@ export default function App() {
   const setVariables = async () => {
     const data = await AsyncStorage.getItem("user");
     setUser(data);
-    console.log("yo1");
-    setVerified(data.verified);
+    if (user) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          setVerified(res.data.verified);
+        })
+        .catch(err => {
+          Alert.alert("Error", "Something Went Wrong");
+          console.log(err);
+        });
+    }
   };
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(async jwt => {
@@ -475,7 +478,7 @@ export default function App() {
       <MyProductsStack.Screen
         name="MyProducts"
         component={Shop}
-        initialParams={{ type: "my" }}
+        initialParams={{ type: "my", verified: verified }}
         options={{
           title: "My Products",
           headerRight: () => (
@@ -596,6 +599,7 @@ export default function App() {
       <HomeStack.Screen
         name="Posts"
         component={Posts}
+        initialParams={{ verified: verified }}
         options={{
           title: "Posts",
           headerRight: () => (
@@ -663,7 +667,7 @@ export default function App() {
       <HomeStack.Screen
         name="Posts"
         component={Posts}
-        initialParams={{ type: "my" }}
+        initialParams={{ type: "my", verified: verified }}
         options={{
           title: "Posts",
           headerRight: () => (
@@ -798,7 +802,7 @@ export default function App() {
       <ShopStack.Screen
         name="Shop"
         component={Shop}
-        initialParams={{ type: "all" }}
+        initialParams={{ type: "all", verified: verified }}
         options={{
           title: "Shop",
           headerRight: () => (
@@ -1046,108 +1050,4 @@ export default function App() {
   ) : (
     <Splash />
   );
-}
-
-{
-  /* <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              ...stackOptions,
-              title: "CirQuip",
-            }}
-          />
-          <Stack.Screen
-            name="Published"
-            component={Published}
-            options={{
-              ...stackOptions,
-              title: "Product Published",
-            }}
-          />
-          <Stack.Screen
-            name="Sell"
-            component={Sell}
-            options={{
-              ...stackOptions,
-              title: "Selling Arena",
-            }}
-          />
-          <Stack.Screen
-            name="Shop"
-            component={Shop}
-            options={{
-              ...stackOptions,
-              title: "Store",
-            }}
-          />
-          <Stack.Screen
-            name="Posts"
-            component={Posts}
-            options={{
-              ...stackOptions,
-              title: "Posts",
-            }}
-          />
-          <Stack.Screen
-            name="SavedPosts"
-            component={SavedPosts}
-            options={{
-              ...stackOptions,
-              title: "Posts",
-            }}
-          />
-          <Stack.Screen
-            name="Product"
-            component={Product}
-            options={{
-              ...stackOptions,
-            }}
-          />
-          <Stack.Screen
-            name="CreatePostImageBrowser"
-            component={CreatePostImageBrowser}
-            options={{
-              title: "Select files",
-            }}
-          />
-          <Stack.Screen
-            name="Camera"
-            component={CreatePostCamera}
-            options={{
-              title: "Capture Image",
-            }}
-          />
-          <Stack.Screen
-            name="CreatePost"
-            component={CreatePost}
-            options={{
-              ...stackOptions,
-              title: "Create Post",
-            }}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={Profile2}
-            options={{ ...stackOptions, title: "Profile" }}
-          />
-          <Stack.Screen
-            name="ChatWithAdmin"
-            component={ChatWithAdmin}
-            options={{
-              ...stackOptions,
-              title: "ChatBox",
-            }}
-          />
-          <Stack.Screen
-            name="ChatWithUser"
-            component={ChatWithUser}
-            options={{
-              ...stackOptions,
-              title: "Chat With User",
-            }}
-          />
-          <Stack.Screen name="OTP" component={OTP} />
-        </Stack.Navigator> */
 }

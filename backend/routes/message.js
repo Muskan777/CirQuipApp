@@ -1,6 +1,5 @@
 const router = require("express").Router();
 let Message = require("../models/message");
-const auth = require("../middlewares/auth");
 
 // @route GET /api/message/getMessages
 // @desc Get all existing messages
