@@ -9,11 +9,10 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
-  KeyboardAvoidingView,
+  ScrollView,
   FlatList,
   SafeAreaView,
 } from "react-native";
-// import { Button, Paragraph, Dialog, Portal } from "react-native-paper";
 import {
   MaterialIcons,
   Entypo,
@@ -21,13 +20,12 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import { IconButton, Button, Dialog, Portal } from "react-native-paper";
+import { IconButton, Button } from "react-native-paper";
 import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
-import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-simple-toast";
 import { CommonActions } from "@react-navigation/native";
 
@@ -284,9 +282,9 @@ export default function CreatePost(props) {
           }}
         />
       </View>
-      <KeyboardAvoidingView style={styles.PostArea}>
+      <View style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
-          <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 0.3, flexDirection: "row" }}>
             {userImage ? (
               <Image
                 style={{ ...styles.ProfileImage }}
@@ -328,6 +326,7 @@ export default function CreatePost(props) {
               }}
               editable
               multiline
+              numberOfLines={24}
               onChangeText={text => setPostText(text)}
               placeholder=" What do you want to CirQuip ?"
               value={postText}
@@ -342,7 +341,7 @@ export default function CreatePost(props) {
             }}
           >
             {videoSource && (
-              <View>
+              <View style={{ position: "relative", zIndex: -2 }}>
                 <Video
                   source={{
                     uri: videoSource.uri,
@@ -495,7 +494,7 @@ export default function CreatePost(props) {
             </View>
           </Modal>
         </View>
-      </KeyboardAvoidingView>
+      </View>
       <View style={styles.bottomContainer}>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
@@ -758,6 +757,7 @@ const styles = StyleSheet.create({
   },
   PrimaryTextInput: {
     fontSize: 18,
+    // height: 250,
     width: "100%",
     color: "#000",
     flex: 1,
@@ -767,7 +767,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   ProfilePicAndCaption: {
-    flex: 0.25,
+    flex: 0.45,
     display: "flex",
     marginHorizontal: 15,
     marginVertical: 15,
