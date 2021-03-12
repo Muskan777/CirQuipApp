@@ -67,14 +67,14 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 style={{ flexDirection: "row" }}
               >
                 {user.profileImage ? (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={{
                       uri: user.profileImage,
                     }}
                   />
                 ) : (
-                  <Image
+                  <Avatar.Image
                     style={styles.ProfileImage}
                     source={require("../assets/profile.png")}
                   />
@@ -128,6 +128,34 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                   navigation.navigate("ShopLiked", {
                     params: { type: "liked" },
                   });
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="info"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="About"
+                onPress={() => {
+                  navigation.navigate("About");
+                }}
+              />
+              <DrawerItem
+                icon={({ color, size }) => (
+                  <MaterialIcons
+                    name="feedback"
+                    color={color}
+                    size={size}
+                    style={styles.Icons}
+                  />
+                )}
+                label="Help & Feedback"
+                onPress={() => {
+                  Linking.openURL("mailto:cirquip@gmail.com?subject=FeedBack");
                 }}
               />
               {user.verified === false && (

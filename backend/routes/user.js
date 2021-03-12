@@ -295,6 +295,18 @@ router.route("/updateUser").patch(auth, async (req, res) => {
   }
 });
 
+router.route("/updatedata").patch(async (req, res) => {
+  let { admissionYear, branch, email } = req.body;
+  admissionYear = parseInt(admissionYear);
+  try {
+    User.findOneAndUpdate({ email: email }, { $set: { admissionYear, branch } })
+      .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 // @route post /api/user/resendOtp
 router.route("/resendOtp").post(auth, async (req, res) => {
   let { email, otp } = req.body;

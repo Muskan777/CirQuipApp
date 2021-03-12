@@ -19,6 +19,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as RootNavigation from "../RootNavigation.js";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import Toast from "react-native-simple-toast";
+import { CommonActions } from "@react-navigation/native";
 
 export default class Shop extends React.Component {
   constructor(props) {
@@ -426,24 +427,49 @@ export default class Shop extends React.Component {
               value={this.state.searchQuery}
             />
           </View>
-          <Title
-            style={{
-              textAlign: "left",
-              margin: 5,
-              marginVertical: 10,
-              color: "rgba(112, 112, 112, 1)",
-              fontSize: 20,
-              fontFamily: "sans-serif",
-            }}
-          >
-            {this.props.route.params.type === "liked"
-              ? "Your Wishlist"
-              : this.props.route.params.type === "my"
-              ? "My Listed Products"
-              : this.props.route.params.type === "requests"
-              ? "Buy Requests"
-              : "New Recommendations"}
-          </Title>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {this.props.route.params.type === "liked" ||
+            this.props.route.params.type === "my" ||
+            this.props.route.params.type === "requests" ? (
+              <MaterialIcons
+                name="arrow-back"
+                style={{
+                  margin: 5,
+                  marginVertical: 10,
+                  color: "rgba(112, 112, 112, 1)",
+                }}
+                size={28}
+                onPress={() => {
+                  this.props.navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [{ name: "Shop", params: { type: "all" } }],
+                    })
+                  );
+                }}
+              />
+            ) : (
+              <Text></Text>
+            )}
+            <Title
+              style={{
+                textAlign: "left",
+                margin: 5,
+                marginVertical: 10,
+                color: "rgba(112, 112, 112, 1)",
+                fontSize: 20,
+                fontFamily: "sans-serif",
+              }}
+            >
+              {this.props.route.params.type === "liked"
+                ? "Your Wishlist"
+                : this.props.route.params.type === "my"
+                ? "My Listed Products"
+                : this.props.route.params.type === "requests"
+                ? "Buy Requests"
+                : "New Recommendations"}
+            </Title>
+          </View>
           {this.state.isLoading ? (
             <Loader />
           ) : (

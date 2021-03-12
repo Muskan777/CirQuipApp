@@ -169,7 +169,6 @@ export default class Sell extends React.Component {
               marginBottom: 28,
               alignItems: "center",
               width: width,
-              justifyContent: "center",
               paddingTop: Platform.OS === "android" ? 25 : 0,
             }}
           >
