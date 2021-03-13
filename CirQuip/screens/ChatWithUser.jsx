@@ -119,9 +119,9 @@ export function ChatWithUser(props) {
       axios
         .get(`${global.config.host}/user/getUsers`)
         .then(res => {
-          if (props.route?.params?.email == global.config.admin) {
+          if (global.config.admin.includes(props.route?.params?.email)) {
             let Users = res.data.users.filter(user => {
-              return user.email != global.config.admin;
+              return !global.config.admin.includes(user.email);
             });
             thread = Users.map(user => {
               return {

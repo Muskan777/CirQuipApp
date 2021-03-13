@@ -745,6 +745,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(46, 165, 221, 0.5724890232086182)",
   },
   inputView: {
+    height: 40,
     color: "rgba(159,159,159,1)",
     fontSize: 20,
     fontWeight: "400",
@@ -785,7 +786,7 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 60,
+    marginTop: 10,
     marginBottom: 15,
   },
   signupBtn: {

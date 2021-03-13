@@ -440,7 +440,7 @@ export default function Posts(props) {
           />
         </View>
         <View style={styles.container3}>
-          {email == global.config.admin ? (
+          {global.config.admin.includes(email) ? (
             <Ionicons
               name="md-chatbubble-ellipses"
               style={{ ...styles.chat }}

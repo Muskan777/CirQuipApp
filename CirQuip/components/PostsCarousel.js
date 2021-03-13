@@ -166,7 +166,7 @@ export default function PostCarousel({
     let userEmail = await AsyncStorage.getItem("email");
     const initialUrl = await Linking.getInitialURL();
     setURL(initialUrl);
-    if (userId === id || userEmail === global.config.admin) {
+    if (userId === id || global.config.admin.includes(userEmail)) {
       setAllowDelete(true);
     }
     axios
