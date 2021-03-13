@@ -87,7 +87,7 @@ const theme = {
 export default function App() {
   const [status, setStatus] = React.useState(false);
   const [user, setUser] = React.useState({});
-  const [verified, setVerified] = React.useState(false);
+  const [verified, setVerified] = React.useState(true);
   const [splash, toggleSplash] = React.useState(true);
   const [notification, setNotification] = React.useState(false);
   const [notificationClicked, setNotificationClicked] = React.useState(false);
@@ -137,10 +137,11 @@ export default function App() {
     }
   };
   React.useEffect(() => {
+    console.log("App Loaded");
+    checkJWT();
     Linking.addEventListener("url", parseCrossLinks);
     RootNavigation.notificationClicked.current = false;
     RootNavigation.appState.current = "active";
-    checkJWT();
     setTimeout(() => toggleSplash(!splash), 2000);
 
     AppState.addEventListener("change", handleStateChange);
@@ -225,6 +226,7 @@ export default function App() {
         .get(`${global.config.host}/user/getUserWithId/${user}`)
         .then(res => {
           setVerified(res.data.verified);
+          console.log("User verified set", verified);
         })
         .catch(err => {
           Toast.show("Something Went Wrong!", Toast.SHORT, [

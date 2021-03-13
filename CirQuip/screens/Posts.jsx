@@ -95,6 +95,7 @@ export default function Posts(props) {
 
   const fetchData = async () => {
     console.log("fetchdata", props.from);
+    setVerified(route.params.verified);
     handleProfileImage();
     if (props?.route?.name === "SavedPosts") {
       let token = await AsyncStorage.getItem("cirquip-auth-token");
@@ -164,6 +165,7 @@ export default function Posts(props) {
                     .get(`${global.config.host}/user/getUserWithId/${user}`)
                     .then(response => {
                       let College = response.data.college;
+                      setVerified(response.data.verified);
                       let data = res.data.post.filter(post => {
                         return post?.userCollege === College;
                       });
@@ -441,6 +443,7 @@ export default function Posts(props) {
             name="plus"
             style={{ ...styles.create }}
             onPress={() => {
+              console.log(verified);
               if (verified) {
                 navigation.navigate("CreatePost");
               } else {
