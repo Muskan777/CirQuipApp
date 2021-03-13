@@ -420,6 +420,7 @@ export default function App() {
               }}
             />
           ),
+          headerShown: false,
         }}
       />
     </SellProductsStack.Navigator>

@@ -69,7 +69,7 @@ export default function Profile(props) {
   };
   const permissions = async () => {
     let user = await AsyncStorage.getItem("user");
-    this.setState({ id: user });
+    setId(user);
     if (Platform.OS !== "web") {
       const {
         status,
@@ -259,13 +259,13 @@ export default function Profile(props) {
               </TouchableOpacity>
             ) : (
               <>
-                {image.image || userProfile.profileImage ? (
+                {image.image || profileImage ? (
                   <Image
                     style={styles.ProfileImage}
                     source={{
                       uri: image.image
                         ? `data:image/jpg;base64,${image.image}`
-                        : userProfile.profileImage,
+                        : profileImage,
                     }}
                   />
                 ) : (
