@@ -18,7 +18,7 @@ import * as Notifications from "expo-notifications";
 import { Avatar, Checkbox } from "react-native-paper";
 import OTP from "./OTP";
 const { width, height } = Dimensions.get("window");
-import { Toast } from "native-base";
+import Toast from "react-native-simple-toast";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -49,7 +49,12 @@ export default class Login extends React.Component {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
+      Toast.show(
+        "Failed to get push token for push notification!",
+        Toast.SHORT,
+        ["UIAlertController"]
+      );
+
       return;
     }
     const token = (await Notifications.getExpoPushTokenAsync()).data;
@@ -73,7 +78,9 @@ export default class Login extends React.Component {
   }
   async handleLogin() {
     if (this.state.password === "") {
-      Alert.alert("CirQuip", "Please Enter Password");
+      Toast.show("CirQuip, Please Enter Password", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return;
     }
     await axios
@@ -92,7 +99,9 @@ export default class Login extends React.Component {
           this.props.handleStatus(true);
         } catch (err) {
           console.log(err);
-          Alert.alert("Error", "Something went wrong");
+          Toast.show("Error,Something went wrong", Toast.SHORT, [
+            "UIAlertController",
+          ]);
         }
       })
       .catch(err => {
@@ -113,19 +122,25 @@ export default class Login extends React.Component {
 
   async handleSignUp() {
     if (this.state.firstname.trim() === "") {
-      Alert.alert("Name Error", "Name cannot be empty");
+      Toast.show("Name Error, Name cannot be empty", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return 1;
     }
 
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
-      Alert.alert("Phone error", "Enter a valid phone number");
+      Toast.show("Phone error, Enter a valid phone number", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return 1;
     }
 
     if (this.state.password !== this.state.password2) {
-      Alert.alert("Error", "Passwords Don't Match");
+      Toast.show("Error, Passwords Don't Match", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return 1;
     }
     let collegeName = this.state.college;
@@ -135,52 +150,92 @@ export default class Login extends React.Component {
     if (this.state.role != "Alumnus" || this.state.role != "Alumni") {
       if (this.state.college == "COEP") {
         if (emailId.split("@")[1] !== "coep.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VJTI") {
         if (emailId.split("@")[1] !== "vjti.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VIT") {
         if (emailId.split("@")[1] !== "vit.edu") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "PICT") {
         if (emailId.split("@")[1] !== "pict.edu") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "PCCOE") {
         if (emailId.split("@")[1] !== "pccoepune.org") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "MIT") {
         if (emailId.split("@")[1] !== "mitwpu.edu.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VIIT") {
         if (emailId.split("@")[1] !== "viit.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "Sandeep University") {
         if (emailId.split("@")[1] !== "sandipuniversity.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VU") {
         if (emailId.split("@")[1] !== "vupune.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "IIIT Pune") {
         if (emailId.split("@")[1] !== "iiitp.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       }
@@ -616,40 +671,42 @@ export default class Login extends React.Component {
             </>
           ) : (
             <>
-              <View
-                style={{
-                  alignItems: "center",
-                  width: width,
-                  height: height,
-                }}
-              >
-                <SignUp1 />
-                <Text style={styles.loginHeader}>Login to your account</Text>
-                <View style={styles.loginfield}></View>
-                <View style={styles.inputView}>
-                  <TextInput
-                    value={this.state.email}
-                    style={styles.inputText}
-                    placeholder="Email ID"
-                    placeholderTextColor="grey"
-                    onChangeText={text => this.setState({ email: text })}
-                    selectionColor="cyan"
-                  />
-                </View>
-                {/* <View style={styles.line}></View> */}
-                <View style={styles.inputView}>
-                  <TextInput
-                    secureTextEntry
-                    value={this.state.password}
-                    style={styles.inputText}
-                    placeholder="Password"
-                    placeholderTextColor="grey"
-                    onChangeText={text => this.setState({ password: text })}
-                  />
-                </View>
-                {/* <View style={styles.line}></View> */}
+              <ScrollView>
+                <View
+                  style={{
+                    marginTop: 40,
+                    alignItems: "center",
+                    width: width,
+                    height: "100%",
+                  }}
+                >
+                  <SignUp1 />
+                  <Text style={styles.loginHeader}>Login to your account</Text>
+                  <View style={styles.loginfield}></View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.email}
+                      style={styles.inputText}
+                      placeholder="Email ID"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ email: text })}
+                      selectionColor="cyan"
+                    />
+                  </View>
+                  {/* <View style={styles.line}></View> */}
+                  <View style={styles.inputView}>
+                    <TextInput
+                      secureTextEntry
+                      value={this.state.password}
+                      style={styles.inputText}
+                      placeholder="Password"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ password: text })}
+                    />
+                  </View>
+                  {/* <View style={styles.line}></View> */}
 
-                {/* <TouchableOpacity
+                  {/* <TouchableOpacity
                   onPress={() =>
                     Alert.alert(
                       "Under Developement",
@@ -659,19 +716,22 @@ export default class Login extends React.Component {
                 >
                   <Text style={styles.forgot}>Forgot Password?</Text>
                 </TouchableOpacity> */}
-                <TouchableOpacity
-                  style={styles.loginBtn}
-                  onPress={() => this.handleLogin()}
-                >
-                  <Text style={styles.loginText}>GET STARTED</Text>
-                </TouchableOpacity>
-                <View style={styles.already1}>
-                  <Text style={styles.already}>Don't have an account yet?</Text>
-                  <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                    <Text style={styles.already2}> SIGN UP</Text>
+                  <TouchableOpacity
+                    style={styles.loginBtn}
+                    onPress={() => this.handleLogin()}
+                  >
+                    <Text style={styles.loginText}>GET STARTED</Text>
                   </TouchableOpacity>
+                  <View style={styles.already11}>
+                    <Text style={styles.already}>
+                      Don't have an account yet?
+                    </Text>
+                    <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                      <Text style={styles.already2}> SIGN UP</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
+              </ScrollView>
             </>
           )}
         </View>
@@ -786,8 +846,8 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 15,
+    marginTop: 15,
+    marginBottom: 20,
   },
   signupBtn: {
     width: "65%",
@@ -852,6 +912,12 @@ const styles = StyleSheet.create({
   },
   loginfield: {
     marginTop: 30,
+  },
+  already11: {
+    flexDirection: "row",
+    textAlign: "center",
+    marginBottom: 50,
+    marginTop: 10,
   },
   already1: {
     flexDirection: "row",
