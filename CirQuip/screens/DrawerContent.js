@@ -259,7 +259,7 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
                 )}
                 label="Bookmarks"
                 onPress={() => {
-                  navigation.navigate("SavedScreen");
+                  navigation.navigate("SavedScreen", { verified: verified });
                 }}
               />
               {user.verified === false && (

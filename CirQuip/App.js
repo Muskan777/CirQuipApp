@@ -241,6 +241,7 @@ export default function App() {
       <SavedStack.Screen
         name="SavedPosts"
         component={Posts}
+        initialParams={{ verified: verified }}
         options={{
           title: "Saved Posts",
           headerRight: () => (
@@ -496,11 +497,12 @@ export default function App() {
             />
           ),
           headerLeft: () => (
-            <MaterialCommunityIcons
-              name="menu"
-              size={26}
+            <IconButton
+              icon="arrow-left"
+              color="#287EC1"
+              size={30}
               onPress={() => {
-                navigation.openDrawer();
+                navigation.goBack();
               }}
             />
           ),
