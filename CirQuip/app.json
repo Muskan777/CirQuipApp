@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "cirquip",
     "name": "CirQuip",
     "slug": "CirQuip",
     "version": "1.0.0",

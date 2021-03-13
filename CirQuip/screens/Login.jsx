@@ -649,7 +649,7 @@ export default class Login extends React.Component {
                 </View>
                 {/* <View style={styles.line}></View> */}
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() =>
                     Alert.alert(
                       "Under Developement",
@@ -658,7 +658,7 @@ export default class Login extends React.Component {
                   }
                 >
                   <Text style={styles.forgot}>Forgot Password?</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   style={styles.loginBtn}
                   onPress={() => this.handleLogin()}

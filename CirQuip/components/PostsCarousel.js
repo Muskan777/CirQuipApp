@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Dimensions,
   Share,
-  Linking,
   Modal,
   Alert,
 } from "react-native";
@@ -19,6 +18,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dialog, Portal, Button, Menu } from "react-native-paper";
 import "../config";
 import Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -276,9 +276,14 @@ export default function PostCarousel({
   //     .catch(e => console.log(e));
   // };
   const handleShare = async () => {
+    let redirectUrl = Linking.createURL("posts", {
+      queryParams: { id: postId },
+    });
+    console.log(redirectUrl);
+
     try {
       const result = await Share.share({
-        message: `Check out ${name}'s post! \n${caption}\n${URL}`,
+        message: `Check out ${name}'s post! \n${caption}\n${redirectUrl}`,
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {

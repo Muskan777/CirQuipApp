@@ -527,7 +527,7 @@ export default class Shop extends React.Component {
               />
             </View>
             <View style={styles.container3}>
-              {this.state.email == global.config.admin ? (
+              {global.config.admin.includes(this.state.email) ? (
                 <Ionicons
                   name="md-chatbubble-ellipses"
                   style={{ ...styles.chat }}

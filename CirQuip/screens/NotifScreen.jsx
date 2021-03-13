@@ -9,12 +9,12 @@ const NotificationStack = createStackNavigator();
 export default class NotifScreen extends React.Component {
   constructor(props) {
     super(props);
-    console.log(this.props);
     let data = {
-      ...this.props.route.params.data,
       from: "notification",
+      ...this.props.route.params.data,
     };
     this.state = {
+      refresh: false,
       data: data,
       component: {
         post: () => <Posts {...data} />,
@@ -24,6 +24,10 @@ export default class NotifScreen extends React.Component {
       },
     };
   }
+
+  prepare = string => {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+  };
   render() {
     return (
       <NotificationStack.Navigator
@@ -37,7 +41,12 @@ export default class NotifScreen extends React.Component {
         }}
       >
         <NotificationStack.Screen
-          name="Notification"
+          key={this.state.refresh}
+          name={
+            this.state.data.from === "notification"
+              ? "Notification"
+              : this.prepare(this.state.data.type)
+          }
           component={this.state.component[this.state.data.type]}
           initialParams={{ data: this.state.data }}
           options={{

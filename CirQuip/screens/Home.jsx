@@ -234,7 +234,7 @@ export default function Home({ navigation }) {
           ) : (
             <></>
           )}
-          {email == global.config.admin ? (
+          {global.config.admin.includes(email) ? (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate({
