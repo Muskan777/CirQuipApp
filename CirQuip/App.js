@@ -1,7 +1,7 @@
 import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
-import { AppState } from "react-native";
+import { AppState, Alert } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
@@ -33,6 +33,7 @@ import CreatePost from "./screens/CreatePost";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import Posts from "./screens/Posts";
 import About from "./screens/About";
+import { Toast } from "native-base";
 
 const checkNotif = notification => {
   const type = notification.request.content.data.type;
@@ -184,7 +185,9 @@ export default function App() {
           setVerified(res.data.verified);
         })
         .catch(err => {
-          Alert.alert("Error", "Something Went Wrong");
+          Toast.show("Something Went Wrong!", Toast.SHORT, [
+            "UIAlertController",
+          ]);
           console.log(err);
         });
     }

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Hyperlink from "react-native-hyperlink";
 import {
   StyleSheet,
   View,
@@ -17,7 +18,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Dialog, Portal, Button, Menu } from "react-native-paper";
 import "../config";
-
+import Clipboard from "expo-clipboard";
 import {
   FontAwesome,
   MaterialCommunityIcons,
@@ -480,18 +481,30 @@ export default function PostCarousel({
 
       <View style={styles.postCaption}>
         <View style={styles.mainContainer}>
-          <Text
-            onTextLayout={onTextLayout}
-            numberOfLines={textShown ? undefined : 4}
-            style={{ lineHeight: 21 }}
-          >
-            {caption}
-          </Text>
+          <Hyperlink linkDefault={true} linkStyle={{ color: "#2ea5dd" }}>
+            <Text
+              onTextLayout={onTextLayout}
+              numberOfLines={textShown ? undefined : 4}
+              style={{ lineHeight: 21 }}
+              onLongPress={() => {
+                Clipboard.setString(caption);
+                Toast.show("Text copied to clipboard!", Toast.SHORT, [
+                  "UIAlertController",
+                ]);
+              }}
+              selectable={true}
+              selectionColor="#2ea5dd"
+            >
+              {caption}
+            </Text>
+          </Hyperlink>
 
           {lengthMore ? (
             <Text
               onPress={toggleNumberOfLines}
               style={{ lineHeight: 21, marginTop: 10 }}
+              selectable={true}
+              selectionColor="#2ea5dd"
             >
               {textShown ? "Read less..." : "Read more..."}
             </Text>

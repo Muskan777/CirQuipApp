@@ -380,7 +380,7 @@ export default function CreatePost(props) {
           <Modal animationType="slide" transparent={true} visible={visible}>
             <View
               style={{
-                height: "50%",
+                height: "60%",
                 marginTop: "auto",
                 backgroundColor: "white",
                 borderTopLeftRadius: 80,
@@ -409,13 +409,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedA}
-                    color={checkedA ? "#4FB5A5" : "gray"}
+                    color={checkedA ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedA(!checkedA)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedA ? "#4FB5A5" : "gray",
+                      color: checkedA ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -426,13 +426,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedB}
-                    color={checkedB ? "#4FB5A5" : "gray"}
+                    color={checkedB ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedB(!checkedB)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedB ? "#4FB5A5" : "gray",
+                      color: checkedB ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -443,13 +443,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedC}
-                    color={checkedC ? "#4FB5A5" : "gray"}
+                    color={checkedC ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedC(!checkedC)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedC ? "#4FB5A5" : "gray",
+                      color: checkedC ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       flex: 1,
                       fontSize: 15,
@@ -461,13 +461,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedD}
-                    color={checkedD ? "#4FB5A5" : "gray"}
+                    color={checkedD ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedD(!checkedD)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedD ? "#4FB5A5" : "gray",
+                      color: checkedD ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -483,10 +483,10 @@ export default function CreatePost(props) {
                     marginTop: 10,
                   }}
                 >
-                  <Button onPress={handleDialog} color="gray" fontSize="15">
+                  <Button onPress={handleDialog} color="gray" fontSize="45">
                     Back
                   </Button>
-                  <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
+                  <Button onPress={handleSubmit} color="#2ea5dd" fontSize="45">
                     Send
                   </Button>
                 </View>
