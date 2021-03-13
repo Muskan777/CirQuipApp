@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React from "react";
 import {
   Text,
   StyleSheet,
   View,
-  TouchableOpacity,
   Dimensions,
   ScrollView,
   Image,
@@ -11,20 +10,11 @@ import {
   Alert,
   Platform,
 } from "react-native";
-import {
-  Appbar,
-  Title,
-  IconButton,
-  Button,
-  Card,
-  Paragraph,
-} from "react-native-paper";
-import { FontAwesome, MaterialIcons } from "@expo/vector-icons";
+import { Title, IconButton, Button } from "react-native-paper";
 import StepIndicator from "expo-step-indicator";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { clockRunning } from "react-native-reanimated";
 const { width, height } = Dimensions.get("window");
 import Toast from "react-native-simple-toast";
 
@@ -179,7 +169,6 @@ export default class Sell extends React.Component {
               marginBottom: 28,
               alignItems: "center",
               width: width,
-              justifyContent: "center",
               paddingTop: Platform.OS === "android" ? 25 : 0,
             }}
           >

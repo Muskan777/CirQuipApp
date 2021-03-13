@@ -9,11 +9,10 @@ import {
   Dimensions,
   Alert,
   TouchableOpacity,
-  KeyboardAvoidingView,
+  ScrollView,
   FlatList,
   SafeAreaView,
 } from "react-native";
-// import { Button, Paragraph, Dialog, Portal } from "react-native-paper";
 import {
   MaterialIcons,
   Entypo,
@@ -21,13 +20,12 @@ import {
   AntDesign,
 } from "@expo/vector-icons";
 import { Video } from "expo-av";
-import { IconButton, Button, Dialog, Portal } from "react-native-paper";
+import { IconButton, Button } from "react-native-paper";
 import { CheckBox } from "native-base";
 import * as DocumentPicker from "expo-document-picker";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as FileSystem from "expo-file-system";
-import { ScrollView } from "react-native-gesture-handler";
 import Toast from "react-native-simple-toast";
 import { CommonActions } from "@react-navigation/native";
 
@@ -284,9 +282,9 @@ export default function CreatePost(props) {
           }}
         />
       </View>
-      <KeyboardAvoidingView style={styles.PostArea}>
+      <View style={styles.PostArea}>
         <View style={styles.ProfilePicAndCaption}>
-          <View style={{ flex: 1, flexDirection: "row" }}>
+          <View style={{ flex: 0.3, flexDirection: "row" }}>
             {userImage ? (
               <Image
                 style={{ ...styles.ProfileImage }}
@@ -304,7 +302,6 @@ export default function CreatePost(props) {
               style={{
                 marginHorizontal: 10,
                 maxWidth: "84%",
-
                 display: "flex",
               }}
             >
@@ -329,6 +326,7 @@ export default function CreatePost(props) {
               }}
               editable
               multiline
+              numberOfLines={24}
               onChangeText={text => setPostText(text)}
               placeholder=" What do you want to CirQuip ?"
               value={postText}
@@ -343,7 +341,7 @@ export default function CreatePost(props) {
             }}
           >
             {videoSource && (
-              <View>
+              <View style={{ position: "relative", zIndex: -2 }}>
                 <Video
                   source={{
                     uri: videoSource.uri,
@@ -382,7 +380,7 @@ export default function CreatePost(props) {
           <Modal animationType="slide" transparent={true} visible={visible}>
             <View
               style={{
-                height: "50%",
+                height: "60%",
                 marginTop: "auto",
                 backgroundColor: "white",
                 borderTopLeftRadius: 80,
@@ -411,13 +409,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedA}
-                    color={checkedA ? "#4FB5A5" : "gray"}
+                    color={checkedA ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedA(!checkedA)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedA ? "#4FB5A5" : "gray",
+                      color: checkedA ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -428,13 +426,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedB}
-                    color={checkedB ? "#4FB5A5" : "gray"}
+                    color={checkedB ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedB(!checkedB)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedB ? "#4FB5A5" : "gray",
+                      color: checkedB ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -445,13 +443,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedC}
-                    color={checkedC ? "#4FB5A5" : "gray"}
+                    color={checkedC ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedC(!checkedC)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedC ? "#4FB5A5" : "gray",
+                      color: checkedC ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       flex: 1,
                       fontSize: 15,
@@ -463,13 +461,13 @@ export default function CreatePost(props) {
                 <View style={styles.checkBoxContainer}>
                   <CheckBox
                     checked={checkedD}
-                    color={checkedD ? "#4FB5A5" : "gray"}
+                    color={checkedD ? "#2ea5dd" : "gray"}
                     onPress={() => setCheckedD(!checkedD)}
                   />
                   <Text
                     style={{
                       ...styles.checkBoxTxt,
-                      color: checkedD ? "#4FB5A5" : "gray",
+                      color: checkedD ? "#2ea5dd" : "gray",
                       fontWeight: "bold",
                       fontSize: 15,
                     }}
@@ -485,10 +483,10 @@ export default function CreatePost(props) {
                     marginTop: 10,
                   }}
                 >
-                  <Button onPress={handleDialog} color="gray" fontSize="15">
+                  <Button onPress={handleDialog} color="gray" fontSize="45">
                     Back
                   </Button>
-                  <Button onPress={handleSubmit} color="#4FB5A5" fontSize="15">
+                  <Button onPress={handleSubmit} color="#2ea5dd" fontSize="45">
                     Send
                   </Button>
                 </View>
@@ -496,7 +494,7 @@ export default function CreatePost(props) {
             </View>
           </Modal>
         </View>
-      </KeyboardAvoidingView>
+      </View>
       <View style={styles.bottomContainer}>
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
@@ -676,8 +674,8 @@ export default function CreatePost(props) {
 
 const styles = StyleSheet.create({
   ProfileImage: {
-    width: 54,
-    height: 54,
+    width: 50,
+    height: 50,
     borderRadius: 40,
   },
   tagContainer: {
@@ -759,6 +757,7 @@ const styles = StyleSheet.create({
   },
   PrimaryTextInput: {
     fontSize: 18,
+    // height: 250,
     width: "100%",
     color: "#000",
     flex: 1,
@@ -768,7 +767,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   ProfilePicAndCaption: {
-    flex: 0.25,
+    flex: 0.45,
     display: "flex",
     marginHorizontal: 15,
     marginVertical: 15,

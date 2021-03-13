@@ -16,7 +16,7 @@ router.post("/register", (req, res) => {
   let name = firstname + " " + lastname;
   phone = parseInt(phone);
   let num = Math.floor(Math.random() * 10000).toString();
-  console.log(num);
+  // console.log(num);
   try {
     User.findOne({ email }).then(user => {
       if (user) {
@@ -67,7 +67,7 @@ router.post("/register", (req, res) => {
 router.post("/login", (req, res) => {
   let { email, password, notifToken: token = null } = req.body;
 
-  console.log(email, password, token);
+  // console.log(email, password, token);
   try {
     User.findOne({ email }).then(user => {
       if (!user) {
@@ -87,7 +87,8 @@ router.post("/login", (req, res) => {
             savedPosts: user.savedPosts,
             sharedPosts: user.sharedPosts,
           };
-          if (token) notifUtils.addNotificationToken(token, user.id);
+          if (token)
+            notifUtils.addNotificationToken(token, user.id, user.email);
           jwt.sign(
             payload,
             keys.jwtSecretKey,
@@ -122,10 +123,10 @@ router.post("/login", (req, res) => {
 router.get("/getUserWithId/:id", async (req, res) => {
   try {
     const user = await User.find({ _id: req.params.id });
-    log("user", user[0]);
+    // log("user", user[0]);
     return res.status(200).json({ ...user[0]._doc, password: "" });
   } catch (err) {
-    log("user fetch", err);
+    // log("user fetch", err);
     res.status(400).json(err);
   }
 });
@@ -133,10 +134,10 @@ router.get("/getUserWithId/:id", async (req, res) => {
 router.get("/getUserWithEmail/:email", async (req, res) => {
   try {
     const user = await User.find({ email: req.params.email });
-    log("user", user[0]);
+    // log("user", user[0]);
     return res.status(200).json({ ...user[0]._doc, password: "" });
   } catch (err) {
-    log("user fetch", err);
+    // log("user fetch", err);
     res.status(400).json(err);
   }
 });
@@ -294,6 +295,18 @@ router.route("/updateUser").patch(auth, async (req, res) => {
   }
 });
 
+router.route("/updatedata").patch(async (req, res) => {
+  let { admissionYear, branch, email } = req.body;
+  admissionYear = parseInt(admissionYear);
+  try {
+    User.findOneAndUpdate({ email: email }, { $set: { admissionYear, branch } })
+      .then(() => res.status(200).send("User updated"))
+      .catch(err => res.status(400).send("Error: " + err));
+  } catch (e) {
+    console.log(e);
+  }
+});
+
 // @route post /api/user/resendOtp
 router.route("/resendOtp").post(auth, async (req, res) => {
   let { email, otp } = req.body;
@@ -334,7 +347,7 @@ router.route("/getLikedPosts").get(auth, async (req, res) => {
 
 router.patch("/verify/:email", async (req, res) => {
   let email = req.params.email;
-  console.log(email);
+  // console.log(email);
   try {
     if (email !== undefined) {
       User.findOneAndUpdate({ email: email }, { $set: { verified: true } })

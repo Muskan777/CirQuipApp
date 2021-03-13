@@ -5,38 +5,21 @@ import {
   SafeAreaView,
   FlatList,
   View,
-  Image,
   Dimensions,
   TouchableOpacity,
   Alert,
   Linking,
   TextInput,
 } from "react-native";
-import {
-  IconButton,
-  Title,
-  Searchbar,
-  Card,
-  Paragraph,
-  Button,
-  FAB,
-  Avatar,
-} from "react-native-paper";
+import { IconButton, Title, Card, Paragraph, Avatar } from "react-native-paper";
 import Loader from "./Loader";
 import axios from "axios";
 const width = Dimensions.get("screen").width;
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import ShadowView from "react-native-simple-shadow-view";
 import * as RootNavigation from "../RootNavigation.js";
-import { LinearGradient } from "expo-linear-gradient";
-import {
-  FontAwesome,
-  MaterialIcons,
-  Ionicons,
-  AntDesign,
-} from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
 import Toast from "react-native-simple-toast";
+import { CommonActions } from "@react-navigation/native";
 
 export default class Shop extends React.Component {
   constructor(props) {
@@ -48,6 +31,7 @@ export default class Shop extends React.Component {
       user: { likes: [] },
       email: "",
       isLoading: true,
+      verified: false,
     };
   }
   callNumber = phone => {
@@ -86,7 +70,7 @@ export default class Shop extends React.Component {
     });
     (async () => {
       let user = await AsyncStorage.getItem("user");
-      this.setState({ id: user });
+      this.setState({ id: user, verified: this.props.route.params.verified });
       let info;
       await AsyncStorage.getItem("info").then(async res => {
         if (res) {
@@ -443,24 +427,49 @@ export default class Shop extends React.Component {
               value={this.state.searchQuery}
             />
           </View>
-          <Title
-            style={{
-              textAlign: "left",
-              margin: 5,
-              marginVertical: 10,
-              color: "rgba(112, 112, 112, 1)",
-              fontSize: 20,
-              fontFamily: "sans-serif",
-            }}
-          >
-            {this.props.route.params.type === "liked"
-              ? "Your Wishlist"
-              : this.props.route.params.type === "my"
-              ? "My Listed Products"
-              : this.props.route.params.type === "requests"
-              ? "Buy Requests"
-              : "New Recommendations"}
-          </Title>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {this.props.route.params.type === "liked" ||
+            this.props.route.params.type === "my" ||
+            this.props.route.params.type === "requests" ? (
+              <MaterialIcons
+                name="arrow-back"
+                style={{
+                  margin: 5,
+                  marginVertical: 10,
+                  color: "rgba(112, 112, 112, 1)",
+                }}
+                size={28}
+                onPress={() => {
+                  this.props.navigation.dispatch(
+                    CommonActions.reset({
+                      index: 0,
+                      routes: [{ name: "Shop", params: { type: "all" } }],
+                    })
+                  );
+                }}
+              />
+            ) : (
+              <Text></Text>
+            )}
+            <Title
+              style={{
+                textAlign: "left",
+                margin: 5,
+                marginVertical: 10,
+                color: "rgba(112, 112, 112, 1)",
+                fontSize: 20,
+                fontFamily: "sans-serif",
+              }}
+            >
+              {this.props.route.params.type === "liked"
+                ? "Your Wishlist"
+                : this.props.route.params.type === "my"
+                ? "My Listed Products"
+                : this.props.route.params.type === "requests"
+                ? "Buy Requests"
+                : "New Recommendations"}
+            </Title>
+          </View>
           {this.state.isLoading ? (
             <Loader />
           ) : (
@@ -505,12 +514,20 @@ export default class Shop extends React.Component {
                 name="plus"
                 style={{ ...styles.create }}
                 onPress={() => {
-                  this.props.navigation.navigate("SellProducts");
+                  if (this.state.verified) {
+                    this.props.navigation.navigate("SellProducts");
+                  } else {
+                    Toast.show(
+                      "Please verify your email ID to sell on CirQuip!",
+                      Toast.SHORT,
+                      ["UIAlertController"]
+                    );
+                  }
                 }}
               />
             </View>
             <View style={styles.container3}>
-              {this.state.email == global.config.admin ? (
+              {global.config.admin.includes(this.state.email) ? (
                 <Ionicons
                   name="md-chatbubble-ellipses"
                   style={{ ...styles.chat }}
@@ -633,32 +650,32 @@ const styles = StyleSheet.create({
   },
   cart: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 5,
     color: "#2ba4db",
   },
   chat: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 2,
     marginLeft: 2,
     color: "#2ba4db",
   },
   create: {
     alignSelf: "center",
-    fontSize: 80,
+    fontSize: 60,
     marginTop: 5,
     color: "#2ba4db",
   },
 
   container1: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    left: 10,
+    left: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",
@@ -667,8 +684,8 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   container2: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: 45,
     backgroundColor: "white",
     position: "absolute",
@@ -680,13 +697,13 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   container3: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    right: 10,
+    right: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",

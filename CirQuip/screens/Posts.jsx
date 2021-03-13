@@ -7,9 +7,6 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  Text,
-  TouchableHighlight,
-  Button,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import Toast from "react-native-simple-toast";
@@ -22,14 +19,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
 import { useRoute } from "@react-navigation/native";
 import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
-import { Col } from "native-base";
-import { log } from "react-native-reanimated";
 export default function Posts(props) {
   const { navigation, route } = props;
   const routeState = useRoute();
   const [data, setData] = useState([]);
   let savedData = [];
   let postData = [];
+  const [verified, setVerified] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [CCPIndex, setCCPIndex] = useState(null);
@@ -98,8 +94,9 @@ export default function Posts(props) {
   };
 
   const fetchData = async () => {
+    console.log("fetchdata", props.from);
     handleProfileImage();
-    if (props.route.name === "SavedPosts") {
+    if (props?.route?.name === "SavedPosts") {
       let token = await AsyncStorage.getItem("cirquip-auth-token");
       await axios
         .get(`${global.config.host}/post/getPosts`, {
@@ -135,6 +132,7 @@ export default function Posts(props) {
         })
         .catch(e => console.log(e));
     } else {
+      console.log("id", props?.uid);
       let url =
         props?.from === "notification" || props?.from === "links"
           ? `${global.config.host}/post/getPostWithId/${props?.uid}`
@@ -152,26 +150,35 @@ export default function Posts(props) {
             })
             .then(async res => {
               res.data.post = res.data.post.reverse();
-              let user = await AsyncStorage.getItem("user");
-              if (user) {
-                axios
-                  .get(`${global.config.host}/user/getUserWithId/${user}`)
-                  .then(response => {
-                    let College = response.data.college;
-                    let data = res.data.post.filter(post => {
-                      return post.userCollege === College;
-                    });
-                    if (props.route.params && props.route.params.type) {
-                      data = data.filter(post => {
-                        return response.data._id === post.userId;
+              if (props?.from === "notification" || props?.from === "links") {
+                console.log("data received", res.data.post);
+                setData(res.data.post);
+                setoriginaldata(res.data.post);
+                setLoading(false);
+                setIsRefreshing(false);
+              } else {
+                let user = await AsyncStorage.getItem("user");
+
+                if (user) {
+                  axios
+                    .get(`${global.config.host}/user/getUserWithId/${user}`)
+                    .then(response => {
+                      let College = response.data.college;
+                      let data = res.data.post.filter(post => {
+                        return post?.userCollege === College;
                       });
-                    }
-                    setData(data);
-                    setoriginaldata(data);
-                    setLoading(false);
-                    setIsRefreshing(false);
-                  })
-                  .catch(e => console.log(e));
+                      if (props.route.params && props.route.params.type) {
+                        data = data.filter(post => {
+                          return response.data._id === post.userId;
+                        });
+                      }
+                      setData(data);
+                      setoriginaldata(data);
+                      setLoading(false);
+                      setIsRefreshing(false);
+                    })
+                    .catch(e => console.log(e));
+                }
               }
             })
             .catch(err => {
@@ -250,31 +257,35 @@ export default function Posts(props) {
 
   return (
     <SafeAreaView style={styles.post}>
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <IconButton
-            icon="menu"
-            onPress={() => {
-              navigation.openDrawer();
-            }}
-            color="#2ba4db"
-            size={30}
-          />
-          <TextInput
-            style={{
-              flex: 1,
-              margin: 5,
-              fontSize: 20,
-              maxHeight: "100%",
-            }}
-            placeholder="Search"
-            onChangeText={query => {
-              setSearchQuery(query);
-            }}
-            value={searchQuery}
-          />
+      {props?.from === "notification" || props?.from === "links" ? (
+        <></>
+      ) : (
+        <View style={styles.searchContainer}>
+          <View style={styles.searchBar}>
+            <IconButton
+              icon="menu"
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+              color="#2ba4db"
+              size={30}
+            />
+            <TextInput
+              style={{
+                flex: 1,
+                margin: 5,
+                fontSize: 20,
+                maxHeight: "100%",
+              }}
+              placeholder="Search"
+              onChangeText={query => {
+                setSearchQuery(query);
+              }}
+              value={searchQuery}
+            />
+          </View>
         </View>
-      </View>
+      )}
 
       {isLoading ? (
         <Loader />
@@ -430,12 +441,20 @@ export default function Posts(props) {
             name="plus"
             style={{ ...styles.create }}
             onPress={() => {
-              navigation.navigate("CreatePost");
+              if (verified) {
+                navigation.navigate("CreatePost");
+              } else {
+                Toast.show(
+                  "Please verify your email ID to CirQuip!",
+                  Toast.SHORT,
+                  ["UIAlertController"]
+                );
+              }
             }}
           />
         </View>
         <View style={styles.container3}>
-          {email == global.config.admin ? (
+          {global.config.admin.includes(email) ? (
             <Ionicons
               name="md-chatbubble-ellipses"
               style={{ ...styles.chat }}
@@ -537,32 +556,32 @@ const styles = StyleSheet.create({
   },
   cart: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 5,
     color: "#2ba4db",
   },
   chat: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 2,
     marginLeft: 2,
     color: "#2ba4db",
   },
   create: {
     alignSelf: "center",
-    fontSize: 80,
+    fontSize: 60,
     marginTop: 5,
     color: "#2ba4db",
   },
 
   container1: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    left: 10,
+    left: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",
@@ -571,26 +590,26 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   container2: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: 45,
     backgroundColor: "white",
     position: "absolute",
     alignSelf: "center",
-    bottom: 50,
+    bottom: 55,
     paddingBottom: 40,
     shadowColor: "#36b5a5",
     shadowOpacity: 1,
     elevation: 6,
   },
   container3: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    right: 10,
+    right: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",
