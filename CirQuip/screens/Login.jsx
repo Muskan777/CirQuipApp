@@ -268,8 +268,8 @@ export default class Login extends React.Component {
   }
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
+      <ScrollView style={styles.containerWrapper}>
+        <View style={{ ...styles.container, flex: 1 }}>
           {this.state.toggleSignUp ? (
             <>
               {this.state.currentPosition === 0 ? (
@@ -741,12 +741,15 @@ export default class Login extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  containerWrapper: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   container: {
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
-    //height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height,
   },
   createAcc: {
     marginTop: 15,
