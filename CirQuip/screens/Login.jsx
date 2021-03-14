@@ -135,7 +135,6 @@ export default class Login extends React.Component {
       return 1;
     }
 
-
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
@@ -144,7 +143,6 @@ export default class Login extends React.Component {
       ]);
       return 1;
     }
-
 
     if (this.state.password !== this.state.password2) {
       Toast.show("Passwords Don't Match", Toast.SHORT, ["UIAlertController"]);
@@ -159,6 +157,21 @@ export default class Login extends React.Component {
         "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
       );
     }
+  }
+
+  pickervalidation() {
+    if (!this.state.role) {
+      Toast.show("Please enter your role", Toast.SHORT, ["UIAlertController"]);
+      return 1;
+    }
+    if (!this.state.college) {
+      Toast.show("Please enter your college", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+      return 1;
+    }
+    this.onPageChange(2);
+    return 0;
   }
 
   async handleSignUp() {
@@ -426,7 +439,7 @@ export default class Login extends React.Component {
                           { label: "Alumnus", value: "Alumnus" },
                           { label: "Club", value: "Club" },
                         ]}
-                        defaultNull
+                        defaultValue={this.state.role}
                         placeholder="Account Type"
                         dropDownMaxHeight={130}
                         selectedLabelStyle={{
@@ -462,12 +475,12 @@ export default class Login extends React.Component {
                           { label: "VU", value: "VU" },
                           { label: "IIIT Pune", value: "IIIT Pune" },
                         ]}
-                        defaultNull
                         placeholder="College Name"
                         dropDownMaxHeight={130}
                         selectedLabelStyle={{
                           color: "grey",
                         }}
+                        defaultValue={this.state.college}
                         containerStyle={styles.dropContainer}
                         placeholderStyle={styles.placeholder}
                         dropDownStyle={styles.dropDown}
@@ -489,7 +502,9 @@ export default class Login extends React.Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.nextBtn}
-                      onPress={() => this.onPageChange(2)}
+                      onPress={() => {
+                        this.pickervalidation();
+                      }}
                     >
                       <Text style={styles.loginText}>NEXT</Text>
                     </TouchableOpacity>

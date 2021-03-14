@@ -11,7 +11,6 @@ export default function About() {
       style={{
         backgroundColor: "#fff",
         ...styles.mainContent,
-        paddingTop: Platform.OS === "android" ? 25 : 0,
       }}
     >
       <ScrollView>
@@ -61,7 +60,7 @@ export default function About() {
           </Text>{" "}
           {"\n"}
           {"\n"}Credits : {"\n"}
-          {"\n"}Application development with Software development section, COEP
+          {"\n"}Application development with Software Development Section, COEP
           ( SDS, COEP ) {"\n"}Website :
           <Text
             style={{ color: "#2ea5dd" }}
