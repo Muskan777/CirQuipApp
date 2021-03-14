@@ -18,6 +18,7 @@ const Comment = ({
   userId,
   onRefresh,
   setModalOpen,
+  setCommentText,
 }) => {
   const [commentLiked, setCommentLiked] = useState(false);
   const [currlikes, setcurrlikes] = useState(likes.length);
@@ -72,6 +73,7 @@ const Comment = ({
   };
   const handleExit = () => {
     onRefresh(true);
+    setCommentText(null);
     setModalOpen(false);
   };
   const handleCommentLikes = async () => {

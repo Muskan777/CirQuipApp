@@ -320,6 +320,7 @@ export default function Posts(props) {
             size={28}
             onPress={() => {
               setModalOpen(false);
+              setCommentText(null);
               setComments([]);
             }}
           />
