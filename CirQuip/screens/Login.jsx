@@ -779,7 +779,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   dropDown: {
-    width: 265,
+    width: 295,
     backgroundColor: "#fff",
     color: "grey",
   },
@@ -794,6 +794,7 @@ const styles = StyleSheet.create({
   label: {
     color: "grey",
     fontSize: 18,
+    fontFamily: "",
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 18,

@@ -33,8 +33,6 @@ export default function Posts(props) {
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [users, setUsers] = useState([]);
-  const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
   const [originaldata, setoriginaldata] = useState([]);
@@ -189,14 +187,6 @@ export default function Posts(props) {
         .catch(err => {
           console.log(err);
         });
-
-      axios
-        .get(`${global.config.host}/user/getUsers`)
-        .then(res => {
-          setUsers(res.data.users);
-          setRequiredUsers(res.data.users);
-        })
-        .catch(e => console.log(e));
     }
   };
 
