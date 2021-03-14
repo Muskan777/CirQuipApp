@@ -319,9 +319,10 @@ export default function Posts(props) {
             style={{ ...styles.Icons, marginTop: 20 }}
             size={28}
             onPress={() => {
-              setModalOpen(false);
               setCommentText(null);
               setComments([]);
+              onRefresh(true);
+              setModalOpen(false);
             }}
           />
         </View>
