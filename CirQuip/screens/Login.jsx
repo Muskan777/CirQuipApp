@@ -120,29 +120,48 @@ export default class Login extends React.Component {
     this.setState({ currentPosition: position });
   };
 
-  async handleSignUp() {
+  handlepageone() {
     if (this.state.firstname.trim() === "") {
-      Toast.show("Name Error, Name cannot be empty", Toast.SHORT, [
+      Toast.show("First Name cannot be empty", Toast.SHORT, [
         "UIAlertController",
       ]);
       return 1;
     }
+
+    if (this.state.lastname.trim() === "") {
+      Toast.show("Last Name cannot be empty", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+      return 1;
+    }
+
 
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
-      Toast.show("Phone error, Enter a valid phone number", Toast.SHORT, [
+      Toast.show("Enter a valid phone number", Toast.SHORT, [
         "UIAlertController",
       ]);
       return 1;
     }
 
+
     if (this.state.password !== this.state.password2) {
-      Toast.show("Error, Passwords Don't Match", Toast.SHORT, [
-        "UIAlertController",
-      ]);
+      Toast.show("Passwords Don't Match", Toast.SHORT, ["UIAlertController"]);
       return 1;
     }
+
+    if (this.state.termsAgreed) {
+      this.onPageChange(1);
+    } else {
+      Alert.alert(
+        "Terms and Conditions",
+        "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
+      );
+    }
+  }
+
+  async handleSignUp() {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
@@ -374,14 +393,7 @@ export default class Login extends React.Component {
                   <TouchableOpacity
                     style={[styles.signupBtn, { marginBottom: 20 }]}
                     onPress={() => {
-                      if (this.state.termsAgreed) {
-                        this.onPageChange(1);
-                      } else {
-                        Alert.alert(
-                          "Terms and Conditions",
-                          "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
-                        );
-                      }
+                      this.handlepageone();
                     }}
                   >
                     <Text style={styles.loginText}>SIGN UP</Text>
