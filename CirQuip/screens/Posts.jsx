@@ -65,6 +65,7 @@ export default function Posts(props) {
   // }, [navigation]);
 
   useEffect(() => {
+    setVerified(route.params.verified);
     console.log("in url", props);
     fetchData();
   }, []);
