@@ -220,7 +220,7 @@ export default function App() {
   const setVariables = async () => {
     const data = await AsyncStorage.getItem("user");
     setUser(data);
-    if (user) {
+    if (data) {
       axios
         .get(`${global.config.host}/user/getUserWithId/${user}`)
         .then(res => {
