@@ -6,14 +6,13 @@
     </title>
   </head>
   <body>
-    <a target="_blank" id="click"></a>
     <script>
       document.addEventListener("DOMContentLoaded", function () {
-        let ele = document.getElementById("click");
-        let link = `intent:#Intent;scheme=cirquip:/${window.location.pathname}${window.location.search};package=com.cirquip.cirquip;S.browser_fallback_url=https://www.cirquip.com;end`;
-        ele.setAttribute("href", link);
-        setTimeout(() => ele.click(), 300);
+	      let link = `intent:/${window.location.pathname}${window.location.search}#Intent;scheme=cirquip;package=com.cirquip.cirquip;S.browser_fallback_url=https://www.cirquip.com;end`
+	
+	window.location =link;
       });
     </script>
   </body>
 </html>
+
