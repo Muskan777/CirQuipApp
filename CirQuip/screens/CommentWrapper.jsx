@@ -170,6 +170,7 @@ export default function CommentWrapper(props) {
                   role={item.userRole}
                   time={item.createdAt}
                   likes={item.likes}
+                  setCommentText={setCommentText}
                 />
               );
             })}

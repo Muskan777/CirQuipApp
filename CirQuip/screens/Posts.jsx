@@ -33,8 +33,6 @@ export default function Posts(props) {
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [users, setUsers] = useState([]);
-  const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
   const [originaldata, setoriginaldata] = useState([]);
@@ -67,6 +65,7 @@ export default function Posts(props) {
   // }, [navigation]);
 
   useEffect(() => {
+    setVerified(route?.params?.verified);
     console.log("in url", props);
     fetchData();
   }, []);
@@ -189,14 +188,6 @@ export default function Posts(props) {
         .catch(err => {
           console.log(err);
         });
-
-      axios
-        .get(`${global.config.host}/user/getUsers`)
-        .then(res => {
-          setUsers(res.data.users);
-          setRequiredUsers(res.data.users);
-        })
-        .catch(e => console.log(e));
     }
   };
 
@@ -329,8 +320,10 @@ export default function Posts(props) {
             style={{ ...styles.Icons, marginTop: 20 }}
             size={28}
             onPress={() => {
-              setModalOpen(false);
+              setCommentText(null);
               setComments([]);
+              onRefresh(true);
+              setModalOpen(false);
             }}
           />
         </View>

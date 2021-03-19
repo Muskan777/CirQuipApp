@@ -113,44 +113,48 @@ export default function CreatePost(props) {
     if (checkedD) {
       group.push("Club");
     }
-    axios
-      .post(
-        `${global.config.host}/post/createPost`,
-        {
-          content: content,
-          caption: postText,
-          taggedUsers: taggedList,
-          group: group,
-          userCollege: College,
-          userSkill: Skill,
-          userInterest: Interest,
-          userClub: Club,
-          userBranch: branch,
-          userAdmissionYear: admissionYear,
-        },
-        {
-          headers: {
-            "cirquip-auth-token": token,
+    if (postText) {
+      axios
+        .post(
+          `${global.config.host}/post/createPost`,
+          {
+            content: content,
+            caption: postText,
+            taggedUsers: taggedList,
+            group: group,
+            userCollege: College,
+            userSkill: Skill,
+            userInterest: Interest,
+            userClub: Club,
+            userBranch: branch,
+            userAdmissionYear: admissionYear,
           },
-        }
-      )
-      .then(() => {
-        Toast.show("New Post Created", Toast.SHORT, ["UIAlertController"]);
-        setPhotos(null);
-        setPostHasImage(false);
-      })
-      .catch(err => {
-        console.log(err.response.data);
-        Alert.alert("Error", err.response.data);
-      });
-    setVisible(false);
+          {
+            headers: {
+              "cirquip-auth-token": token,
+            },
+          }
+        )
+        .then(() => {
+          Toast.show("New Post Created", Toast.SHORT, ["UIAlertController"]);
+          setPhotos(null);
+          setPostHasImage(false);
+        })
+        .catch(err => {
+          console.log(err.response.data);
+          Alert.alert("Error", err.response.data);
+        });
+      setVisible(false);
 
-    props.navigation.dispatch(
-      CommonActions.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      })
-    );
+      props.navigation.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        })
+      );
+    } else {
+      Toast.show("Empty Post!", Toast.SHORT, ["UIAlertController"]);
+    }
   };
   useEffect(() => {
     props.navigation.setOptions({

@@ -11,6 +11,7 @@ import axios from "axios";
 import Toast from "react-native-simple-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TabRouter } from "react-navigation";
+import { Dimensions } from "react-native";
 
 export default function OTP({ email, navigation, onPageChange, route }) {
   const [otp, setOTP] = useState("");
@@ -151,8 +152,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    width: "auto",
-    height: "100%",
+    flex: 1,
+    height: Dimensions.get("window").height,
   },
   top1: {
     fontSize: 30,
@@ -216,6 +217,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: "white",
     fontSize: 16,
+    fontFamily: "",
     fontWeight: "700",
     // marginBottom: 100,
   },

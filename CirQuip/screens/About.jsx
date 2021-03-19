@@ -3,6 +3,7 @@ import { StyleSheet, Text, SafeAreaView } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { Avatar } from "react-native-paper";
 import screen from "../assets/asset2.png";
+import { Linking } from "react-native";
 
 export default function About() {
   return (
@@ -10,7 +11,6 @@ export default function About() {
       style={{
         backgroundColor: "#fff",
         ...styles.mainContent,
-        paddingTop: Platform.OS === "android" ? 25 : 0,
       }}
     >
       <ScrollView>
@@ -40,14 +40,58 @@ export default function About() {
           new world for the students’ community, to experience what you haven’t
           explored yet! {"\n"} Next time, when you have any questions related to
           your College, Project, Placement or guidance... CirQuip it!{"\n"}
-          {"\n"}Website : www.cirquip.com {"\n"}E-mail : cirquip@gmail.com{" "}
+          {"\n"}Website :{" "}
+          <Text
+            style={{ color: "#2ea5dd" }}
+            onPress={() => {
+              Linking.openURL("https://www.cirquip.com");
+            }}
+          >
+            www.cirquip.com{" "}
+          </Text>{" "}
+          {"\n"}E-mail :{" "}
+          <Text
+            style={{ color: "#2ea5dd" }}
+            onPress={() => {
+              Linking.openURL("mailto:cirquip@gmail.com");
+            }}
+          >
+            cirquip@gmail.com{" "}
+          </Text>{" "}
           {"\n"}
           {"\n"}Credits : {"\n"}
-          {"\n"}Application development with Software development section, COEP
-          ( SDS, COEP ) {"\n"}Website : sdscoep.codes {"\n"}
+          {"\n"}Application development with Software Development Section, COEP
+          ( SDS, COEP ) {"\n"}Website :
+          <Text
+            style={{ color: "#2ea5dd" }}
+            onPress={() => {
+              Linking.openURL("https://www.sdscoep.codes");
+            }}
+          >
+            sdscoep.codes{" "}
+          </Text>{" "}
+          {"\n"}
           {"\n"}Design : {"\n"}
-          {"\n"}Priyanka Sahoo {"\n"}E-mail : priyankassahoo17@gmail.com {"\n"}
-          {"\n"}Sanket Bansode {"\n"}E-mail : sanketbansode71@gmail.com{"\n"}
+          {"\n"}Priyanka Sahoo {"\n"}E-mail :{" "}
+          <Text
+            style={{ color: "#2ea5dd" }}
+            onPress={() => {
+              Linking.openURL("mailto:priyankassahoo17@gmail.com");
+            }}
+          >
+            priyankassahoo17@gmail.com{" "}
+          </Text>
+          {"\n"}
+          {"\n"}Sanket Bansode {"\n"}E-mail :{" "}
+          <Text
+            style={{ color: "#2ea5dd" }}
+            onPress={() => {
+              Linking.openURL("mailto:sanketbansode71@gmail.com");
+            }}
+          >
+            sanketbansode71@gmail.com{" "}
+          </Text>
+          {"\n"}
         </Text>
       </ScrollView>
     </SafeAreaView>
