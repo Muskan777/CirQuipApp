@@ -34,7 +34,7 @@ import CreatePost from "./screens/CreatePost";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import Posts from "./screens/Posts";
 import About from "./screens/About";
-import { Toast } from "native-base";
+import { Root, Toast } from "native-base";
 import url from "url";
 
 const checkNotif = notification => {
@@ -96,6 +96,7 @@ export default function App() {
   const handleNotificationClicked = state => {
     setNotificationClicked(state);
   };
+  const useMountEffect = fun => React.useEffect(fun, []);
   const handleStateChange = nextAppState => {
     if (
       RootNavigation.appState.current.match(/inactive|background/) &&
@@ -112,30 +113,43 @@ export default function App() {
     }
     RootNavigation.appState.current = nextAppState;
   };
-  const parseCrossLinks = str => {
+  const parseCrossLinks = (str, start = false) => {
     if (!RootNavigation?.navigationRef) {
       Alert.alert("Something is fishy");
       return;
     }
-    console.log(str);
-    let uri = url.parse(str["url"], true);
-    let path = uri.pathname;
-    let queryParams = { id: uri.query["id"] };
-    console.log(uri.pathname, uri.query["id"]);
-    //let { path, queryParams } = Linking.parse(url);
-    if (path) {
-      if (path.includes("posts")) {
-        let target = "notificationStack";
-        let propsData = {
-          data: { from: "links", uid: queryParams.id, type: "post" },
-        };
-        RootNavigation.navigationRef &&
-          RootNavigation?.navigate(target, propsData);
-        setDummyURL(url);
-      } else if (path.includes("products")) {
-      }
+    console.log("url string is", str);
+    //let uri = url.parse(str["url"], true);
+    //let path = uri.pathname;
+    //let queryParams = { id: uri.query["id"] };
+    //console.log(uri.pathname, uri.query["id"]);
+    str = str.url ? str.url : str;
+    let { path, queryParams } = Linking.parse(str);
+    if (str.includes("posts")) {
+      console.log("redirecting", path, queryParams, path.includes("posts"));
+      let target = "notificationStack";
+      let propsData = {
+        data: { from: "links", uid: queryParams.id, type: "post" },
+      };
+      setTimeout(
+        () => {
+          RootNavigation.navigate(target, propsData);
+        },
+        start ? 3000 : 0
+      );
+      setDummyURL(url);
+    } else if (path.includes("products")) {
     }
   };
+  useMountEffect(() => {
+    (async () => {
+      await Linking.getInitialURL().then(url => {
+        if (url && url !== dummyURL) {
+          parseCrossLinks(url, true);
+        }
+      });
+    })();
+  });
   React.useEffect(() => {
     Linking.addEventListener("url", parseCrossLinks);
     RootNavigation.notificationClicked.current = false;

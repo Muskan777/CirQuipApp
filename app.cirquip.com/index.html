@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>
+      Cirquip: Grow your Business by reaching large network of student
+      community.
+    </title>
+  </head>
+  <body>
+    <a target="_blank" id="click" style="display: none"></a>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let ele = document.getElementById("click");
+        ele.setAttribute(
+          "href",
+          `intent:#Intent;scheme=cirquip:/{window.location.pathname}{window.location.search};package=com.cirquip.cirquip;S.browser_fallback_url=https://www.cirquip.com;end`
+        );
+        ele.click();
+        setTimeout(() => (window.location = "https://www.cirquip.com"), 1000);
+      });
+    </script>
+  </body>
+</html>

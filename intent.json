@@ -1,0 +1,15 @@
+{
+  "intentFilters": [
+    {
+      "action": "VIEW",
+      "data": [
+        {
+          "scheme": "https",
+          "host": "app.cirquip.com",
+          "pathPrefix": "/"
+        }
+      ],
+      "category": ["BROWSABLE", "DEFAULT"]
+    }
+  ]
+}
