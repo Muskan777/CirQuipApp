@@ -122,11 +122,11 @@ export default function App() {
       return;
     }
     console.log(str);
-    let uri = url.parse(str["url"], true);
-    let path = uri.pathname;
-    let queryParams = { id: uri.query["id"] };
-    console.log(uri.pathname, uri.query["id"]);
-    //let { path, queryParams } = Linking.parse(url);
+    //let uri = url.parse(str["url"], true);
+    //let path = uri.pathname;
+    //let queryParams = { id: uri.query["id"] };
+    //console.log(uri.pathname, uri.query["id"]);
+    let { path, queryParams } = Linking.parse(str);
     if (path.includes("posts")) {
       let target = "notificationStack";
       let propsData = {
