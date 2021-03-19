@@ -3,9 +3,7 @@ import {
   Text,
   StyleSheet,
   SafeAreaView,
-  FlatList,
   View,
-  Image,
   Dimensions,
   TouchableOpacity,
   Alert,
@@ -15,11 +13,9 @@ import {
 } from "react-native";
 import {
   Title,
-  Searchbar,
   Card,
   IconButton,
   Button,
-  Surface,
   Avatar,
   FAB,
 } from "react-native-paper";
@@ -301,7 +297,7 @@ export default class Product extends React.Component {
                 })
               );
             } else {
-              if (this.state.myEmail === global.config.admin) {
+              if (global.config.admin.includes(this.state.myEmail)) {
                 Toast.show("Product Deleted!", Toast.SHORT, [
                   "UIAlertController",
                 ]);
@@ -457,19 +453,20 @@ export default class Product extends React.Component {
             </Card>
             <Card>
               <Card.Actions style={{ justifyContent: "space-around" }}>
-                {this.state?.type !== "my" &&
-                this.state?.myEmail === global.config.admin ? (
-                  <Button
-                    mode="contained"
-                    icon="delete"
-                    style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
-                    onPress={() => this.handleSell()}
-                  >
-                    <Text style={{ fontSize: 20 }}>Delete</Text>
-                  </Button>
-                ) : (
-                  <></>
-                )}
+                {this.state?.type !== "my" && this.state.myEmail ? (
+                  global.config.admin.includes(this.state.myEmail) ? (
+                    <Button
+                      mode="contained"
+                      icon="delete"
+                      style={{ margin: 5, paddingRight: 5, paddingLeft: 5 }}
+                      onPress={() => this.handleSell()}
+                    >
+                      <Text style={{ fontSize: 20 }}>Delete</Text>
+                    </Button>
+                  ) : (
+                    <></>
+                  )
+                ) : null}
                 {this.state?.type === "my" ? (
                   <Button
                     mode="contained"

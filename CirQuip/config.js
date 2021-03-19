@@ -7,5 +7,11 @@ global.config = {
   host: __DEV__
     ? "http://" + Constants.default.manifest.hostUri.split(":")[0] + ":3000/api"
     : "http://15.207.85.98/api",
-  admin: "aniketj18.instru@coep.ac.in",
+  admin: [
+    "cirquip_a1@yahoo.com",
+    "cirquip_a2@yahoo.com",
+    "cirquip_a3@outlook.com",
+    "cirquip_a4@outlook.com",
+    "aniketj18.instru@coep.ac.in",
+  ],
 };

@@ -1,14 +1,9 @@
 import React from "react";
-import * as Notifications from "expo-notifications";
 import { createStackNavigator } from "@react-navigation/stack";
-import { NavigationContainer } from "@react-navigation/native";
 import Posts from "./Posts";
 import CommentWrapper from "./CommentWrapper";
 import Product from "./Product";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
-import { IconButton } from "react-native-paper";
-import * as RootNavigation from "../RootNavigation.js";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 const NotificationStack = createStackNavigator();
 
 export default class NotifScreen extends React.Component {

@@ -6,14 +6,12 @@ import {
   ScrollView,
   Image,
   SafeAreaView,
-  Touchable,
 } from "react-native";
 import axios from "axios";
 import Loader from "./Loader";
 import { TextInput, TouchableOpacity } from "react-native-gesture-handler";
 import { RadioButton, Button } from "react-native-paper";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { handleLogout } from "./AppNavigator";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { IconButton } from "react-native-paper";
@@ -69,23 +67,24 @@ export default function Profile(props) {
       })
       .catch(e => console.log(e));
   };
+  const permissions = async () => {
+    let user = await AsyncStorage.getItem("user");
+    setId(user);
+    if (Platform.OS !== "web") {
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "CirQuip",
+          "We need camera/gallery permission to upload photos"
+        );
+      }
+    }
+  };
   useEffect(() => {
     fetchData();
-    async () => {
-      let user = await AsyncStorage.getItem("user");
-      this.setState({ id: user });
-      if (Platform.OS !== "web") {
-        const {
-          status,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
-          Alert.alert(
-            "CirQuip",
-            "We need camera/gallery permission to upload photos"
-          );
-        }
-      }
-    };
+    permissions();
   }, []);
 
   const handleChangesinProfile = () => {
@@ -260,13 +259,13 @@ export default function Profile(props) {
               </TouchableOpacity>
             ) : (
               <>
-                {image.image || userProfile.profileImage ? (
+                {image.image || profileImage ? (
                   <Image
                     style={styles.ProfileImage}
                     source={{
                       uri: image.image
                         ? `data:image/jpg;base64,${image.image}`
-                        : userProfile.profileImage,
+                        : profileImage,
                     }}
                   />
                 ) : (

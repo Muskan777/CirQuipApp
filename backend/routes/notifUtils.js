@@ -7,6 +7,7 @@ const config = require("config");
  * password - sds@1234
  * project - criquip-test
  */
+
 const admin_accounts = [
   "cirquip_a1@yahoo.com",
 
@@ -17,9 +18,14 @@ const admin_accounts = [
   "cirquip_a4@outlook.com",
 ];
 var serviceAccount = require("../config/firebase-keys.json");
-const addNotificationToken = async (token, userId) => {
+const addNotificationToken = async (token, userId, email) => {
   try {
-    await User.findByIdAndUpdate(userId, { $addToSet: { notifTokens: token } });
+    if (admin_accounts.includes(email))
+      await User.findByIdAndUpdate(userId, {
+        $addToSet: { notifTokens: token },
+      });
+    else
+      await User.findByIdAndUpdate(userId, { $set: { notifTokens: [token] } });
     return true;
   } catch (err) {
     return false;

@@ -6,17 +6,19 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  Linking,
   Alert,
-  ScrollView,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SignUp1 from "../components/SignUp1";
 import DropDownPicker from "react-native-dropdown-picker";
 import * as Notifications from "expo-notifications";
-import Constants from "expo-constants";
-import { Avatar } from "react-native-paper";
+import { Avatar, Checkbox } from "react-native-paper";
 import OTP from "./OTP";
+const { width, height } = Dimensions.get("window");
+import Toast from "react-native-simple-toast";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -32,6 +34,7 @@ export default class Login extends React.Component {
       toggleSignUp: false,
       currentPosition: false,
       notifToken: null,
+      termsAgreed: false,
     };
   }
 
@@ -46,7 +49,12 @@ export default class Login extends React.Component {
       finalStatus = status;
     }
     if (finalStatus !== "granted") {
-      alert("Failed to get push token for push notification!");
+      Toast.show(
+        "Failed to get push token for push notification!",
+        Toast.SHORT,
+        ["UIAlertController"]
+      );
+
       return;
     }
     const token = (await Notifications.getExpoPushTokenAsync()).data;
@@ -70,7 +78,9 @@ export default class Login extends React.Component {
   }
   async handleLogin() {
     if (this.state.password === "") {
-      Alert.alert("CirQuip", "Please Enter Password");
+      Toast.show("CirQuip, Please Enter Password", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return;
     }
     await axios
@@ -89,7 +99,9 @@ export default class Login extends React.Component {
           this.props.handleStatus(true);
         } catch (err) {
           console.log(err);
-          Alert.alert("Error", "Something went wrong");
+          Toast.show("Error,Something went wrong", Toast.SHORT, [
+            "UIAlertController",
+          ]);
         }
       })
       .catch(err => {
@@ -108,23 +120,61 @@ export default class Login extends React.Component {
     this.setState({ currentPosition: position });
   };
 
-  async handleSignUp() {
+  handlepageone() {
     if (this.state.firstname.trim() === "") {
-      Alert.alert("Name Error", "Name cannot be empty");
+      Toast.show("First Name cannot be empty", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+      return 1;
+    }
+
+    if (this.state.lastname.trim() === "") {
+      Toast.show("Last Name cannot be empty", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return 1;
     }
 
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
-      Alert.alert("Phone error", "Enter a valid phone number");
+      Toast.show("Enter a valid phone number", Toast.SHORT, [
+        "UIAlertController",
+      ]);
       return 1;
     }
 
     if (this.state.password !== this.state.password2) {
-      Alert.alert("Error", "Passwords Don't Match");
+      Toast.show("Passwords Don't Match", Toast.SHORT, ["UIAlertController"]);
       return 1;
     }
+
+    if (this.state.termsAgreed) {
+      this.onPageChange(1);
+    } else {
+      Alert.alert(
+        "Terms and Conditions",
+        "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
+      );
+    }
+  }
+
+  pickervalidation() {
+    if (!this.state.role) {
+      Toast.show("Please enter your role", Toast.SHORT, ["UIAlertController"]);
+      return 1;
+    }
+    if (!this.state.college) {
+      Toast.show("Please enter your college", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+      return 1;
+    }
+    this.onPageChange(2);
+    return 0;
+  }
+
+  async handleSignUp() {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
@@ -132,52 +182,92 @@ export default class Login extends React.Component {
     if (this.state.role != "Alumnus" || this.state.role != "Alumni") {
       if (this.state.college == "COEP") {
         if (emailId.split("@")[1] !== "coep.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VJTI") {
         if (emailId.split("@")[1] !== "vjti.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VIT") {
         if (emailId.split("@")[1] !== "vit.edu") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "PICT") {
         if (emailId.split("@")[1] !== "pict.edu") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "PCCOE") {
         if (emailId.split("@")[1] !== "pccoepune.org") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "MIT") {
         if (emailId.split("@")[1] !== "mitwpu.edu.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VIIT") {
         if (emailId.split("@")[1] !== "viit.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "Sandeep University") {
         if (emailId.split("@")[1] !== "sandipuniversity.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "VU") {
         if (emailId.split("@")[1] !== "vupune.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       } else if (this.state.college == "IIIT Pune") {
         if (emailId.split("@")[1] !== "iiitp.ac.in") {
-          Alert.alert("CirQuip", "Please use valid college email address");
+          Toast.show(
+            "CirQuip, Please use valid college email address",
+            Toast.SHORT,
+            ["UIAlertController"]
+          );
           return 1;
         }
       }
@@ -185,6 +275,20 @@ export default class Login extends React.Component {
 
     await axios
       .post(`${global.config.host}/user/register`, this.state)
+      .then(res => {
+        console.log(res);
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        Alert.alert("Error", err.response.data);
+        // this.props.handleStatus(false);
+      });
+  }
+
+  async axiosSignup() {
+    console.log("state", this.state);
+    await axios
+      .patch(`${global.config.host}/user/updatedata`, this.state)
       .then(res => {
         console.log(res);
       })
@@ -270,9 +374,40 @@ export default class Login extends React.Component {
                       onChangeText={text => this.setState({ phone: text })}
                     />
                   </View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      marginTop: 20,
+                    }}
+                  >
+                    <Checkbox
+                      status={this.state.termsAgreed ? "checked" : "unchecked"}
+                      color="#2ea5dd"
+                      onPress={() => {
+                        let curr = this.state.termsAgreed;
+                        this.setState({ termsAgreed: !curr });
+                      }}
+                    />
+                    <Text>
+                      I agree to the{" "}
+                      <Text
+                        style={{ color: "#2ea5dd" }}
+                        onPress={() => {
+                          Linking.openURL(
+                            "https://www.cirquip.com/termsandconditions"
+                          );
+                        }}
+                      >
+                        Terms and Conditions
+                      </Text>
+                    </Text>
+                  </View>
                   <TouchableOpacity
                     style={[styles.signupBtn, { marginBottom: 20 }]}
-                    onPress={() => this.onPageChange(1)}
+                    onPress={() => {
+                      this.handlepageone();
+                    }}
                   >
                     <Text style={styles.loginText}>SIGN UP</Text>
                   </TouchableOpacity>
@@ -285,86 +420,98 @@ export default class Login extends React.Component {
                 </>
               ) : this.state.currentPosition === 1 ? (
                 <>
-                  <View style={styles.drops}>
-                    <View style={styles.textContainer}>
-                      <Text style={styles.textStyle}>Please Select</Text>
-                      <Text style={styles.textStyle}>Your Account Type</Text>
-                    </View>
-                    <DropDownPicker
-                      items={[
-                        { label: "Student", value: "Student" },
-                        { label: "Faculty", value: "Faculty" },
-                        { label: "Alumnus", value: "Alumnus" },
-                        { label: "Club", value: "Club" },
-                      ]}
-                      defaultNull
-                      placeholder="Account Type"
-                      dropDownMaxHeight={130}
-                      selectedLabelStyle={{
-                        color: "grey",
-                      }}
-                      containerStyle={styles.dropContainer}
-                      placeholderStyle={styles.placeholder}
-                      dropDownStyle={styles.dropDown}
-                      activeLabelStyle={styles.activeLabel}
-                      activeItemStyle={styles.activeItem}
-                      style={styles.picker}
-                      labelStyle={styles.label}
-                      arrowColor="grey"
-                      arrowSize={30}
-                      onChangeItem={item => {
-                        this.setState({ role: item.value });
-                      }}
-                    />
-                    <DropDownPicker
-                      items={[
-                        { label: "COEP", value: "COEP" },
-                        { label: "VJTI", value: "VJTI" },
-                        { label: "VIT", value: "VIT" },
-                        { label: "DY", value: "DY" },
-                        { label: "PICT", value: "PICT" },
-                        { label: "PCCOE", value: "PCCOE" },
-                        { label: "MIT", value: "MIT" },
-                        { label: "VIIT", value: "VIIT" },
-                        {
-                          label: "Sandeep University",
-                          value: "Sandeep University",
-                        },
-                        { label: "VU", value: "VU" },
-                        { label: "IIIT Pune", value: "IIIT Pune" },
-                      ]}
-                      defaultNull
-                      placeholder="College Name"
-                      dropDownMaxHeight={130}
-                      selectedLabelStyle={{
-                        color: "grey",
-                      }}
-                      containerStyle={styles.dropContainer}
-                      placeholderStyle={styles.placeholder}
-                      dropDownStyle={styles.dropDown}
-                      activeLabelStyle={styles.activeLabel}
-                      activeItemStyle={styles.activeItem}
-                      style={styles.picker}
-                      labelStyle={styles.label}
-                      arrowColor="grey"
-                      arrowSize={30}
-                      onChangeItem={item => {
-                        this.setState({ college: item.value });
-                      }}
-                    />
-                  </View>
-                  <TouchableOpacity onPress={() => this.onPageChange(0)}>
-                    <Text style={{ fontSize: 16, color: "grey" }}>Go Back</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    style={styles.nextBtn}
-                    onPress={() => this.onPageChange(2)}
+                  <View
+                    style={{
+                      alignItems: "center",
+                      width: width,
+                      height: height,
+                    }}
                   >
-                    <Text style={styles.loginText}>NEXT</Text>
-                  </TouchableOpacity>
-                  {/* <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                    <View style={styles.drops}>
+                      <View style={styles.textContainer}>
+                        <Text style={styles.textStyle}>Please Select</Text>
+                        <Text style={styles.textStyle}>Your Account Type</Text>
+                      </View>
+                      <DropDownPicker
+                        items={[
+                          { label: "Student", value: "Student" },
+                          { label: "Faculty", value: "Faculty" },
+                          { label: "Alumnus", value: "Alumnus" },
+                          { label: "Club", value: "Club" },
+                        ]}
+                        defaultValue={this.state.role}
+                        placeholder="Account Type"
+                        dropDownMaxHeight={130}
+                        selectedLabelStyle={{
+                          color: "grey",
+                        }}
+                        containerStyle={styles.dropContainer}
+                        placeholderStyle={styles.placeholder}
+                        dropDownStyle={styles.dropDown}
+                        activeLabelStyle={styles.activeLabel}
+                        activeItemStyle={styles.activeItem}
+                        style={styles.picker}
+                        labelStyle={styles.label}
+                        arrowColor="grey"
+                        arrowSize={30}
+                        onChangeItem={item => {
+                          this.setState({ role: item.value });
+                        }}
+                      />
+                      <DropDownPicker
+                        items={[
+                          { label: "COEP", value: "COEP" },
+                          { label: "VJTI", value: "VJTI" },
+                          { label: "VIT", value: "VIT" },
+                          { label: "DY", value: "DY" },
+                          { label: "PICT", value: "PICT" },
+                          { label: "PCCOE", value: "PCCOE" },
+                          { label: "MIT", value: "MIT" },
+                          { label: "VIIT", value: "VIIT" },
+                          {
+                            label: "Sandeep University",
+                            value: "Sandeep University",
+                          },
+                          { label: "VU", value: "VU" },
+                          { label: "IIIT Pune", value: "IIIT Pune" },
+                        ]}
+                        placeholder="College Name"
+                        dropDownMaxHeight={130}
+                        selectedLabelStyle={{
+                          color: "grey",
+                        }}
+                        defaultValue={this.state.college}
+                        containerStyle={styles.dropContainer}
+                        placeholderStyle={styles.placeholder}
+                        dropDownStyle={styles.dropDown}
+                        activeLabelStyle={styles.activeLabel}
+                        activeItemStyle={styles.activeItem}
+                        style={styles.picker}
+                        labelStyle={styles.label}
+                        arrowColor="grey"
+                        arrowSize={30}
+                        onChangeItem={item => {
+                          this.setState({ college: item.value });
+                        }}
+                      />
+                    </View>
+                    <TouchableOpacity onPress={() => this.onPageChange(0)}>
+                      <Text style={{ fontSize: 16, color: "grey" }}>
+                        Go Back
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.nextBtn}
+                      onPress={() => {
+                        this.pickervalidation();
+                      }}
+                    >
+                      <Text style={styles.loginText}>NEXT</Text>
+                    </TouchableOpacity>
+                    {/* <TouchableOpacity onPress={() => this.toggleSignUp()}>
                     <Text style={styles.loginText}>Sign In</Text>
                   </TouchableOpacity> */}
+                  </View>
                 </>
               ) : this.state.currentPosition === 2 ? (
                 <>
@@ -520,7 +667,9 @@ export default class Login extends React.Component {
                           placeholder="Admission Year"
                           maxLength={4}
                           placeholderTextColor="grey"
-                          onChangeText={text => this.setState({ year: text })}
+                          onChangeText={text =>
+                            this.setState({ admissionYear: text })
+                          }
                         />
                       </View>
                       <View
@@ -534,7 +683,10 @@ export default class Login extends React.Component {
                       >
                         <TouchableOpacity
                           style={styles.nextBtn}
-                          onPress={() => this.toggleSignUp()}
+                          onPress={() => {
+                            this.axiosSignup();
+                            this.toggleSignUp();
+                          }}
                         >
                           <Text style={styles.loginText}>FINISH</Text>
                         </TouchableOpacity>
@@ -546,56 +698,67 @@ export default class Login extends React.Component {
             </>
           ) : (
             <>
-              <SignUp1 />
-              <View>
-                <Text style={styles.loginHeader}>Login to your account</Text>
-              </View>
-              <View style={styles.loginfield}></View>
-              <View style={styles.inputView}>
-                <TextInput
-                  value={this.state.email}
-                  style={styles.inputText}
-                  placeholder="Email Id."
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ email: text })}
-                  selectionColor="cyan"
-                />
-              </View>
-              {/* <View style={styles.line}></View> */}
-              <View style={styles.inputView}>
-                <TextInput
-                  secureTextEntry
-                  value={this.state.password}
-                  style={styles.inputText}
-                  placeholder="Password"
-                  placeholderTextColor="grey"
-                  onChangeText={text => this.setState({ password: text })}
-                />
-              </View>
-              {/* <View style={styles.line}></View> */}
+              <ScrollView>
+                <View
+                  style={{
+                    marginTop: 40,
+                    alignItems: "center",
+                    width: width,
+                    height: "100%",
+                  }}
+                >
+                  <SignUp1 />
+                  <Text style={styles.loginHeader}>Login to your account</Text>
+                  <View style={styles.loginfield}></View>
+                  <View style={styles.inputView}>
+                    <TextInput
+                      value={this.state.email}
+                      style={styles.inputText}
+                      placeholder="Email ID"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ email: text })}
+                      selectionColor="cyan"
+                    />
+                  </View>
+                  {/* <View style={styles.line}></View> */}
+                  <View style={styles.inputView}>
+                    <TextInput
+                      secureTextEntry
+                      value={this.state.password}
+                      style={styles.inputText}
+                      placeholder="Password"
+                      placeholderTextColor="grey"
+                      onChangeText={text => this.setState({ password: text })}
+                    />
+                  </View>
+                  {/* <View style={styles.line}></View> */}
 
-              <TouchableOpacity
-                onPress={() =>
-                  Alert.alert(
-                    "Under Developement",
-                    "The Developers are lazy :)"
-                  )
-                }
-              >
-                <Text style={styles.forgot}>Forgot Password?</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.loginBtn}
-                onPress={() => this.handleLogin()}
-              >
-                <Text style={styles.loginText}>GET STARTED</Text>
-              </TouchableOpacity>
-              <View style={styles.already1}>
-                <Text style={styles.already}>Don't have an account yet?</Text>
-                <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                  <Text style={styles.already2}> SIGN UP</Text>
-                </TouchableOpacity>
-              </View>
+                  {/* <TouchableOpacity
+                  onPress={() =>
+                    Alert.alert(
+                      "Under Developement",
+                      "The Developers are lazy :)"
+                    )
+                  }
+                >
+                  <Text style={styles.forgot}>Forgot Password?</Text>
+                </TouchableOpacity> */}
+                  <TouchableOpacity
+                    style={styles.loginBtn}
+                    onPress={() => this.handleLogin()}
+                  >
+                    <Text style={styles.loginText}>GET STARTED</Text>
+                  </TouchableOpacity>
+                  <View style={styles.already11}>
+                    <Text style={styles.already}>
+                      Don't have an account yet?
+                    </Text>
+                    <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                      <Text style={styles.already2}> SIGN UP</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </ScrollView>
             </>
           )}
         </View>
@@ -643,7 +806,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   dropDown: {
-    width: 265,
+    width: 295,
     backgroundColor: "#fff",
     color: "grey",
   },
@@ -658,6 +821,7 @@ const styles = StyleSheet.create({
   label: {
     color: "grey",
     fontSize: 18,
+    fontFamily: "",
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 18,
@@ -669,6 +833,7 @@ const styles = StyleSheet.create({
     borderColor: "rgba(46, 165, 221, 0.5724890232086182)",
   },
   inputView: {
+    height: 40,
     color: "rgba(159,159,159,1)",
     fontSize: 20,
     fontWeight: "400",
@@ -709,8 +874,8 @@ const styles = StyleSheet.create({
     height: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 60,
-    marginBottom: 15,
+    marginTop: 15,
+    marginBottom: 20,
   },
   signupBtn: {
     width: "65%",
@@ -736,6 +901,7 @@ const styles = StyleSheet.create({
     color: "white",
     fontSize: 16,
     fontWeight: "600",
+    fontFamily: "",
     zIndex: 0,
     // marginBottom: 100,
   },
@@ -758,6 +924,7 @@ const styles = StyleSheet.create({
     fontWeight: "300",
     fontStyle: "normal",
     // fontFamily: "Avenir",
+    fontFamily: "",
     lineHeight: 20,
     marginTop: 0,
     marginBottom: 50,
@@ -767,7 +934,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "300",
     fontStyle: "normal",
-    // fontFamily: "Avenir",
     lineHeight: 20,
     marginTop: 0,
     marginBottom: 50,
@@ -775,9 +941,15 @@ const styles = StyleSheet.create({
   loginfield: {
     marginTop: 30,
   },
+  already11: {
+    flexDirection: "row",
+    textAlign: "center",
+    marginBottom: 50,
+    marginTop: 10,
+  },
   already1: {
     flexDirection: "row",
-    alignItems: "center",
+    textAlign: "center",
   },
   textContainer: {
     width: "100%",
@@ -795,6 +967,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "rgba(46, 165, 221, 1)",
     fontWeight: "700",
+    fontFamily: "",
     marginTop: 92,
   },
 });

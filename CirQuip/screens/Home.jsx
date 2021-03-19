@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   StyleSheet,
@@ -9,14 +9,7 @@ import {
   Alert,
 } from "react-native";
 import { getStatusBarHeight } from "react-native-status-bar-height";
-import {
-  Appbar,
-  Title,
-  Surface,
-  Button,
-  Card,
-  Paragraph,
-} from "react-native-paper";
+import { Title, Button } from "react-native-paper";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import "../config";
@@ -26,7 +19,6 @@ const { width, height } = Dimensions.get("window");
 // #25f183
 export default function Home({ navigation }) {
   const [margin, setMargin] = useState(0);
-  let [data, setData] = useState([1, 2, 3, 4]);
   let [email, setemail] = useState("");
   const [verified, setVerified] = useState(false);
   const [assign, setassign] = React.useState(false);
@@ -242,7 +234,7 @@ export default function Home({ navigation }) {
           ) : (
             <></>
           )}
-          {email == global.config.admin ? (
+          {global.config.admin.includes(email) ? (
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate({

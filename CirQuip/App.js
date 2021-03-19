@@ -1,16 +1,13 @@
 import "react-native-gesture-handler";
 import * as React from "react";
 import "./config";
-import { Alert, AppState } from "react-native";
-import { NavigationContainer, useNavigation } from "@react-navigation/native";
+import { AppState, Alert } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import {
   DefaultTheme,
   Provider as PaperProvider,
-  Button,
-  Text,
   IconButton,
-  TextInput,
 } from "react-native-paper";
 import * as Linking from "expo-linking";
 import Login from "./screens/Login.jsx";
@@ -23,8 +20,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { DrawerContent } from "./screens/DrawerContent";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import NotifScreen from "./screens/NotifScreen.jsx";
-import * as SplashScreen from "expo-splash-screen";
-import SavedPosts from "./screens/SavedPosts";
 import OTP from "./screens/OTP";
 import { ChatWithAdmin } from "./screens/ChatWithAdmin";
 import { ChatWithUser } from "./screens/ChatWithUser";
@@ -33,14 +28,15 @@ import CreatePostCamera from "./screens/CreatePostCamera";
 import Product from "./screens/Product";
 import Shop from "./screens/Shop";
 import Splash from "./screens/splash";
-import Constants from "expo-constants";
 import * as Notifications from "expo-notifications";
 import * as RootNavigation from "./RootNavigation";
 import CreatePost from "./screens/CreatePost";
 import CreatePostImageBrowser from "./screens/CreatePostImageBrowser";
 import Posts from "./screens/Posts";
 import About from "./screens/About";
+import { Root, Toast } from "native-base";
 import url from "url";
+
 const checkNotif = notification => {
   const type = notification.request.content.data.type;
   if (type == "chat-admin" || type == "chat-user") {
@@ -100,6 +96,7 @@ export default function App() {
   const handleNotificationClicked = state => {
     setNotificationClicked(state);
   };
+  const useMountEffect = fun => React.useEffect(fun, []);
   const handleStateChange = nextAppState => {
     if (
       RootNavigation.appState.current.match(/inactive|background/) &&
@@ -116,28 +113,43 @@ export default function App() {
     }
     RootNavigation.appState.current = nextAppState;
   };
-  const parseCrossLinks = str => {
+  const parseCrossLinks = (str, start = false) => {
     if (!RootNavigation?.navigationRef) {
       Alert.alert("Something is fishy");
       return;
     }
-    console.log(str);
+    console.log("url string is", str);
     //let uri = url.parse(str["url"], true);
     //let path = uri.pathname;
     //let queryParams = { id: uri.query["id"] };
     //console.log(uri.pathname, uri.query["id"]);
+    str = str.url ? str.url : str;
     let { path, queryParams } = Linking.parse(str);
-    if (path.includes("posts")) {
+    if (str.includes("posts")) {
+      console.log("redirecting", path, queryParams, path.includes("posts"));
       let target = "notificationStack";
       let propsData = {
         data: { from: "links", uid: queryParams.id, type: "post" },
       };
-      RootNavigation.navigationRef &&
-        RootNavigation?.navigate(target, propsData);
+      setTimeout(
+        () => {
+          RootNavigation.navigate(target, propsData);
+        },
+        start ? 3000 : 0
+      );
       setDummyURL(url);
     } else if (path.includes("products")) {
     }
   };
+  useMountEffect(() => {
+    (async () => {
+      await Linking.getInitialURL().then(url => {
+        if (url && url !== dummyURL) {
+          parseCrossLinks(url, true);
+        }
+      });
+    })();
+  });
   React.useEffect(() => {
     Linking.addEventListener("url", parseCrossLinks);
     RootNavigation.notificationClicked.current = false;
@@ -193,7 +205,7 @@ export default function App() {
 
         RootNavigation.navigationRef.current.reset({
           index: 0,
-          routes: [{ name: "HomeDrawer" }],
+          routes: [{ name: "Home" }],
         });
         RootNavigation.navigate(target, propsData);
       }
@@ -222,8 +234,19 @@ export default function App() {
   const setVariables = async () => {
     const data = await AsyncStorage.getItem("user");
     setUser(data);
-    console.log("yo1");
-    setVerified(data.verified);
+    if (data) {
+      axios
+        .get(`${global.config.host}/user/getUserWithId/${user}`)
+        .then(res => {
+          setVerified(res.data.verified);
+        })
+        .catch(err => {
+          Toast.show("Something Went Wrong!", Toast.SHORT, [
+            "UIAlertController",
+          ]);
+          console.log(err);
+        });
+    }
   };
   const checkJWT = async () => {
     await AsyncStorage.getItem("cirquip-auth-token").then(async jwt => {
@@ -274,6 +297,7 @@ export default function App() {
       <SavedStack.Screen
         name="SavedPosts"
         component={Posts}
+        initialParams={{ verified: verified }}
         options={{
           title: "Saved Posts",
           headerRight: () => (
@@ -453,6 +477,7 @@ export default function App() {
               }}
             />
           ),
+          headerShown: false,
         }}
       />
     </SellProductsStack.Navigator>
@@ -514,7 +539,7 @@ export default function App() {
       <MyProductsStack.Screen
         name="MyProducts"
         component={Shop}
-        initialParams={{ type: "my" }}
+        initialParams={{ type: "my", verified: verified }}
         options={{
           title: "My Products",
           headerRight: () => (
@@ -528,11 +553,12 @@ export default function App() {
             />
           ),
           headerLeft: () => (
-            <MaterialCommunityIcons
-              name="menu"
-              size={26}
+            <IconButton
+              icon="arrow-left"
+              color="#287EC1"
+              size={30}
               onPress={() => {
-                navigation.openDrawer();
+                navigation.goBack();
               }}
             />
           ),
@@ -635,6 +661,7 @@ export default function App() {
       <HomeStack.Screen
         name="Posts"
         component={Posts}
+        initialParams={{ verified: verified }}
         options={{
           title: "Posts",
           headerRight: () => (
@@ -702,7 +729,7 @@ export default function App() {
       <HomeStack.Screen
         name="Posts"
         component={Posts}
-        initialParams={{ type: "my" }}
+        initialParams={{ type: "my", verified: verified }}
         options={{
           title: "Posts",
           headerRight: () => (
@@ -837,7 +864,7 @@ export default function App() {
       <ShopStack.Screen
         name="Shop"
         component={Shop}
-        initialParams={{ type: "all" }}
+        initialParams={{ type: "all", verified: verified }}
         options={{
           title: "Shop",
           headerRight: () => (
@@ -1048,6 +1075,10 @@ export default function App() {
               name="notificationStack"
               component={props => <NotifScreen {...props} />}
             />
+            <Drawer.Screen
+              name="CreatePost"
+              component={CreatePostStackScreen}
+            />
             <Drawer.Screen name="MyPosts" component={MyPostStackScreen} />
             <Drawer.Screen name="Shop" component={ShopStackScreen} />
             <Drawer.Screen name="ShopLiked" component={ShopLikedStackScreen} />
@@ -1083,108 +1114,4 @@ export default function App() {
   ) : (
     <Splash />
   );
-}
-
-{
-  /* <Stack.Navigator>
-          <Stack.Screen
-            name="Home"
-            component={Home}
-            options={{
-              ...stackOptions,
-              title: "CirQuip",
-            }}
-          />
-          <Stack.Screen
-            name="Published"
-            component={Published}
-            options={{
-              ...stackOptions,
-              title: "Product Published",
-            }}
-          />
-          <Stack.Screen
-            name="Sell"
-            component={Sell}
-            options={{
-              ...stackOptions,
-              title: "Selling Arena",
-            }}
-          />
-          <Stack.Screen
-            name="Shop"
-            component={Shop}
-            options={{
-              ...stackOptions,
-              title: "Store",
-            }}
-          />
-          <Stack.Screen
-            name="Posts"
-            component={Posts}
-            options={{
-              ...stackOptions,
-              title: "Posts",
-            }}
-          />
-          <Stack.Screen
-            name="SavedPosts"
-            component={SavedPosts}
-            options={{
-              ...stackOptions,
-              title: "Posts",
-            }}
-          />
-          <Stack.Screen
-            name="Product"
-            component={Product}
-            options={{
-              ...stackOptions,
-            }}
-          />
-          <Stack.Screen
-            name="CreatePostImageBrowser"
-            component={CreatePostImageBrowser}
-            options={{
-              title: "Select files",
-            }}
-          />
-          <Stack.Screen
-            name="Camera"
-            component={CreatePostCamera}
-            options={{
-              title: "Capture Image",
-            }}
-          />
-          <Stack.Screen
-            name="CreatePost"
-            component={CreatePost}
-            options={{
-              ...stackOptions,
-              title: "Create Post",
-            }}
-          />
-          <Stack.Screen
-            name="Profile"
-            component={Profile2}
-            options={{ ...stackOptions, title: "Profile" }}
-          />
-          <Stack.Screen
-            name="ChatWithAdmin"
-            component={ChatWithAdmin}
-            options={{
-              ...stackOptions,
-              title: "ChatBox",
-            }}
-          />
-          <Stack.Screen
-            name="ChatWithUser"
-            component={ChatWithUser}
-            options={{
-              ...stackOptions,
-              title: "Chat With User",
-            }}
-          />
-          <Stack.Screen name="OTP" component={OTP} />
-        </Stack.Navigator> */
 }

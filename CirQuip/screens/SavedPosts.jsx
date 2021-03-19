@@ -5,21 +5,17 @@ import {
   Image,
   StyleSheet,
   View,
-  Text,
   StatusBar,
   Modal,
   TextInput,
   TouchableOpacity,
-  TouchableHighlight,
 } from "react-native";
-import { Card } from "react-native-material-cards";
 import PostsCarousel from "../components/PostsCarousel";
 import axios from "axios";
 import Comment from "../components/Comment";
 
-import Post from "../components/Post";
 import Loader from "./Loader";
-import { MaterialIcons, Ionicons, AntDesign } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 

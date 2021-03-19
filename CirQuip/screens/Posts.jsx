@@ -7,9 +7,6 @@ import {
   TextInput,
   ScrollView,
   Alert,
-  Text,
-  TouchableHighlight,
-  Button,
 } from "react-native";
 import { SafeAreaView, StyleSheet, View } from "react-native";
 import Toast from "react-native-simple-toast";
@@ -28,6 +25,7 @@ export default function Posts(props) {
   const [data, setData] = useState([]);
   let savedData = [];
   let postData = [];
+  const [verified, setVerified] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [CCPIndex, setCCPIndex] = useState(null);
@@ -35,8 +33,6 @@ export default function Posts(props) {
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [users, setUsers] = useState([]);
-  const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
   const [originaldata, setoriginaldata] = useState([]);
@@ -69,6 +65,7 @@ export default function Posts(props) {
   // }, [navigation]);
 
   useEffect(() => {
+    setVerified(route?.params?.verified);
     console.log("in url", props);
     fetchData();
   }, []);
@@ -191,14 +188,6 @@ export default function Posts(props) {
         .catch(err => {
           console.log(err);
         });
-
-      axios
-        .get(`${global.config.host}/user/getUsers`)
-        .then(res => {
-          setUsers(res.data.users);
-          setRequiredUsers(res.data.users);
-        })
-        .catch(e => console.log(e));
     }
   };
 
@@ -331,8 +320,10 @@ export default function Posts(props) {
             style={{ ...styles.Icons, marginTop: 20 }}
             size={28}
             onPress={() => {
-              setModalOpen(false);
+              setCommentText(null);
               setComments([]);
+              onRefresh(true);
+              setModalOpen(false);
             }}
           />
         </View>
@@ -443,12 +434,20 @@ export default function Posts(props) {
             name="plus"
             style={{ ...styles.create }}
             onPress={() => {
-              navigation.navigate("CreatePost");
+              if (verified) {
+                navigation.navigate("CreatePost");
+              } else {
+                Toast.show(
+                  "Please verify your email ID to CirQuip!",
+                  Toast.SHORT,
+                  ["UIAlertController"]
+                );
+              }
             }}
           />
         </View>
         <View style={styles.container3}>
-          {email == global.config.admin ? (
+          {global.config.admin.includes(email) ? (
             <Ionicons
               name="md-chatbubble-ellipses"
               style={{ ...styles.chat }}
@@ -550,32 +549,32 @@ const styles = StyleSheet.create({
   },
   cart: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 5,
     color: "#2ba4db",
   },
   chat: {
     alignSelf: "center",
-    fontSize: 40,
+    fontSize: 30,
     marginTop: 2,
     marginLeft: 2,
     color: "#2ba4db",
   },
   create: {
     alignSelf: "center",
-    fontSize: 80,
+    fontSize: 60,
     marginTop: 5,
     color: "#2ba4db",
   },
 
   container1: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    left: 10,
+    left: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",
@@ -584,26 +583,26 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   container2: {
-    height: 90,
-    width: 90,
+    height: 70,
+    width: 70,
     borderRadius: 45,
     backgroundColor: "white",
     position: "absolute",
     alignSelf: "center",
-    bottom: 50,
+    bottom: 55,
     paddingBottom: 40,
     shadowColor: "#36b5a5",
     shadowOpacity: 1,
     elevation: 6,
   },
   container3: {
-    width: 70,
-    height: 70,
+    width: 60,
+    height: 60,
     padding: 10,
     margin: 10,
     // borderRadius:40,
     position: "absolute",
-    right: 10,
+    right: 20,
     bottom: 5,
     borderRadius: 35,
     backgroundColor: "white",

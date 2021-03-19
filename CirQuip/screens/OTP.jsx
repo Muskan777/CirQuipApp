@@ -10,13 +10,15 @@ import {
 import axios from "axios";
 import Toast from "react-native-simple-toast";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { TabRouter } from "react-navigation";
+import { Dimensions } from "react-native";
 
-export default function OTP({ email, navigation, onPageChange }) {
+export default function OTP({ email, navigation, onPageChange, route }) {
   const [otp, setOTP] = useState("");
   const [id, setId] = useState("");
-  const [mailId, setMailId] = useState(email);
+  const [mailId, setMailId] = useState(email ? email : route.params.email);
   const [validOTP, setValidOTP] = useState(email);
-
+  console.log(id + " " + mailId);
   useEffect(() => {
     if (mailId === undefined) {
       AsyncStorage.getItem("user").then(id => {
@@ -24,7 +26,7 @@ export default function OTP({ email, navigation, onPageChange }) {
         getData(id);
       });
     } else {
-      getDataMail(email);
+      getDataMail(mailId);
     }
   }, []);
 
@@ -111,7 +113,7 @@ export default function OTP({ email, navigation, onPageChange }) {
   return (
     <View style={styles.container}>
       <Text style={styles.top1}>An OTP has been sent to</Text>
-      <Text style={styles.top2}>{email}</Text>
+      <Text style={styles.top2}>{mailId}</Text>
       <TextInput
         style={styles.inputView}
         placeholder="Enter OTP"
@@ -139,7 +141,7 @@ export default function OTP({ email, navigation, onPageChange }) {
           }
         }}
       >
-        <Text style={{ color: "grey", marginTop: 50 }}>Skip</Text>
+        <Text style={{ color: "grey", marginTop: 50, fontSize: 16 }}>Skip</Text>
       </TouchableOpacity>
     </View>
   );
@@ -147,11 +149,11 @@ export default function OTP({ email, navigation, onPageChange }) {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: "60%",
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    width: "auto",
+    flex: 1,
+    height: Dimensions.get("window").height,
   },
   top1: {
     fontSize: 30,
@@ -215,6 +217,7 @@ const styles = StyleSheet.create({
   loginText: {
     color: "white",
     fontSize: 16,
+    fontFamily: "",
     fontWeight: "700",
     // marginBottom: 100,
   },

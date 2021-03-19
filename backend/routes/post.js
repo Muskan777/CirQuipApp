@@ -25,7 +25,7 @@ router.route("/getPosts").get(auth, (req, res) => {
             }
           }
         });
-        console.log(arr);
+        // console.log(arr);
         res.status(200).send({ post: arr });
       })
       .catch(err => res.status(400).json("Error: " + err));
@@ -35,8 +35,8 @@ router.route("/getPosts").get(auth, (req, res) => {
 });
 
 router.route("/reportPost").post(auth, (req, res) => {
-  console.log("Report");
-  console.log(req.body.email);
+  // console.log("Report");
+  // console.log(req.body.email);
   var transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 465,
@@ -238,7 +238,7 @@ router.route("/updatePost").patch(async (req, res) => {
 router.route("/likePost").patch(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
-    console.log(Object.keys(post));
+    // console.log(Object.keys(post));
     const userId = post._doc.userId;
     const title = post._doc.caption;
     if (!post) {
@@ -435,7 +435,12 @@ router.route("/deletePost").post(auth, async (req, res) => {
         return res.status(400).json("could not delete images");
       }
       Post.findByIdAndDelete(req.body.id)
-        .then(() => res.status(200).send("Post deleted"))
+        .then(() => {
+          post._doc.comments.forEach(async comment => {
+            await Comment.findByIdAndDelete(comment);
+          });
+          res.status(200).send("Post deleted");
+        })
         .catch(err => res.status(400).send("Error:" + err));
     } else {
       return res.status(400).send("Unauthorized deletion requested");

@@ -1,26 +1,18 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  FlatList,
   Image,
-  Modal,
   TouchableOpacity,
   TextInput,
   ScrollView,
   Alert,
-  Text,
 } from "react-native";
-import { SafeAreaView, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import axios from "axios";
 import PostsCarousel from "../components/PostsCarousel";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { IconButton } from "react-native-paper";
-import { handleLogout } from "./AppNavigator";
 import { MaterialIcons } from "@expo/vector-icons";
-import * as RootNavigation from "../RootNavigation";
-import * as Notifications from "expo-notifications";
-import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 export default function CommentWrapper(props) {
   const [isLoading, setLoading] = useState(true);
@@ -28,7 +20,6 @@ export default function CommentWrapper(props) {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState([]);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [key, setKey] = useState(false);
   const [userImage, setUserImage] = useState("");
   const scroll = React.useRef();
   const navigation = useNavigation();
@@ -179,6 +170,7 @@ export default function CommentWrapper(props) {
                   role={item.userRole}
                   time={item.createdAt}
                   likes={item.likes}
+                  setCommentText={setCommentText}
                 />
               );
             })}
