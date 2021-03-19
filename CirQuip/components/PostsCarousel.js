@@ -537,15 +537,10 @@ export default function PostCarousel({
             isMuted={false}
             resizeMode="cover"
             // isLooping
-            usePoster
             posterStyle={{
               width: 60,
               marginLeft: Dimensions.get("window").width / 2 - 60,
               justifyContent: "center",
-            }}
-            posterSource={{
-              uri:
-                "https://cutewallpaper.org/21/loading-gif-transparent-background/My-Principal-Lifestyle.gif",
             }}
             shouldPlay={false}
             useNativeControls
