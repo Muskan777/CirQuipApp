@@ -309,6 +309,7 @@ export default function Posts(props) {
             />
           )}
           keyExtractor={item => item._id}
+          contentContainerStyle={{ paddingBottom: "35%" }}
           onRefresh={() => onRefresh(true)}
           refreshing={isRefreshing}
         />

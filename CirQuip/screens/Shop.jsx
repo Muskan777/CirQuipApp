@@ -481,6 +481,7 @@ export default class Shop extends React.Component {
                   renderItem={item => this.renderItemComponent(item)}
                   keyExtractor={item => item._id}
                   //ItemSeparatorComponent={this.ItemSeparator}
+                  contentContainerStyle={{ paddingBottom: "35%" }}
                   refreshing={this.state.refreshing}
                   onRefresh={this.handleRefresh}
                   style={{ marginBottom: "25%" }}
