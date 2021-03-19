@@ -268,4 +268,5 @@ router.post("/sell/:productId", auth, async (req, resp) => {
     return resp.status(400).json(err);
   }
 });
+
 module.exports = router;

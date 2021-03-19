@@ -276,11 +276,11 @@ export default function PostCarousel({
   //     .catch(e => console.log(e));
   // };
   const handleShare = async () => {
-    let redirectUrl = Linking.createURL("posts", {
-      queryParams: { id: postId },
-    });
-    console.log(redirectUrl);
-
+    // let redirectUrl = Linking.createURL("posts", {
+    //   queryParams: { id: postId },
+    // });
+    // console.log(redirectUrl);
+    let redirectUrl = `https://app.cirquip.com/posts?id=${postId}`;
     try {
       const result = await Share.share({
         message: `Check out ${name}'s post! \n${caption}\n${redirectUrl}`,
