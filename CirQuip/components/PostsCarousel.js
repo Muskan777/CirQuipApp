@@ -356,7 +356,7 @@ export default function PostCarousel({
     setTextShown(!textShown);
   };
   const onTextLayout = React.useCallback(e => {
-    setLengthMore(e.nativeEvent.lines.length >= 4); //to check the text is more than 4 lines or not
+    setLengthMore(e.nativeEvent.lines.length > 4); //to check the text is more than 4 lines or not
     // console.log(e.nativeEvent);
   }, []);
 
@@ -507,11 +507,16 @@ export default function PostCarousel({
           {lengthMore ? (
             <Text
               onPress={toggleNumberOfLines}
-              style={{ lineHeight: 21, marginTop: 10 }}
+              style={{
+                lineHeight: 21,
+                marginTop: 10,
+                fontWeight: "bold",
+                color: "#2ea5dd",
+              }}
               selectable={true}
               selectionColor="#2ea5dd"
             >
-              {textShown ? "Read less..." : "Read more..."}
+              {textShown ? "...less" : "...more"}
             </Text>
           ) : null}
         </View>
