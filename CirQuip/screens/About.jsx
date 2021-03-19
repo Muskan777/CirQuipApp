@@ -21,26 +21,18 @@ export default function About() {
           resizeMode="contain"
         />
         <Text style={styles.about}>
-          At CirQuip, we connect, share and provide resources among the college
-          community. The Students, Professors and Alumnus having different
-          experiences and opportunities to share are provided an interactive
-          platform here to share their knowledge. CirQuip links the integral
-          part of any college i.e. their Technical and Non-Technical clubs
-          sharing their achievements and know-how among the college crowd.
-          CirQuip is instrumental in removing the communication barrier between
-          seniors, juniors and professors to construct necessary interaction to
-          share their experiences as whole. Our knowledge is unserviceable
-          without a college network to help it reach out and this is where
-          CirQuip focuses to support and encourage the college community to
-          outspread its knowledge and resources.{"\n"} CirQuip stands out
-          differently with its buy and sell feature, a platform created to sell
-          or rent your goods within the college itself!{"\n"} CirQuip aims to
-          answer your every query related to your college, projects, general
-          questions, etc. through our support feature. CirQuip creates a whole
-          new world for the students’ community, to experience what you haven’t
-          explored yet! {"\n"} Next time, when you have any questions related to
-          your College, Project, Placement or guidance... CirQuip it!{"\n"}
-          {"\n"}Website :{" "}
+          At CirQuip, we connect you with your college remotely. It is an
+          authenticated and college specific platform where you connect with
+          your Alumni, Clubs, Professors and Students. We assist you with our
+          e-commerce feature where you Buy and Sell college-necessary goods. We
+          build a bridge between You and Your Alumni, thereby allowing you to
+          access the knowledge and experience they never had in their college
+          days.{"\n"}So, head over to explore, Click the Create icon and start
+          sharing your projects/knowledge/thoughts/skills and so much more!{" "}
+          {"\n"}You have an opportunity waiting for You!
+          {"\n"}
+          {"\n"}
+          <Text style={{ fontWeight: "bold" }}>Website :</Text>{" "}
           <Text
             style={{ color: "#2ea5dd" }}
             onPress={() => {
@@ -49,7 +41,8 @@ export default function About() {
           >
             www.cirquip.com{" "}
           </Text>{" "}
-          {"\n"}E-mail :{" "}
+          {"\n"}
+          <Text style={{ fontWeight: "bold" }}>E-mail :</Text>{" "}
           <Text
             style={{ color: "#2ea5dd" }}
             onPress={() => {
@@ -59,9 +52,11 @@ export default function About() {
             cirquip@gmail.com{" "}
           </Text>{" "}
           {"\n"}
-          {"\n"}Credits : {"\n"}
+          {"\n"}
+          <Text style={{ fontWeight: "bold" }}>Credits :</Text>
           {"\n"}Application development with Software Development Section, COEP
-          ( SDS, COEP ) {"\n"}Website :
+          ( SDS, COEP ) {"\n"}
+          <Text style={{ fontWeight: "bold" }}>Website :</Text>
           <Text
             style={{ color: "#2ea5dd" }}
             onPress={() => {
@@ -71,7 +66,8 @@ export default function About() {
             sdscoep.codes{" "}
           </Text>{" "}
           {"\n"}
-          {"\n"}Design : {"\n"}
+          {"\n"}
+          <Text style={{ fontWeight: "bold" }}>Design :</Text>
           {"\n"}Priyanka Sahoo {"\n"}E-mail :{" "}
           <Text
             style={{ color: "#2ea5dd" }}
@@ -110,7 +106,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   about: {
-    color: "#888",
+    color: "#666",
     fontSize: 17,
     marginHorizontal: 25,
   },
