@@ -12,6 +12,5 @@ global.config = {
     "cirquip_a2@yahoo.com",
     "cirquip_a3@outlook.com",
     "cirquip_a4@outlook.com",
-    "aniketj18.instru@coep.ac.in",
   ],
 };
