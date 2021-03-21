@@ -224,7 +224,7 @@ export default function Posts(props) {
       })
       .catch(err => {
         console.log(err.response.data);
-        Alert.alert("Error", err.response.data);
+        Toast.show("Empty Comment!", Toast.SHORT, ["UIAlertController"]);
       });
   };
   const searchFunction = () => {
@@ -309,6 +309,7 @@ export default function Posts(props) {
             />
           )}
           keyExtractor={item => item._id}
+          contentContainerStyle={{ paddingBottom: "35%" }}
           onRefresh={() => onRefresh(true)}
           refreshing={isRefreshing}
         />

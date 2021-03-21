@@ -492,6 +492,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
+    backgroundColor: "#fff",
     paddingTop: Platform.OS === "android" ? 25 : 0,
   },
   ProfileImage: {

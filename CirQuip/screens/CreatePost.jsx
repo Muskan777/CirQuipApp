@@ -176,7 +176,6 @@ export default function CreatePost(props) {
 
   useEffect(() => {
     const { params } = props.route;
-    // console.log(props.route);
     if (params) {
       const { images } = params;
       if (images) setPhotos(images);

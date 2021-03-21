@@ -18,7 +18,6 @@ const Comment = ({
   userId,
   onRefresh,
   setModalOpen,
-  setCommentText,
 }) => {
   const [commentLiked, setCommentLiked] = useState(false);
   const [currlikes, setcurrlikes] = useState(likes.length);
@@ -71,11 +70,7 @@ const Comment = ({
       setCommentLiked(true);
     }
   };
-  const handleExit = () => {
-    onRefresh(true);
-    setCommentText(null);
-    setModalOpen(false);
-  };
+
   const handleCommentLikes = async () => {
     let nlikes;
     if (commentLiked) {
@@ -126,7 +121,7 @@ const Comment = ({
         setDeleted(true);
         setLoading(false);
         Toast.show("Comment Deleted", Toast.SHORT, ["UIAlertController"]);
-        handleExit();
+        setModalOpen(false);
       })
       .catch(e => console.log(e));
   };

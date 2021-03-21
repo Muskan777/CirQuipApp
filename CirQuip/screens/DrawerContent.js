@@ -309,6 +309,16 @@ export function DrawerContent({ handleLogout, navigation, ...props }) {
           </View>
         </DrawerContentScrollView>
       )}
+      <Drawer.Section style={styles.bottomDrawerSection}>
+        <Avatar.Image
+          style={styles.ProfileImage}
+          source={require("../assets/asset2.png")}
+        />
+        <View style={{ marginLeft: 15, flexDirection: "column" }}>
+          <Title style={styles.title1}>CirQuip</Title>
+          <Caption style={styles.caption}>Developed By SDS COEP</Caption>
+        </View>
+      </Drawer.Section>
     </View>
   );
 }
@@ -325,6 +335,12 @@ const styles = StyleSheet.create({
     marginTop: 3,
     fontWeight: "bold",
   },
+  title1: {
+    fontSize: 16,
+    marginTop: 3,
+    backgroundColor: "rgba(255, 255, 255, 0)",
+    color: "rgba(46, 165, 221, 1)",
+  },
   caption: {
     fontSize: 14,
     lineHeight: 14,
@@ -333,6 +349,10 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: "row",
     alignItems: "center",
+  },
+  ProfileImage: {
+    marginTop: 5,
+    marginLeft: 5,
   },
   Icons: {
     fontSize: 25,
@@ -355,6 +375,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderTopColor: "#f4f4f4",
     borderTopWidth: 1,
+    flexDirection: "row",
   },
   preference: {
     flexDirection: "row",
