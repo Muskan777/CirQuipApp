@@ -17,10 +17,32 @@ export default class NotifScreen extends React.Component {
       refresh: false,
       data: data,
       component: {
-        post: () => <Posts {...data} />,
-        comment: () => <CommentWrapper {...data} />,
-        "comment-like": () => <CommentWrapper {...data} />,
-        product: props => <Product {...data} {...props} />,
+        post: () => (
+          <Posts
+            {...{ from: "notification", ...this.props.route.params.data }}
+            key={this.props.route.params.data.uid}
+          />
+        ),
+        comment: () => (
+          <CommentWrapper
+            {...{ from: "notification", ...this.props.route.params.data }}
+            key={this.props.route.params.data.uid}
+          />
+        ),
+        "comment-like": () => (
+          <CommentWrapper
+            {...{ from: "notification", ...this.props.route.params.data }}
+            key={this.props.route.params.data.uid}
+          />
+        ),
+        product: props => (
+          <Product
+            {...{ from: "notification", ...this.props.route.params.data }}
+            key={this.props.route.params.data.uid}
+            {...props}
+            key={this.props.route.params.data.uid}
+          />
+        ),
       },
     };
   }
@@ -31,6 +53,7 @@ export default class NotifScreen extends React.Component {
   render() {
     return (
       <NotificationStack.Navigator
+        key={this.props.route.params?.data.uid}
         screenOptions={{
           headerTitleStyle: {
             fontSize: 20,
@@ -41,12 +64,12 @@ export default class NotifScreen extends React.Component {
         }}
       >
         <NotificationStack.Screen
-          key={this.state.refresh}
           name={
             this.state.data.from === "notification"
               ? "Notification"
               : this.prepare(this.state.data.type)
           }
+          key={this.props.route.params?.data.uid}
           component={this.state.component[this.state.data.type]}
           initialParams={{ data: this.state.data }}
           options={{
