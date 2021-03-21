@@ -70,10 +70,7 @@ const Comment = ({
       setCommentLiked(true);
     }
   };
-  const handleExit = () => {
-    onRefresh(true);
-    setModalOpen(false);
-  };
+
   const handleCommentLikes = async () => {
     let nlikes;
     if (commentLiked) {
@@ -124,7 +121,7 @@ const Comment = ({
         setDeleted(true);
         setLoading(false);
         Toast.show("Comment Deleted", Toast.SHORT, ["UIAlertController"]);
-        handleExit();
+        setModalOpen(false);
       })
       .catch(e => console.log(e));
   };

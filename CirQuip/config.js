@@ -6,7 +6,7 @@ global.config = {
   debug: true,
   host: __DEV__
     ? "http://" + Constants.default.manifest.hostUri.split(":")[0] + ":3000/api"
-    : "http://15.207.85.98/api",
+    : "https://api.cirquip.com",
   admin: [
     "cirquip_a1@yahoo.com",
     "cirquip_a2@yahoo.com",

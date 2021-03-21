@@ -120,9 +120,16 @@ export default class Login extends React.Component {
     this.setState({ currentPosition: position });
   };
 
-  async handleSignUp() {
+  handlepageone() {
     if (this.state.firstname.trim() === "") {
-      Toast.show("Name Error, Name cannot be empty", Toast.SHORT, [
+      Toast.show("First Name cannot be empty", Toast.SHORT, [
+        "UIAlertController",
+      ]);
+      return 1;
+    }
+
+    if (this.state.lastname.trim() === "") {
+      Toast.show("Last Name cannot be empty", Toast.SHORT, [
         "UIAlertController",
       ]);
       return 1;
@@ -131,18 +138,43 @@ export default class Login extends React.Component {
     var phoneno = /^\d{10}$/;
 
     if (!this.state.phone.match(phoneno)) {
-      Toast.show("Phone error, Enter a valid phone number", Toast.SHORT, [
+      Toast.show("Enter a valid phone number", Toast.SHORT, [
         "UIAlertController",
       ]);
       return 1;
     }
 
     if (this.state.password !== this.state.password2) {
-      Toast.show("Error, Passwords Don't Match", Toast.SHORT, [
+      Toast.show("Passwords Don't Match", Toast.SHORT, ["UIAlertController"]);
+      return 1;
+    }
+
+    if (this.state.termsAgreed) {
+      this.onPageChange(1);
+    } else {
+      Alert.alert(
+        "Terms and Conditions",
+        "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
+      );
+    }
+  }
+
+  pickervalidation() {
+    if (!this.state.role) {
+      Toast.show("Please enter your role", Toast.SHORT, ["UIAlertController"]);
+      return 1;
+    }
+    if (!this.state.college) {
+      Toast.show("Please enter your college", Toast.SHORT, [
         "UIAlertController",
       ]);
       return 1;
     }
+    this.onPageChange(2);
+    return 0;
+  }
+
+  async handleSignUp() {
     let collegeName = this.state.college;
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
@@ -268,131 +300,130 @@ export default class Login extends React.Component {
   }
   render() {
     return (
-      <ScrollView>
-        <View style={styles.container}>
+      <ScrollView style={styles.containerWrapper}>
+        <View style={{ ...styles.container, flex: 1 }}>
           {this.state.toggleSignUp ? (
             <>
               {this.state.currentPosition === 0 ? (
-                <>
-                  <SignUp1 />
-                  <Text style={styles.createAcc}>Create account</Text>
-                  <View style={styles.inputView}>
-                    <TextInput
-                      value={this.state.firstname}
-                      style={styles.inputText}
-                      placeholder="First Name"
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ firstname: text })}
-                    />
-                  </View>
-                  <View style={styles.inputView}>
-                    <TextInput
-                      value={this.state.lastname}
-                      style={styles.inputText}
-                      placeholder="Last Name"
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ lastname: text })}
-                    />
-                  </View>
-                  {/* <View style={styles.line}></View> */}
-                  {/* <View style={styles.inputView}>
-                    <TextInput
-                      value={this.state.email}
-                      style={styles.inputText}
-                      textContentType={"emailAddress"}
-                      placeholder="Email..."
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ email: text })}
-                    />
-                  </View> */}
-                  {/* <View style={styles.line}></View> */}
-
-                  {/* <View style={styles.line}></View> */}
-                  <View style={styles.inputView}>
-                    <TextInput
-                      value={this.state.password}
-                      secureTextEntry
-                      style={styles.inputText}
-                      placeholder="Password"
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ password: text })}
-                    />
-                  </View>
-                  {/* <View style={styles.line}></View> */}
-                  <View style={styles.inputView}>
-                    <TextInput
-                      value={this.state.password2}
-                      secureTextEntry
-                      style={styles.inputText}
-                      placeholder="Confirm Password"
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ password2: text })}
-                    />
-                  </View>
-                  {/* <View style={styles.line}></View> */}
-                  <View style={styles.inputView}>
-                    <TextInput
-                      maxLength={10}
-                      value={this.state.phone}
-                      textContentType={"telephoneNumber"}
-                      keyboardType={"phone-pad"}
-                      style={styles.inputText}
-                      placeholder="Mobile no."
-                      placeholderTextColor="grey"
-                      onChangeText={text => this.setState({ phone: text })}
-                    />
-                  </View>
+                <ScrollView
+                  style={{
+                    width: "100%",
+                  }}
+                >
                   <View
                     style={{
-                      flexDirection: "row",
+                      flex: 1,
                       alignItems: "center",
-                      marginTop: 20,
+                      justifyContent: "center",
                     }}
                   >
-                    <Checkbox
-                      status={this.state.termsAgreed ? "checked" : "unchecked"}
-                      color="#2ea5dd"
-                      onPress={() => {
-                        let curr = this.state.termsAgreed;
-                        this.setState({ termsAgreed: !curr });
+                    <SignUp1 />
+                    <Text style={styles.createAcc}>Create account</Text>
+                    <View style={styles.inputView}>
+                      <TextInput
+                        value={this.state.firstname}
+                        style={styles.inputText}
+                        placeholder="First Name"
+                        placeholderTextColor="grey"
+                        onChangeText={text =>
+                          this.setState({ firstname: text })
+                        }
+                      />
+                    </View>
+                    <View style={styles.inputView}>
+                      <TextInput
+                        value={this.state.lastname}
+                        style={styles.inputText}
+                        placeholder="Last Name"
+                        placeholderTextColor="grey"
+                        onChangeText={text => this.setState({ lastname: text })}
+                      />
+                    </View>
+                    <View style={styles.inputView}>
+                      <TextInput
+                        value={this.state.password}
+                        secureTextEntry
+                        style={styles.inputText}
+                        placeholder="Password"
+                        placeholderTextColor="grey"
+                        onChangeText={text => this.setState({ password: text })}
+                      />
+                    </View>
+                    {/* <View style={styles.line}></View> */}
+                    <View style={styles.inputView}>
+                      <TextInput
+                        value={this.state.password2}
+                        secureTextEntry
+                        style={styles.inputText}
+                        placeholder="Confirm Password"
+                        placeholderTextColor="grey"
+                        onChangeText={text =>
+                          this.setState({ password2: text })
+                        }
+                      />
+                    </View>
+                    {/* <View style={styles.line}></View> */}
+                    <View style={styles.inputView}>
+                      <TextInput
+                        maxLength={10}
+                        value={this.state.phone}
+                        textContentType={"telephoneNumber"}
+                        keyboardType={"phone-pad"}
+                        style={styles.inputText}
+                        placeholder="Mobile no."
+                        placeholderTextColor="grey"
+                        onChangeText={text => this.setState({ phone: text })}
+                      />
+                    </View>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "center",
+                        marginTop: 20,
                       }}
-                    />
-                    <Text>
-                      I agree to the{" "}
-                      <Text
-                        style={{ color: "#2ea5dd" }}
+                    >
+                      <Checkbox
+                        status={
+                          this.state.termsAgreed ? "checked" : "unchecked"
+                        }
+                        color="#2ea5dd"
                         onPress={() => {
-                          Linking.openURL(
-                            "https://www.cirquip.com/termsandconditions"
-                          );
+                          let curr = this.state.termsAgreed;
+                          this.setState({ termsAgreed: !curr });
                         }}
-                      >
-                        Terms and Conditions
+                      />
+                      <Text>
+                        I agree to the{" "}
+                        <Text
+                          style={{ color: "#2ea5dd" }}
+                          onPress={() => {
+                            Linking.openURL(
+                              "https://www.cirquip.com/termsandconditions"
+                            );
+                          }}
+                        >
+                          Terms and Conditions
+                        </Text>
                       </Text>
-                    </Text>
-                  </View>
-                  <TouchableOpacity
-                    style={[styles.signupBtn, { marginBottom: 20 }]}
-                    onPress={() => {
-                      if (this.state.termsAgreed) {
-                        this.onPageChange(1);
-                      } else {
-                        Alert.alert(
-                          "Terms and Conditions",
-                          "Please agree to the terms and conditions to continue. The detailed terms and conditions are available at www.cirquip.com/termsandconditions"
-                        );
-                      }
-                    }}
-                  >
-                    <Text style={styles.loginText}>SIGN UP</Text>
-                  </TouchableOpacity>
-                  <View style={styles.already1}>
-                    <Text style={styles.already}>Already have an account?</Text>
-                    <TouchableOpacity onPress={() => this.toggleSignUp()}>
-                      <Text style={styles.already2}> SIGN IN</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={[styles.signupBtn, { marginBottom: 20 }]}
+                      onPress={() => {
+                        this.handlepageone();
+                      }}
+                    >
+                      <Text style={styles.loginText}>SIGN UP</Text>
                     </TouchableOpacity>
+                    <View style={styles.already1}>
+                      <Text style={styles.already}>
+                        Already have an account?
+                      </Text>
+                      <TouchableOpacity onPress={() => this.toggleSignUp()}>
+                        <Text style={styles.already2}> SIGN IN</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
-                </>
+                </ScrollView>
               ) : this.state.currentPosition === 1 ? (
                 <>
                   <View
@@ -414,7 +445,7 @@ export default class Login extends React.Component {
                           { label: "Alumnus", value: "Alumnus" },
                           { label: "Club", value: "Club" },
                         ]}
-                        defaultNull
+                        defaultValue={this.state.role}
                         placeholder="Account Type"
                         dropDownMaxHeight={130}
                         selectedLabelStyle={{
@@ -450,12 +481,12 @@ export default class Login extends React.Component {
                           { label: "VU", value: "VU" },
                           { label: "IIIT Pune", value: "IIIT Pune" },
                         ]}
-                        defaultNull
                         placeholder="College Name"
                         dropDownMaxHeight={130}
                         selectedLabelStyle={{
                           color: "grey",
                         }}
+                        defaultValue={this.state.college}
                         containerStyle={styles.dropContainer}
                         placeholderStyle={styles.placeholder}
                         dropDownStyle={styles.dropDown}
@@ -477,7 +508,9 @@ export default class Login extends React.Component {
                     </TouchableOpacity>
                     <TouchableOpacity
                       style={styles.nextBtn}
-                      onPress={() => this.onPageChange(2)}
+                      onPress={() => {
+                        this.pickervalidation();
+                      }}
                     >
                       <Text style={styles.loginText}>NEXT</Text>
                     </TouchableOpacity>
@@ -741,15 +774,19 @@ export default class Login extends React.Component {
 }
 
 const styles = StyleSheet.create({
+  containerWrapper: {
+    flex: 1,
+    backgroundColor: "#fff",
+  },
   container: {
     backgroundColor: "white",
     alignItems: "center",
     justifyContent: "center",
-    height: "100%",
-    //height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height,
   },
   createAcc: {
     marginTop: 15,
+    fontFamily: "",
     marginBottom: 15,
     fontSize: 23,
     color: "rgba(112, 112, 112, 1)",
@@ -779,7 +816,7 @@ const styles = StyleSheet.create({
     lineHeight: 28,
   },
   dropDown: {
-    width: 265,
+    width: 295,
     backgroundColor: "#fff",
     color: "grey",
   },
@@ -794,6 +831,7 @@ const styles = StyleSheet.create({
   label: {
     color: "grey",
     fontSize: 18,
+    fontFamily: "",
     fontStyle: "normal",
     fontWeight: "400",
     lineHeight: 18,

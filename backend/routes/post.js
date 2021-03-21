@@ -435,7 +435,12 @@ router.route("/deletePost").post(auth, async (req, res) => {
         return res.status(400).json("could not delete images");
       }
       Post.findByIdAndDelete(req.body.id)
-        .then(() => res.status(200).send("Post deleted"))
+        .then(() => {
+          post._doc.comments.forEach(async comment => {
+            await Comment.findByIdAndDelete(comment);
+          });
+          res.status(200).send("Post deleted");
+        })
         .catch(err => res.status(400).send("Error:" + err));
     } else {
       return res.status(400).send("Unauthorized deletion requested");

@@ -25,6 +25,7 @@ export default class Shop extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      products: [],
       data: [],
       refreshing: true,
       searchQuery: "",
@@ -101,6 +102,7 @@ export default class Shop extends React.Component {
           { id: id }
         )
         .then(res => {
+          this.setState({ products: res.data });
           this.setState({ data: res.data });
           this.setState({ refreshing: false });
           this.setState({ isLoading: false });
@@ -418,11 +420,19 @@ export default class Shop extends React.Component {
                 fontSize: 18,
                 maxHeight: "100%",
               }}
-              onSubmitEditing={() => this.performSearch()}
+              // onSubmitEditing={() => this.performSearch()}
               placeholder="Search"
               onChangeText={query => {
                 // console.log(users);
-                this.setState({ searchQuery: query });
+                this.setState({ searchQuery: query }, () => {
+                  this.setState({
+                    data: this.state.products.filter(product => {
+                      return product.name
+                        .toLowerCase()
+                        .includes(this.state.searchQuery.toLowerCase());
+                    }),
+                  });
+                });
               }}
               value={this.state.searchQuery}
             />
@@ -481,6 +491,7 @@ export default class Shop extends React.Component {
                   renderItem={item => this.renderItemComponent(item)}
                   keyExtractor={item => item._id}
                   //ItemSeparatorComponent={this.ItemSeparator}
+                  contentContainerStyle={{ paddingBottom: "35%" }}
                   refreshing={this.state.refreshing}
                   onRefresh={this.handleRefresh}
                   style={{ marginBottom: "25%" }}

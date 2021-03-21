@@ -13,6 +13,7 @@ import Toast from "react-native-simple-toast";
 
 import axios from "axios";
 import PostsCarousel from "../components/PostsCarousel";
+import Post from "../components/Post";
 import Comment from "../components/Comment";
 import Loader from "./Loader";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -33,13 +34,10 @@ export default function Posts(props) {
   const [comments, setComments] = useState([]);
   const [isLoading, setLoading] = useState(true);
   const [commentLoading, setCommentLoading] = useState(true);
-  const [users, setUsers] = useState([]);
-  const [requiredusers, setRequiredUsers] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [email, setEmail] = useState("");
   const [originaldata, setoriginaldata] = useState([]);
   const [userImage, setUserImage] = useState("");
-
   // React.useEffect(() => {
   //   navigation?.setOptions({
   //     headerRight: () => (
@@ -67,6 +65,7 @@ export default function Posts(props) {
   // }, [navigation]);
 
   useEffect(() => {
+    setVerified(route?.params?.verified);
     console.log("in url", props);
     fetchData();
   }, []);
@@ -191,14 +190,6 @@ export default function Posts(props) {
         .catch(err => {
           console.log(err);
         });
-
-      axios
-        .get(`${global.config.host}/user/getUsers`)
-        .then(res => {
-          setUsers(res.data.users);
-          setRequiredUsers(res.data.users);
-        })
-        .catch(e => console.log(e));
     }
   };
 
@@ -235,7 +226,7 @@ export default function Posts(props) {
       })
       .catch(err => {
         console.log(err.response.data);
-        Alert.alert("Error", err.response.data);
+        Toast.show("Empty Comment!", Toast.SHORT, ["UIAlertController"]);
       });
   };
   const searchFunction = () => {
@@ -320,6 +311,7 @@ export default function Posts(props) {
             />
           )}
           keyExtractor={item => item._id}
+          contentContainerStyle={{ paddingBottom: "35%" }}
           onRefresh={() => onRefresh(true)}
           refreshing={isRefreshing}
         />
@@ -331,8 +323,10 @@ export default function Posts(props) {
             style={{ ...styles.Icons, marginTop: 20 }}
             size={28}
             onPress={() => {
-              setModalOpen(false);
+              setCommentText(null);
               setComments([]);
+              onRefresh(true);
+              setModalOpen(false);
             }}
           />
         </View>
@@ -340,7 +334,7 @@ export default function Posts(props) {
           {isLoading ? (
             <Loader />
           ) : (
-            <PostsCarousel
+            <Post
               name={data[CCPIndex]?.userName}
               role={data[CCPIndex]?.userRole}
               createdAt={data[CCPIndex]?.createdAt}
@@ -354,7 +348,6 @@ export default function Posts(props) {
               onCommentClick={onCommentClick}
               navigation={navigation}
               taggedUsers={data[CCPIndex]?.taggedUsers}
-              // postIndex={index}
               postId={data[CCPIndex]?._id}
               id={data[CCPIndex]?.userId}
             />

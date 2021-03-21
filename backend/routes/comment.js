@@ -94,8 +94,8 @@ router.route("/likeComment").patch(auth, async (req, res) => {
         { $push: { likes: req.payload.id } }
       )
         .then(async comment => {
-          let post = await Post.findById(comment._doc.postId);
-          notifUtils.sendNotifications(post._doc.userId, {
+          //let post = await Post.findById(comment._doc.postId);
+          notifUtils.sendNotifications(comment._doc.userId, {
             title: `You received a like ❤️  on your comment`,
             message: `${req.payload.name} liked your comment "${comment.comment}"`,
             uid: req.body.id,
