@@ -656,15 +656,113 @@ export default class Login extends React.Component {
                           Connect To Your College Remotely!
                         </Text>
                       </View>
-                      <View style={styles.inputView}>
-                        <TextInput
-                          value={this.state.branch}
-                          style={styles.inputText}
-                          placeholder="Branch Name"
-                          placeholderTextColor="grey"
-                          onChangeText={text => this.setState({ branch: text })}
-                        />
-                      </View>
+                      <DropDownPicker
+                        items={[
+                          {
+                            label: "Aeronautical Engineering",
+                            value: "Aeronautical Engineering",
+                          },
+                          {
+                            label: "Aerospace Engineering",
+                            value: "Aerospace Engineering",
+                          },
+                          { label: "Architecture", value: "Architecture" },
+                          { label: "Biotechnology", value: "Biotechnology" },
+                          { label: "B. Planning", value: "B. Planning" },
+                          {
+                            label: "Chemical Engineering",
+                            value: "Chemical Engineering",
+                          },
+                          {
+                            label: "Computer Science Engineering",
+                            value: "Computer Science Engineering",
+                          },
+                          {
+                            label: "Civil Engineering",
+                            value: "Civil Engineering",
+                          },
+                          {
+                            label: "Electrical Engineering",
+                            value: "Electrical Engineering",
+                          },
+                          {
+                            label:
+                              "Electronics and Telecommunication Engineering",
+                            value:
+                              "Electronics and Telecommunication Engineering",
+                          },
+                          {
+                            label: "Electronics Engineering",
+                            value: "Electronics Engineering",
+                          },
+                          {
+                            label: "Environmental Engineering",
+                            value: "Environmental Engineering",
+                          },
+                          {
+                            label: "Industrial Engineering",
+                            value: "Industrial Engineering",
+                          },
+                          {
+                            label: "Instrumentation Engineering",
+                            value: "Instrumentation Engineering",
+                          },
+                          {
+                            label: "Information Technology",
+                            value: "Information Technology",
+                          },
+                          {
+                            label: "Interior Design",
+                            value: "Interior Design",
+                          },
+                          {
+                            label: "Mechanical Engineering",
+                            value: "Mechanical Engineering",
+                          },
+                          {
+                            label: "Mechatronics Engineering",
+                            value: "Mechatronics Engineering",
+                          },
+                          {
+                            label: "Metallurgical Engineering",
+                            value: "Metallurgical Engineering",
+                          },
+                          {
+                            label: "Mining Engineering",
+                            value: "Mining Engineering",
+                          },
+                          {
+                            label: "Power Engineering",
+                            value: "Power Engineering",
+                          },
+                          {
+                            label: "Production Engineering",
+                            value: "Production Engineering",
+                          },
+                          {
+                            label: "Textile Engineering",
+                            value: "Textile Engineering",
+                          },
+                        ]}
+                        defaultValue={""}
+                        placeholder="Select your branch"
+                        dropDownMaxHeight={130}
+                        selectedLabelStyle={{
+                          color: "grey",
+                        }}
+                        containerStyle={styles.dropContainer}
+                        placeholderStyle={styles.placeholder}
+                        dropDownStyle={styles.dropDown}
+                        activeLabelStyle={styles.activeLabel}
+                        activeItemStyle={styles.activeItem}
+                        style={styles.picker}
+                        labelStyle={styles.label}
+                        arrowColor="grey"
+                        arrowSize={30}
+                        onChangeItem={item => {
+                          this.setState({ branch: item.value });
+                        }}
+                      />
                       <View style={styles.inputView}>
                         <TextInput
                           value={this.state.year}

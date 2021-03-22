@@ -136,8 +136,11 @@ export default function OTP({ email, navigation, onPageChange, route }) {
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
+          console.log(navigation);
           if (navigation) {
-            navigation.navigate("Home");
+            navigation.goBack("Home");
+          } else {
+            onPageChange();
           }
         }}
       >
