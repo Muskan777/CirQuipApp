@@ -182,7 +182,6 @@ export default function Posts(props) {
               }
             })
             .catch(err => {
-              Alert.alert("Error", "Something Went Wrong");
               console.log(err);
             });
         })

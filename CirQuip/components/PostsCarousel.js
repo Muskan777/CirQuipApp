@@ -111,7 +111,6 @@ export default function PostCarousel({
         if (res.data.profileImage) setUserImage(res.data.profileImage);
       })
       .catch(err => {
-        Alert.alert("Error", "Something Went Wrong");
         console.log(err);
       });
   };
