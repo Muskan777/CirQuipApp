@@ -67,7 +67,7 @@ export default class NotifScreen extends React.Component {
           name={
             this.state.data.from === "notification"
               ? "Notification"
-              : this.prepare(this.state.data.type)
+              : this.prepare(this.props.route.params.data.type)
           }
           key={this.props.route.params?.data.uid}
           component={this.state.component[this.state.data.type]}

@@ -86,7 +86,6 @@ export default function Posts(props) {
           if (res.data.profileImage) setUserImage(res.data.profileImage);
         })
         .catch(err => {
-          Alert.alert("Error", "Something Went Wrong");
           console.log(err);
         });
     }
@@ -94,7 +93,7 @@ export default function Posts(props) {
 
   const fetchData = async () => {
     console.log("fetchdata", props.from);
-    setVerified(route.params.verified);
+    setVerified(route?.params?.verified);
     handleProfileImage();
     if (props?.route?.name === "SavedPosts") {
       let token = await AsyncStorage.getItem("cirquip-auth-token");

@@ -129,7 +129,12 @@ export default function App() {
       console.log("redirecting", path, queryParams, path.includes("posts"));
       let target = "notificationStack";
       let propsData = {
-        data: { from: "links", uid: queryParams.id, type: "post" },
+        data: {
+          from: "links",
+          uid: queryParams.id,
+          type: "post",
+          verified: verified,
+        },
       };
       setTimeout(
         () => {
@@ -171,7 +176,7 @@ export default function App() {
         let data = response.notification.request.content.data;
         console.log(data);
         let target = "notificationStack";
-        let propsData = { data: data };
+        let propsData = { data: { ...data, verified: verified } };
         if (data.type === "chat-admin" || data.type == "chat-user") {
           target = "ChatAdmin";
           propsData = { email: user.email };
