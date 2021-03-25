@@ -179,7 +179,8 @@ export default class Login extends React.Component {
     let regex = /[!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~]/g;
     collegeName = collegeName.toLowerCase().replace(regex, "");
     let emailId = this.state.email;
-    if (this.state.role != "Alumnus" || this.state.role != "Alumni") {
+    console.log(this.state.role);
+    if (this.state.role !== "Alumnus" && this.state.role !== "Alumni") {
       if (this.state.college == "COEP") {
         if (emailId.split("@")[1] !== "coep.ac.in") {
           Toast.show(

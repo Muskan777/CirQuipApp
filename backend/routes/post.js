@@ -402,20 +402,25 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 // @route DELETE /api/post/deletePost
 // @desc Deletes existing post
 
+const admin_accounts = ["604e2ec44e3ba4bb03c3da25"];
+
 router.route("/deletePost").post(auth, async (req, res) => {
   try {
     let post = await Post.findById(req.body.id);
     let user = await User.findById(ObjectId(post._doc.userId));
     if (!user) throw "User not found";
-    let admin = await User.find({ email: "admin@coep.ac.in" });
+    // let admin = await User.find({ email: "admin@coep.ac.in" });
     let adminId;
-    if (admin) {
-      adminId = admin._id;
-    }
+    // if (admin) {
+    //   adminId = admin._id;
+    // }
     if (!post) {
       return res.status(400).send("Post with id not found");
     }
-    if (req.payload.id === post.userId || req.payload.id === adminId) {
+    if (
+      req.payload.id === post.userId ||
+      req.payload.id === admin_accounts[0]
+    ) {
       let images = [];
       post._doc.content.forEach(image => {
         images.push({

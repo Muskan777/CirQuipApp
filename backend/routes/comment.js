@@ -116,6 +116,7 @@ router.route("/likeComment").patch(auth, async (req, res) => {
 
 // @route POST /api/comment/deleteComment
 // @desc Deletes existing comment
+const admin_accounts = ["604e2ec44e3ba4bb03c3da25"];
 
 router.route("/deleteComment").post(auth, async (req, res) => {
   try {
@@ -130,7 +131,10 @@ router.route("/deleteComment").post(auth, async (req, res) => {
     if (!comment) {
       return res.status(404).send("Comment with id not found");
     }
-    if (req.payload.id === comment._doc.userId || req.payload.id === adminId) {
+    if (
+      req.payload.id === comment._doc.userId ||
+      req.payload.id === admin_accounts[0]
+    ) {
       Comment.findByIdAndDelete(req.body.id)
         .then(async () => {
           await Post.findOneAndUpdate(

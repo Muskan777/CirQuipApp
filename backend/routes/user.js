@@ -361,8 +361,8 @@ router.patch("/verify/:email", async (req, res) => {
   }
 });
 
-// @route DELETE /api/user/deleteUser
-// @desc Deletes existing user
+// @route DELETE /api/user/delet
+const admin_accounts = ["604e2ec44e3ba4bb03c3da25"];
 
 router.route("/deleteUser").delete(auth, async (req, res) => {
   try {
@@ -372,7 +372,10 @@ router.route("/deleteUser").delete(auth, async (req, res) => {
     if (!user) {
       return res.status(400).send("User with id not found");
     }
-    if (req.payload.id === `${user._id}` || req.payload.id === adminId) {
+    if (
+      req.payload.id === `${user._id}` ||
+      req.payload.id === admin_accounts[0]
+    ) {
       User.findByIdAndDelete(req.body.id)
         .then(() => res.status(200).send("User deleted"))
         .catch(err => res.status(400).send("Error:" + err));
