@@ -200,7 +200,7 @@ export default class Login extends React.Component {
           return 1;
         }
       } else if (this.state.college == "VIT") {
-        if (emailId.split("@")[1] !== "vit.edu") {
+        if (emailId.split("@")[1] !== "vit.edu.in") {
           Toast.show(
             "CirQuip, Please use valid college email address",
             Toast.SHORT,
@@ -209,7 +209,7 @@ export default class Login extends React.Component {
           return 1;
         }
       } else if (this.state.college == "PICT") {
-        if (emailId.split("@")[1] !== "pict.edu") {
+        if (emailId.split("@")[1] !== "pict.edu.in") {
           Toast.show(
             "CirQuip, Please use valid college email address",
             Toast.SHORT,
@@ -245,7 +245,7 @@ export default class Login extends React.Component {
           return 1;
         }
       } else if (this.state.college == "Sandeep University") {
-        if (emailId.split("@")[1] !== "sandipuniversity.in") {
+        if (emailId.split("@")[1] !== "sandipuniversity.edu.in") {
           Toast.show(
             "CirQuip, Please use valid college email address",
             Toast.SHORT,
