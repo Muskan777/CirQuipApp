@@ -402,7 +402,7 @@ router.route("/sharePost").patch(auth, async (req, res) => {
 // @route DELETE /api/post/deletePost
 // @desc Deletes existing post
 
-const admin_accounts = ["604e2ec44e3ba4bb03c3da25"];
+const admin_accounts = ["605f668fdd5233b7ed4e9843"];
 
 router.route("/deletePost").post(auth, async (req, res) => {
   try {
